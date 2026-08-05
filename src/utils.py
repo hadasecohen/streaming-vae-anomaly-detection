@@ -3,7 +3,6 @@ import numpy as np
 import math
 import os
 import random
-from enum import IntEnum
 import time
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
@@ -30,48 +29,6 @@ EPS_BY_METRIC = {
     "kl": 1e-3,
 }
 
-class Trial_Paths :
-
-    def __init__(self, trial_dir, standalone: bool = False):
-
-        self.trial_dir = trial_dir
-        self.standalone = standalone
-        
-        # Split CSVs
-        self.predictions_csv       = os.path.join(self.trial_dir, "trial_predictions.csv")
-        self.humanFriendly_log     = os.path.join(self.trial_dir, "human_friendly.log") 
-
-        # Optional figures
-        self.conf_hist_png_path    = os.path.join(self.trial_dir, "confusion_histograms.png")
-        self.conf_stack_hist_png_path = os.path.join(self.trial_dir, "confusion_stack_histograms.png")
-        self.plot_graphs_path        = os.path.join(self.trial_dir, "metric_plot_graphs.png")
-        self.colored_graph_png_path        = os.path.join(self.trial_dir, "metric_colored_graphs.png")
-        self.plot_scores_vs_thresholds      = os.path.join(self.trial_dir, "scores_vs_thresholds.png")
-        self.plot_latent_pca_2d      = os.path.join(self.trial_dir, "latent_pca_2d.png")
-        self.plot_latent_pca_3d      = os.path.join(self.trial_dir, "latent_pca_3d.png")
-        self.plot_latent_pca_3d_html = os.path.join(self.trial_dir, "latent_pca_3d.html")
-        self.plot_latent_pca_3d_confusion      = os.path.join(self.trial_dir, "latent_pca_3d_confusion.png")
-        self.plot_latent_pca_3d_confusion_html = os.path.join(self.trial_dir, "latent_pca_3d_confusion.html")
-        self.plot_latent_pca_3d_month_html     = os.path.join(self.trial_dir, "latent_pca_3d_month.html")
-        # Manifold projections (generated only when enabled in plot_settings)
-        self.latent_umap_month_html  = os.path.join(self.trial_dir, "latent_umap_month.html")
-        self.latent_umap_hod_html    = os.path.join(self.trial_dir, "latent_umap_hod.html")
-        self.latent_umap_doy_html    = os.path.join(self.trial_dir, "latent_umap_doy.html")
-        self.latent_isomap_month_html = os.path.join(self.trial_dir, "latent_isomap_month.html")
-        self.latent_isomap_hod_html  = os.path.join(self.trial_dir, "latent_isomap_hod.html")
-        self.latent_isomap_doy_html  = os.path.join(self.trial_dir, "latent_isomap_doy.html")
-        self.latent_tsne_month_html  = os.path.join(self.trial_dir, "latent_tsne_month.html")
-        self.latent_tsne_hod_html    = os.path.join(self.trial_dir, "latent_tsne_hod.html")
-        self.latent_tsne_doy_html    = os.path.join(self.trial_dir, "latent_tsne_doy.html")
-        self.latent_mu_npy                     = os.path.join(self.trial_dir, "latent_mu.npy")
-        self.latent_timestamps_npy             = os.path.join(self.trial_dir, "latent_timestamps.npy")
-        self.latent_labels_npy                 = os.path.join(self.trial_dir, "latent_labels.npy")
-        self.latent_scores_npy                 = os.path.join(self.trial_dir, "latent_scores.npy")
-        self.plot_latent_norm_over_time      = os.path.join(self.trial_dir, "latent_norm_over_time.png")
-        self.plot_latent_mahalanobis      = os.path.join(self.trial_dir, "latent_mahalanobis.png")
-        self.metric_confidence_heatmap        = os.path.join(self.trial_dir, "metric_confidence_heatmap.png")
-        self.decoder_sensitivity_png = os.path.join(self.trial_dir, "decoder_sensitivity.png")
-
 Activations: Dict[str, Callable[[], nn.Module]] = {
     "relu": nn.ReLU,
     "gelu": nn.GELU,
@@ -82,19 +39,6 @@ Activations: Dict[str, Callable[[], nn.Module]] = {
     "identity": nn.Identity,
 }
 
-# pooling method
-def pool_seq(pool, h: torch.Tensor) -> torch.Tensor:
-    if pool == "mean":
-        return h.mean(dim=1)
-    if pool == "sum":
-        return h.sum(dim=1)
-    if pool == "last":
-        return h[:, -1, :]
-    raise ValueError("pool must be one of: mean, sum, last")
-
-class Verbosity(IntEnum):
-    SILENT=0; ERRORS=1; INFO=2; DEBUG=3
-    
 def set_global_seed(seed: int | None):
 
     if seed is None:

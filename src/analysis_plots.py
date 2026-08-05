@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 import pandas as pd
 import ast
@@ -10,7 +12,12 @@ from matplotlib.colors import TwoSlopeNorm
 from matplotlib.patches import Rectangle
 from sklearn.decomposition import PCA
 
-from src.utils import Trial_Paths
+# Trial_Paths (src.logging_utils) is used only as a type hint below — not
+# imported at runtime to avoid a circular import (logging_utils imports
+# from this module via `from src.analysis_plots import *`).
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.logging_utils import Trial_Paths
 
 
 # Desired ordering (edit if needed)
