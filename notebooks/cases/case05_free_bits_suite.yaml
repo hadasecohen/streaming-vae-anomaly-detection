@@ -1,0 +1,41 @@
+# Case 5 — KL free-bits sweet spot (~ Fig 4.13, Table 4.8 section c)
+# Transformer-VAE, contextual anomalies, window mode. free_bits=0 lets the
+# expressive TF decoder bypass the latent code (weak KL signal); a moderate
+# floor forces every dimension to carry some information; too large a floor
+# adds noise back in. Expect a middle value to win.
+#
+# Layering: era5_common -> models/era5_TF_VAE -> anom_types/contextual
+#           -> stream/window -> config: {model: {free_bits: N}}
+
+run_module: regression.run_trial
+rq: case05_free_bits
+base_config: ../../modules/era5_common.yaml
+output_dir: runs/regression/case05_free_bits
+
+runs:
+
+- name: TF_free_bits_0
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: free_bits, variant: "0.0", order: 1}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {model: {free_bits: 0.0}}
+
+- name: TF_free_bits_baseline
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: free_bits, variant: "0.5", order: 2}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+
+- name: TF_free_bits_high
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: free_bits, variant: "2.0", order: 3}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {model: {free_bits: 2.0}}

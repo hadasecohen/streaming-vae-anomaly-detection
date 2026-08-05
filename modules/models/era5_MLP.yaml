@@ -1,0 +1,11 @@
+# Layer: MLP-VAE architecture (~700K params at latent_dim=12)
+model:
+  type: "MLP"
+  hidden_dims:     [512, 512, 384]
+  acts:            [silu, silu, elu]
+  drops:           [0.2, 0.2, 0.0]
+  dec_hidden_dims: [384, 512]
+  dec_acts:        [elu, silu]
+  dec_drops:       [0.0, 0.0]
+  norm: layer
+  weight_init: kaiming_uniform

@@ -1,0 +1,45 @@
+# Case 6 — Reconstruction loss x cyclic conditioning (~ Fig 4.14)
+# Point anomalies, point mode. MSE amplifies the isolated spike into a high
+# score. Once the model is also conditioned on cyclic time features (tighter
+# expectation of "normal"), MAE's linear penalty stops amplifying deviations
+# the same way — the thesis found this flattens the anomaly-score distribution.
+#
+# Layering: era5_common -> models/era5_MLP -> anom_types/point -> stream/point
+#           -> feat_eng/{cyclic_off, cyclic_recon} -> config: {model: {recon_loss_kind}}
+
+run_module: regression.run_trial
+rq: case06_reconstruction_loss
+base_config: ../../modules/era5_common.yaml
+output_dir: runs/regression/case06_reconstruction_loss
+
+runs:
+
+- name: MLP_plain_mse
+  model_arch: MLP
+  compare: {anomaly: Point, arch: MLP, section: recon_loss, variant: plain_mse, order: 1}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/point.yaml
+  - ../../modules/stream/point.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {recon_loss_kind: mse}}
+
+- name: MLP_cyclic_mse
+  model_arch: MLP
+  compare: {anomaly: Point, arch: MLP, section: recon_loss, variant: cyclic_mse, order: 2}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/point.yaml
+  - ../../modules/stream/point.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml
+  config: {model: {recon_loss_kind: mse}}
+
+- name: MLP_cyclic_mae
+  model_arch: MLP
+  compare: {anomaly: Point, arch: MLP, section: recon_loss, variant: cyclic_mae, order: 3}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/point.yaml
+  - ../../modules/stream/point.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml
+  config: {model: {recon_loss_kind: mae}}

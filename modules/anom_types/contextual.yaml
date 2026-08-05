@@ -1,0 +1,3 @@
+# Layer: contextual (locally-plausible but seasonally/diurnally wrong) anomaly dataset
+data:
+  data_path: data/era5/era5_contextual_anomalies.csv

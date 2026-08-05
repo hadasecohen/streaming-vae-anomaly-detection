@@ -1,0 +1,8 @@
+# Layer: cyclic time features appended as input, but NOT reconstructed.
+# Thesis finding (Table 4.23): this alone gives almost no benefit — the encoder
+# has no pressure to actually keep the signal. Compare against cyclic_recon.yaml.
+data:
+  args:
+    cyclic_time_features: true
+model:
+  cyclic_recon: false

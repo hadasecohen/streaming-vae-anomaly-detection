@@ -1,0 +1,51 @@
+# Case 7 — Streaming granularity: point vs window, x cyclic features (~ Fig 4.15)
+# Contextual anomalies. A seasonal swap is invisible to a model that only ever
+# sees one isolated timestep — window mode is what actually exposes the pattern.
+# Cyclic-recon partially recovers point-mode performance (explicit phase acts as
+# a substitute for temporal context) but window mode remains far stronger.
+#
+# Layering: era5_common -> models/era5_MLP -> anom_types/contextual
+#           -> stream/{point,window} -> feat_eng/{cyclic_off,cyclic_recon}
+
+run_module: regression.run_trial
+rq: case07_point_vs_window
+base_config: ../../modules/era5_common.yaml
+output_dir: runs/regression/case07_point_vs_window
+
+runs:
+
+- name: MLP_plain_point
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: plain, variant: point, order: 1}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/point.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+
+- name: MLP_plain_window
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: plain, variant: window, order: 2}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+
+- name: MLP_cyclic_point
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: cyclic, variant: point, order: 1}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/point.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml
+
+- name: MLP_cyclic_window
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: cyclic, variant: window, order: 2}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml

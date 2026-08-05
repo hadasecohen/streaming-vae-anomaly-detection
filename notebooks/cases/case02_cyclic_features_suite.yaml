@@ -1,0 +1,41 @@
+# Case 2 — Cyclic time features: input-only vs reconstructed ("MLP-VAE-Cyclic")
+# Reproduces the mechanism behind Table 4.23 / Fig 4.15 (contextual anomalies):
+# appending sin/cos(hour-of-day, day-of-year) as input barely helps; also putting
+# them in the reconstruction target is what actually improves contextual detection.
+#
+# Layering: era5_common -> models/era5_MLP -> anom_types/contextual -> stream/window
+#           -> feat_eng/{cyclic_off, cyclic_on, cyclic_recon}
+
+run_module: regression.run_trial
+rq: case02_cyclic_features
+base_config: ../../modules/era5_common.yaml
+output_dir: runs/regression/case02_cyclic_features
+
+runs:
+
+- name: MLP_plain
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: cyclic, variant: "off", order: 1}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+
+- name: MLP_cyclic_input_only
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: cyclic, variant: input_only, order: 2}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_on.yaml
+
+- name: MLP_cyclic_recon
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: cyclic, variant: recon, order: 3}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml

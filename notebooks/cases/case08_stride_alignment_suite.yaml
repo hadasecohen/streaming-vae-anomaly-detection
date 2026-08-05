@@ -1,0 +1,46 @@
+# Case 8 — Stride / phase alignment (~ Table 4.20, MLP-VAE-Cyclic stride story)
+# Contextual anomalies, MLP-VAE-Cyclic, fixed 1-week window. Stride controls how
+# the window's starting hour drifts relative to the diurnal cycle: stride=1 means
+# almost every window starts at a different phase (decoupled from hour-of-day),
+# while stride=24 keeps every window phase-aligned. The thesis found MLP-VAE-Cyclic
+# is unusually sensitive to this because its cyclic features assume a stable phase.
+#
+# Layering: era5_common -> models/era5_MLP -> anom_types/contextual -> stream/window
+#           -> feat_eng/cyclic_recon -> config: {stream: {stride: N}}
+
+run_module: regression.run_trial
+rq: case08_stride_alignment
+base_config: ../../modules/era5_common.yaml
+output_dir: runs/regression/case08_stride_alignment
+
+runs:
+
+- name: MLP_Cyclic_stride_1
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: stride, variant: "1", order: 1}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml
+  config: {stream: {stride: 1}}
+
+- name: MLP_Cyclic_stride_12
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: stride, variant: "12", order: 2}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml
+  config: {stream: {stride: 12}}
+
+- name: MLP_Cyclic_stride_24
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: stride, variant: "24", order: 3}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml
+  # stride: 24 is already the stream/window.yaml default — no override needed

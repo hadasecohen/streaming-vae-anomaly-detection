@@ -1,0 +1,107 @@
+
+# ERA5 hourly climate reanalysis — MLP-VAE, point mode
+#
+# Data: 70 128 hourly rows (4 years warmup + 4 years test), 13 synthetic ERA5-shaped features.
+# Warmup: first 4 years (35 064 rows) — all normal.
+# Test:   last  4 years (35 064 rows) — contains injected anomalies (scenario-dependent).
+#
+# Before running, inject anomalies with e.g.:
+#   python scripts/inject_era5_anomalies.py \
+#       --input  Datasets/ERA5/reanalysis-era5-single-levels-timeseries.csv \
+#       --output Datasets/ERA5/era5_mixed.csv \
+#       --scenario mixed --seed 42
+# (or swap the data_path below for any single-scenario file)
+
+common:
+  # device: cpu
+  # device: cuda:0
+  seed: 42
+  logging:
+    run_dir: runs/ERA5-point/MLP/standalone
+    verbosity: INFO_HIGH   # SILENT=0; ERRORS=1; INFO_LOW=2; INFO_HIGH=3; DEBUG=4
+  reporting:
+    min_eval_samples: 1000
+    report_every: 500
+    grace_steps: 0
+
+data:
+  name: era5
+  # Point to an anomaly-injected file produced by scripts/inject_era5_anomalies.py.
+  # Use the raw CSV (reanalysis-era5-single-levels-timeseries.csv) for a normal-only run.
+  data_path: data/era5/era5_point_rare.csv
+  # Warmup window: rows [warmup_start, warmup_end).  Rows before warmup_start are
+  # ignored; the test stream starts at warmup_end.
+  # ERA5 row ≈ 1 hour.  Full dataset: row 0 = 1940-01-01, row 755567 = 2026-03-11.
+  warmup_start: 17532    # last 2 years of warmup only (point-scenario short local training)
+  warmup_end:   35064     # 4 years hourly (see scripts/generate_mini_era5.py)
+  args:
+    scaler_kind: zscore
+    # z_clip: 5.0
+    val_ratio: 0.2
+
+model:
+  type: "MLP"
+  latent_dim: 12
+
+  # Encoder — 3-layer MLP for 13 input features
+  hidden_dims: [128, 64, 32]
+  acts:        ["silu", "elu", "elu"]
+  drops:       [0.2, 0.1, 0.0]
+
+  # Decoder — asymmetric (lighter than encoder)
+  dec_hidden_dims: [32, 64]
+  dec_acts:        ["elu", "silu"]
+  dec_drops:       [0.0, 0.0]
+
+  norm: layer             # per-layer normalisation: "layer" | "batch" | omit for none
+  prior_variance: 1
+  pool_latent: true
+  pooling: mean
+  recon_loss_kind: mse    # mse | mae | huber | spectral_kl | spectral_js
+  clamp_logvar: true
+  clamp_bounds: [-4, 4]
+  free_bits: 0.5          # per-dim KL floor; prevents posterior collapse on easy features
+  weight_init: kaiming_uniform
+  use_pos_enc: false
+
+training:
+  offline_enabled: true
+  offline_batch_size: 128
+  lr_offline: 5e-4
+  lr_online: 5e-5
+  weight_decay: 1.0e-4
+  elbo_beta: 0.6
+  kl_anneal_epochs: 20      # ramp β 0 → elbo_beta over N offline epochs
+  anom_if_score_above: 0.6
+  update_if_score_below: 0.5
+  policy: normal_only
+  clip_grads_norm: 2.0
+  do_kl_normalize: false
+  training_loss: elbo
+  lambda_variance: 0.5
+  hard_threshold_cut: true
+
+  threshold:
+    q: 0.95
+    buffer_length: 200
+    ema: 0.2
+
+  ensemble:
+    threshold: 0.60
+    metric_weights:
+      elbo: 0.0
+      recon: 0.7
+      kl: 0.3
+      mah_full_cov: 0.0
+      gmm_latent: 0.0
+      logvar_sumexp: 0.0
+      elbo_w_var: 0.0
+      mu_norm: 0.0
+      logvar_target_mse: 0.0
+
+stream:
+  mode: point
+  max_steps: 2000   # subset of the 453k test rows; set to null to stream everything
+  stride: 1
+  shuffle: false
+  seq_len: 1         # unused in point mode but required by the env

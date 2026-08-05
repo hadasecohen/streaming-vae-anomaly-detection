@@ -1,0 +1,3 @@
+# Layer: point (isolated spike) anomaly dataset
+data:
+  data_path: data/era5/era5_point_rare.csv

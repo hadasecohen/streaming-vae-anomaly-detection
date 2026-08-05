@@ -1,0 +1,10 @@
+# Layer: cyclic time features, appended AND reconstructed.
+# This is what the thesis calls "MLP-VAE-Cyclic" — forcing reconstruction of the
+# sin/cos(hour), sin/cos(day-of-year) columns creates gradient pressure to keep
+# calendar phase in the latent code, which is what drove the big contextual-F1
+# jump (Table 4.23: 0.477 -> 0.729 for MLP-VAE).
+data:
+  args:
+    cyclic_time_features: true
+model:
+  cyclic_recon: true

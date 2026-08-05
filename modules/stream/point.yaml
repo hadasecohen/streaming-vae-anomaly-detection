@@ -1,0 +1,7 @@
+# Layer: point streaming mode (one sample at a time)
+stream:
+  mode: point
+  max_steps: 100000
+  seq_len: 1
+  stride: 1
+  shuffle: false

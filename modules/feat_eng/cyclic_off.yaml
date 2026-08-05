@@ -1,0 +1,7 @@
+# Layer: no cyclic time features (plain architecture) — this is also era5_common's
+# default; the file exists so a run can name the choice explicitly in its layer list.
+data:
+  args:
+    cyclic_time_features: false
+model:
+  cyclic_recon: false

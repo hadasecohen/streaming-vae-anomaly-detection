@@ -1,0 +1,7 @@
+# Layer: window streaming mode (1-week window, 1-day stride)
+stream:
+  mode: window
+  max_steps: 100000
+  seq_len: 168    # 1 week
+  stride: 24      # advance 1 day at a time
+  shuffle: false

@@ -1,0 +1,3 @@
+# Layer: group (collective mean-shift block) anomaly dataset
+data:
+  data_path: data/era5/era5_group_anomalies.csv

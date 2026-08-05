@@ -1,0 +1,31 @@
+# Case 1 — Clean-data false-positive baseline (~ Fig 4.1, 4.2, Table 4.1)
+# No injected anomalies: every predicted anomaly is a false positive. Compares
+# MLP-VAE-Cyclic against Transformer-VAE to see which architecture starts from
+# a calibrated, low false-positive rate vs. an early miscalibration burst.
+#
+# Layering: era5_common -> models/era5_{MLP,TF_VAE} -> anom_types/clean
+#           -> stream/window -> feat_eng/cyclic_recon (MLP only)
+
+run_module: regression.run_trial
+rq: case01_clean_baseline
+base_config: ../../modules/era5_common.yaml
+output_dir: runs/regression/case01_clean_baseline
+
+runs:
+
+- name: MLP_Cyclic_Clean
+  model_arch: MLP
+  compare: {anomaly: Clean, arch: MLP_Cyclic, section: baseline, variant: MLP_Cyclic, order: 1}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/clean.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml
+
+- name: TF_VAE_Clean
+  model_arch: TF_VAE
+  compare: {anomaly: Clean, arch: TF_VAE, section: baseline, variant: TF_VAE, order: 2}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/clean.yaml
+  - ../../modules/stream/window.yaml

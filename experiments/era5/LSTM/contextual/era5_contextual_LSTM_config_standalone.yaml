@@ -1,0 +1,108 @@
+
+# ERA5 hourly climate reanalysis — LSTM-VAE, window mode
+#
+# Data: 70 128 hourly rows (4 years warmup + 4 years test), 13 synthetic ERA5-shaped features.
+# Warmup: first 4 years (35 064 rows) — all normal.
+# Test:   last  4 years (35 064 rows) — contains injected anomalies (scenario-dependent).
+#
+# seq_len=24 (1 day window) is a natural fit for ERA5's diurnal cycle.
+# seq_len=168 (1 week) captures the synoptic scale but increases memory cost.
+#
+# Before running, inject anomalies with e.g.:
+#   python scripts/inject_era5_anomalies.py \
+#       --input  Datasets/ERA5/reanalysis-era5-single-levels-timeseries.csv \
+#       --output Datasets/ERA5/era5_mixed.csv \
+#       --scenario mixed --seed 42
+
+common:
+  # device: cpu
+  # device: cuda:0
+  seed: 42
+  logging:
+    run_dir: runs/ERA5-contextual/LSTM/standalone
+    verbosity: INFO_HIGH   # SILENT=0; ERRORS=1; INFO_LOW=2; INFO_HIGH=3; DEBUG=4
+  reporting:
+    min_eval_samples: 1000
+    report_every: 500
+    grace_steps: 0
+
+data:
+  name: era5
+  data_path: data/era5/era5_contextual_anomalies.csv
+  # Warmup window: rows [warmup_start, warmup_end).  Rows before warmup_start are
+  # ignored; the test stream starts at warmup_end.
+  # ERA5 row ≈ 1 hour.  Full dataset: row 0 = 1940-01-01, row 755567 = 2026-03-11.
+  warmup_start: 0     # 1940-01-01  — set > 0 to skip early history
+  warmup_end:   35064     # 4 years hourly (see scripts/generate_mini_era5.py)
+  args:
+    scaler_kind: zscore
+    # z_clip: 5.0
+    cyclic_time_features: true   # set true to append sin/cos(doy) + sin/cos(hod) — helps contextual anomaly detection
+    val_ratio: 0.2
+
+model:
+  type: "LSTM"
+  latent_dim: 12
+  recon_loss_kind: mse    # mse | mae | spectral_kl | spectral_js
+  pool_latent: true
+  pooling: mean
+  prior_variance: 1
+  clamp_logvar: true
+  clamp_bounds: [-4, 4]
+  free_bits: 0.5
+  use_layer_norm: true
+
+  # Encoder
+  enc_hidden_dim: 128
+  enc_num_layers: 2
+  enc_dropout: 0.1
+
+  # Decoder
+  dec_hidden_dim: 128
+  dec_num_layers: 2
+  dec_dropout: 0.0
+
+  enc_bidirectional: false
+  use_pos_enc: true       # diurnal + seasonal positional encoding helps
+
+training:
+  offline_enabled: true
+  offline_batch_size: 128
+  lr_offline: 5e-4
+  lr_online: 5e-5
+  weight_decay: 1.0e-4
+  elbo_beta: 0.6
+  kl_anneal_epochs: 20
+  anom_if_score_above: 0.6
+  update_if_score_below: 0.5
+  policy: normal_only
+  clip_grads_norm: 2.0
+  do_kl_normalize: false
+  training_loss: elbo
+  lambda_variance: 0.5
+  hard_threshold_cut: true
+
+  threshold:
+    q: 0.95
+    buffer_length: 200
+    ema: 0.2
+
+  ensemble:
+    threshold: 0.6
+    metric_weights:
+      elbo: 0.0
+      recon: 0.0
+      kl: 0.0
+      mah_full_cov: 0.0
+      gmm_latent: 0.0
+      logvar_sumexp: 0.0
+      elbo_w_var: 1.0
+      mu_norm: 0.0
+      logvar_target_mse: 0.0
+
+stream:
+  mode: window
+  max_steps: 100000
+  stride: 24
+  seq_len: 336
+  shuffle: false

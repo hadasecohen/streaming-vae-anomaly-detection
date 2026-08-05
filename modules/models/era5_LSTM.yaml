@@ -1,0 +1,11 @@
+# Layer: LSTM-VAE architecture
+model:
+  type: "LSTM"
+  use_layer_norm: true
+  enc_hidden_dim: 128
+  enc_num_layers: 2
+  enc_dropout: 0.1
+  dec_hidden_dim: 128
+  dec_num_layers: 2
+  dec_dropout: 0.0
+  enc_bidirectional: false

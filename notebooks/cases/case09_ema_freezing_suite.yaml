@@ -1,0 +1,53 @@
+# Case 9 — Rolling-threshold EMA freezing (~ Fig 4.17, 4.18)
+# Contextual anomalies, window mode. ema=0 freezes the adaptive threshold at its
+# warmup-calibrated value (no online recalibration). MLP-VAE-Cyclic is expected
+# to stay roughly as good as its adaptive baseline; Transformer-VAE is expected
+# to collapse because its score distribution keeps drifting away from the frozen
+# warmup calibration.
+#
+# Layering: era5_common -> models/era5_{MLP,TF_VAE} -> anom_types/contextual
+#           -> stream/window -> feat_eng/cyclic_recon (MLP only)
+#           -> config: {training: {threshold: {ema: N}}}
+
+run_module: regression.run_trial
+rq: case09_ema_freezing
+base_config: ../../modules/era5_common.yaml
+output_dir: runs/regression/case09_ema_freezing
+
+runs:
+
+- name: MLP_Cyclic_ema_baseline
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: ema, variant: "0.2", order: 1}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml
+
+- name: MLP_Cyclic_ema_frozen
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: ema, variant: "0.0", order: 2}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml
+  config: {training: {threshold: {ema: 0.0}}}
+
+- name: TF_ema_baseline
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: ema, variant: "0.2", order: 1}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+
+- name: TF_ema_frozen
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: ema, variant: "0.0", order: 2}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {training: {threshold: {ema: 0.0}}}

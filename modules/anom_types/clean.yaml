@@ -1,0 +1,3 @@
+# Layer: clean data (no injected anomalies) — false-positive-rate baseline
+data:
+  data_path: data/era5/reanalysis-era5-single-levels-timeseries.csv

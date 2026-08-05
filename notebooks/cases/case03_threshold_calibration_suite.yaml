@@ -1,0 +1,50 @@
+# Case 3 — Prediction threshold: calibration dynamics (~ Fig 4.7, 4.10, 4.11)
+# Group anomalies, window mode. Transformer-VAE at a low threshold shows an
+# early-stream false-positive burst before the rolling threshold catches up;
+# LSTM-VAE at a high threshold shows the opposite failure — a mid/late-stream
+# recall collapse once the decision boundary sits above the anomaly scores.
+#
+# Layering: era5_common -> models/era5_{TF_VAE,LSTM} -> anom_types/group
+#           -> stream/window -> config: {training: {anom_if_score_above: N}}
+
+run_module: regression.run_trial
+rq: case03_threshold_calibration
+base_config: ../../modules/era5_common.yaml
+output_dir: runs/regression/case03_threshold_calibration
+
+runs:
+
+- name: TF_low_threshold
+  model_arch: TF_VAE
+  compare: {anomaly: Group, arch: TF_VAE, section: threshold, variant: "0.3", order: 1}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/group.yaml
+  - ../../modules/stream/window.yaml
+  config: {training: {anom_if_score_above: 0.3}}
+
+- name: TF_baseline_threshold
+  model_arch: TF_VAE
+  compare: {anomaly: Group, arch: TF_VAE, section: threshold, variant: "0.6", order: 2}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/group.yaml
+  - ../../modules/stream/window.yaml
+
+- name: TF_high_threshold
+  model_arch: TF_VAE
+  compare: {anomaly: Group, arch: TF_VAE, section: threshold, variant: "0.9", order: 3}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/group.yaml
+  - ../../modules/stream/window.yaml
+  config: {training: {anom_if_score_above: 0.9}}
+
+- name: LSTM_high_threshold
+  model_arch: LSTM
+  compare: {anomaly: Group, arch: LSTM, section: threshold, variant: "0.9", order: 4}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/group.yaml
+  - ../../modules/stream/window.yaml
+  config: {training: {anom_if_score_above: 0.9}}
