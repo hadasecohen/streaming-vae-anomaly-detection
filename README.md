@@ -49,7 +49,6 @@ wrong seasonal/diurnal pattern), `group` (collective mean-shift blocks).
 
 ```bash
 pip install -r requirements.txt
-python scripts/generate_mini_era5.py          # writes data/era5/*.csv (synthetic, no download needed)
 python -m experiments.era5.MLP.group.run_era5_group_MLP_standalone
 ```
 
@@ -61,8 +60,14 @@ logs and metrics to `runs/<scenario>/<arch>/standalone/run.log`.
 
 [`notebooks/demo_colab.ipynb`](notebooks/demo_colab.ipynb) clones this repo
 and runs the same MLP/group experiment on a free Colab GPU runtime — no
-local setup, no data download (the mini dataset is synthetic and generated
-in the notebook itself).
+local setup, no data download (the mini dataset ships with the repo).
+
+[`notebooks/cases/`](notebooks/cases/) has 10 further notebooks, each
+reproducing one specific finding from the thesis this code is based on
+(prediction-threshold calibration, cyclic time features, latent
+dimensionality, window size/stride, ...) as a small 2–4-run comparison with
+its own suite YAML — see the markdown cell at the top of each for what it
+reproduces.
 
 ## Multi-run tooling
 
@@ -71,17 +76,16 @@ in the notebook itself).
 - `scripts/report_metrics.py` — walks a session tree and optionally invokes `cross_compare.py` (`--cc`)
 - `regression/run_trial.py` — the single-config runner these suites launch as a subprocess (`python -m regression.run_trial <config.yaml> <ARCH>`)
 
-No example suite YAML is bundled — compose your own suite YAML (see the
-docstring at the top of `run_regression.py` for the schema) pointing
-`config_layers` at any of the `experiments/era5/**/*.yaml` configs.
+`notebooks/cases/*_suite.yaml` are worked examples of the suite YAML schema
+(see the docstring at the top of `run_regression.py` for the full schema),
+each composed from the shared fragments under `modules/` via `config_layers`.
 
 ## Data
 
-No real data is committed. `data/era5/` holds small, fully synthetic
-ERA5-shaped CSVs (`scripts/generate_mini_era5.py`) so every experiment
-config above runs standalone with zero downloads. See
-[`DATA_LICENSE.md`](DATA_LICENSE.md) for details and for pointing
-configs at real ERA5 data instead.
+`data/era5/` holds a real, 12-year slice of ERA5 hourly reanalysis data
+(105,192 rows) so every experiment config above runs standalone with zero
+downloads. See [`DATA_LICENSE.md`](DATA_LICENSE.md) for provenance,
+attribution, and how to point configs at the full-scale real export instead.
 
 ## License
 

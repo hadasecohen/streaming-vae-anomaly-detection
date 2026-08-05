@@ -1,7 +1,14 @@
 # Layer: point streaming mode (one sample at a time)
+# Point mode streams one gradient step per test row, batch_size=1, no batching —
+# so GPU per-op launch overhead dominates and it runs faster on CPU than GPU.
+# max_steps also caps it to a demo-sized subset of the 70,128-row test set (the
+# original experiment configs hint at the same idea via a commented-out
+# `# max_steps: 2000`).
+common:
+  device: cpu
 stream:
   mode: point
-  max_steps: 100000
+  max_steps: 5000
   seq_len: 1
   stride: 1
   shuffle: false

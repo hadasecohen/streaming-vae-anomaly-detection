@@ -3,7 +3,6 @@ __pycache__/
 .ipynb_checkpoints/
 
 runs/
-data/era5/*.csv
 
 *.egg-info/
 .venv/

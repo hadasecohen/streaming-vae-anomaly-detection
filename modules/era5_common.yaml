@@ -1,9 +1,10 @@
 # ERA5 mini-dataset — shared base config for the case-study suites in notebooks/cases/.
 #
-# Data: 70,128 hourly rows (4 years warmup + 4 years test), synthetic ERA5-shaped
-# (scripts/generate_mini_era5.py) — see DATA_LICENSE.md. Swap data_path for a real
-# ERA5 export to match the thesis's full-scale numbers; the qualitative effects in
-# each case hold on the mini dataset too, just with wider run-to-run noise.
+# Data: 105,192 hourly rows (4 years warmup + 8 years test), a real ERA5 slice
+# centered on the same warmup/test split used at full scale — see DATA_LICENSE.md.
+# Swap data_path for the full-scale export to match the thesis's original numbers;
+# the qualitative effects in each case hold on this shorter slice too, just with
+# wider run-to-run noise.
 #
 # Layering order (see any notebooks/cases/case*_suite.yaml):
 #   era5_common.yaml -> models/era5_{ARCH}.yaml -> anom_types/{type}.yaml
@@ -21,7 +22,7 @@ common:
 data:
   name: era5
   warmup_start: 0
-  warmup_end: 35064        # 4 years hourly — see scripts/generate_mini_era5.py
+  warmup_end: 35064        # 4 years hourly — see DATA_LICENSE.md
   args:
     scaler_kind: zscore
     cyclic_time_features: false   # overridden by feat_eng/cyclic_*.yaml layers

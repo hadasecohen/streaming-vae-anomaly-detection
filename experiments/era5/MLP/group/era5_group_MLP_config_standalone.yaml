@@ -1,9 +1,9 @@
 
 # ERA5 hourly climate reanalysis — MLP-VAE, point mode
 #
-# Data: 70 128 hourly rows (4 years warmup + 4 years test), 13 synthetic ERA5-shaped features.
+# Data: 105,192 hourly rows (4 years warmup + 8 years test), a real ERA5 slice (see DATA_LICENSE.md).
 # Warmup: first 4 years (35 064 rows) — all normal.
-# Test:   last  4 years (35 064 rows) — contains injected anomalies (scenario-dependent).
+# Test:   next  8 years (70,128 rows) — contains injected anomalies (scenario-dependent).
 #
 # Before running, inject anomalies with e.g.:
 #   python scripts/inject_era5_anomalies.py \
@@ -33,7 +33,7 @@ data:
   # ignored; the test stream starts at warmup_end.
   # ERA5 row ≈ 1 hour.  Full dataset: row 0 = 1940-01-01, row 755567 = 2026-03-11.
   warmup_start: 0     # 1940-01-01  — set > 0 to skip early history
-  warmup_end:   35064     # 4 years hourly (see scripts/generate_mini_era5.py)
+  warmup_end:   35064     # 4 years hourly (see DATA_LICENSE.md)
   args:
     scaler_kind: zscore
     # z_clip: 5.0
