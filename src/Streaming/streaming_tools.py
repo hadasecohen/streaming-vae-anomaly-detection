@@ -1,6 +1,6 @@
 import torch
 
-from src.VAE_model.utils import _as_iso
+from src.utils import _as_iso
 
 import math
 import numpy as np

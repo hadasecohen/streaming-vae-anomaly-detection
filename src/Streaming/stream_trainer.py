@@ -9,14 +9,14 @@ import math
 import copy
 
 from collections import deque
-from src.VAE_model.VAE.base_VAE import VAE
+from src.VAE.base_VAE import VAE
 from src.logging_utils import Logger, Verbosity
-from src.VAE_model.utils import MIN_TH_BOOTSTRAP, TANH_S_BY_METRIC, EPS_BY_METRIC
+from src.utils import MIN_TH_BOOTSTRAP, TANH_S_BY_METRIC, EPS_BY_METRIC
 
-from src.VAE_model.Streaming.trainer_utils import ThresholdState, \
+from src.Streaming.trainer_utils import ThresholdState, \
                         Metric, OnlineSigmaPrior, PredStats, \
                         calc_sigma_mad, calc_sigma_iqr, extract_stats, pick_best_threshold, find_best_threshold_f1
-from src.VAE_model.Streaming.streaming_tools import PCAMahalanobis, WelfordVec, GMMLatentScorer
+from src.Streaming.streaming_tools import PCAMahalanobis, WelfordVec, GMMLatentScorer
 
 # from distribution_analysis import *
 

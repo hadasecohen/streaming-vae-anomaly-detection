@@ -6,8 +6,8 @@ import torch.nn.functional as F
 from dataclasses import dataclass
 from typing import List, Any, Optional
 
-from src.VAE_model.VAE.Attn_pool import AttnPool
-from src.VAE_model.utils import Activations
+from src.VAE.Attn_pool import AttnPool
+from src.utils import Activations
 
 
 
@@ -103,7 +103,7 @@ class VAE(nn.Module):
                     "The temporal LSTM needs a per-timestep latent sequence (B,T,Z); "
                     "pooled mode collapses T to 1, leaving no causal context."
                 )
-            from src.VAE_model.VAE.normalizing_flows import NormalizingFlowChain
+            from src.VAE.normalizing_flows import NormalizingFlowChain
             self.flow: nn.Module | None = NormalizingFlowChain(
                 flow_type, latent_dim, flow_num_steps, hidden_dim=flow_hidden_dim
             )

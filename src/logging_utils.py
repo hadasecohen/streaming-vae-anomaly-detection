@@ -8,9 +8,9 @@ from enum import IntEnum
 from typing import Any, Callable, Dict, Optional, Union, List, Tuple
 import matplotlib.pyplot as plt
 
-from src.VAE_model.utils import Trial_Paths
+from src.utils import Trial_Paths
 
-from src.VAE_model.analysis_plots import *
+from src.analysis_plots import *
 
 
 DEFAULT_DISABLED_OUTPUTS: frozenset = frozenset({

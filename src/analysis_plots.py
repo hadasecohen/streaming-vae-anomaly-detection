@@ -10,7 +10,7 @@ from matplotlib.colors import TwoSlopeNorm
 from matplotlib.patches import Rectangle
 from sklearn.decomposition import PCA
 
-from src.VAE_model.utils import Trial_Paths
+from src.utils import Trial_Paths
 
 
 # Desired ordering (edit if needed)

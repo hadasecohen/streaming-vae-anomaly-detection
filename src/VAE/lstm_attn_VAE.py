@@ -4,9 +4,9 @@ from typing import List, Optional
 import torch
 import torch.nn as nn
 
-from src.VAE_model.VAE.transformer_utils import make_transformer_stack, sinusoidal_pe_additive_cached
-from src.VAE_model.VAE.base_VAE import LossFunc
-from src.VAE_model.VAE.lstm_VAE import LSTM_VAE
+from src.VAE.transformer_utils import make_transformer_stack, sinusoidal_pe_additive_cached
+from src.VAE.base_VAE import LossFunc
+from src.VAE.lstm_VAE import LSTM_VAE
 
 # LSTM_VAE + TransformerEncoderLayer stack applied to encoder outputs h_seq (B,T,H_enc).
 # Uses VAE.forward() from base; only overrides encode_sequence().

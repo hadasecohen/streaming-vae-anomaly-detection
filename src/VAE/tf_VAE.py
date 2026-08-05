@@ -35,8 +35,8 @@ import torch
 import torch.nn as nn
 from typing import Optional
 
-from src.VAE_model.VAE.base_VAE import VAE, LossFunc
-from src.VAE_model.VAE.transformer_utils import sinusoidal_pe_additive_cached
+from src.VAE.base_VAE import VAE, LossFunc
+from src.VAE.transformer_utils import sinusoidal_pe_additive_cached
 
 
 class TF_VAE(VAE):

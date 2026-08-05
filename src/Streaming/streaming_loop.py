@@ -4,8 +4,8 @@ import numpy as np
 
 from src.Data_tools.dataset_adapter import DatasetAdapter
 from src.logging_utils import Logger, TrialFilesObj
-from src.VAE_model.Streaming.stream_trainer import StreamTrainer
-from src.VAE_model.Streaming.perf_tracker import PerfTracker, STEP_BLOCK_SIZE
+from src.Streaming.stream_trainer import StreamTrainer
+from src.Streaming.perf_tracker import PerfTracker, STEP_BLOCK_SIZE
 
 
 class AnomalyDetection:

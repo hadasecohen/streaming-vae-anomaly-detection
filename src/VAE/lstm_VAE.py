@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from typing import Optional
-from src.VAE_model.VAE.base_VAE import VAE, LossFunc
+from src.VAE.base_VAE import VAE, LossFunc
 
 # -------- Subclass: LSTM --------
 class LSTM_VAE(VAE):

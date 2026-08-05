@@ -6,17 +6,16 @@ import optuna
 
 import numpy as np
 
-from src.VAE_model.env.streaming_env import StreamEnv
-from src.VAE_model.Streaming.streaming_loop import AnomalyDetection
+from src.env.streaming_env import StreamEnv
+from src.Streaming.streaming_loop import AnomalyDetection
 from src.logging_utils import RunFilesObj, create_run_files_obj
 
 from src.Data_tools.dataset_loader import data_fn_builder
-from src.VAE_model.env.optuna_utils import suggest_param, make_report_fn
 
-from src.VAE_model.VAE.base_VAE import LossFunc
-from src.VAE_model.Streaming.stream_trainer import StreamTrainer
-from src.VAE_model.Streaming.trainer_utils import ThresholdState
-from src.VAE_model.utils import format_metrics_stats, to_plain, make_positional_freqs, make_hourly_domain_freqs
+from src.VAE.base_VAE import LossFunc
+from src.Streaming.stream_trainer import StreamTrainer
+from src.Streaming.trainer_utils import ThresholdState
+from src.utils import format_metrics_stats, to_plain, make_positional_freqs, make_hourly_domain_freqs
 
 class StreamEnvOptuna(StreamEnv):
     
@@ -65,15 +64,15 @@ class StreamEnvOptuna(StreamEnv):
         # Lazy import so this file doesn’t require model at import time
         match model_type:
             case "MLP":
-                from src.VAE_model.VAE.mlp_VAE import MLP_VAE
+                from src.VAE.mlp_VAE import MLP_VAE
             case "MLP_Attn" | "MLP attn":
-                from src.VAE_model.VAE.mlp_attn_VAE import MLP_ATTN_VAE
+                from src.VAE.mlp_attn_VAE import MLP_ATTN_VAE
             case "LSTM":
-                from src.VAE_model.VAE.lstm_VAE import LSTM_VAE
+                from src.VAE.lstm_VAE import LSTM_VAE
             case "LSTM_Attn" | "LSTM attn":
-                from src.VAE_model.VAE.lstm_attn_VAE import LSTM_ATTN_VAE
+                from src.VAE.lstm_attn_VAE import LSTM_ATTN_VAE
             case "TF_VAE":
-                from src.VAE_model.VAE.tf_VAE import TF_VAE
+                from src.VAE.tf_VAE import TF_VAE
             case _:
                 raise ValueError(f"No such model: {model_type}")
 
@@ -485,3 +484,73 @@ class StreamEnvOptuna(StreamEnv):
             return value
             
         return objective
+
+def suggest_param(trial, name, spec, ctx):
+    if not isinstance(spec, dict):
+        return spec  # plain scalar — treat as fixed, no sampling
+    t = spec["type"]
+
+    step = spec.get("step", None)
+
+    if t == "int":
+        if step is None:
+            return trial.suggest_int(name, spec["low"], spec["high"])
+        else:
+            return trial.suggest_int(name, spec["low"], spec["high"], step=step)
+    if t == "float":
+        return trial.suggest_float(name, spec["low"], spec["high"], log=spec.get("log", False))
+    if t == "categorical":
+        return trial.suggest_categorical(name, spec["choices"])
+    if t.endswith("_list"):
+        # Determine list length
+        count = spec.get("count")
+        if count is None:
+            cp = spec.get("count_param")
+            if cp is None:
+                raise KeyError(
+                    f"{name}: list spec must provide either 'count' or 'count_param'. "
+                    f"Spec was: {spec}"
+                )
+            if cp not in ctx:
+                raise KeyError(
+                    f"{name}: count_param '{cp}' not found in ctx yet. "
+                    f"Ensure '{cp}' is defined in 'common' and suggested BEFORE any *_list "
+                    f"that depends on it."
+                )
+            count = int(ctx[cp])
+        # Build inner items using key_fmt
+        key_fmt = spec["key_fmt"]  # e.g., "enc_w{idx}"
+        inner_type = t.replace("_list", "")
+        vals = []
+        for idx in range(count):
+            inner = dict(spec)
+            inner["type"] = inner_type
+            inner.pop("count", None)
+            inner.pop("count_param", None)
+            inner_name = key_fmt.format(idx=idx)
+            vals.append(suggest_param(trial, inner_name, inner, ctx))
+        return vals
+
+    raise ValueError(f"Unknown spec type: {t}")
+
+def suggest_from_space(trial, space, model_key):
+    ctx = {}
+    def add_block(block):
+        for name, spec in block.items():
+            # 👇 NEW: skip suggest_param for constants / metadata
+            if not (isinstance(spec, dict) and "type" in spec):
+                ctx[name] = spec  # constant like epochs: 10
+                continue
+            ctx[name] = suggest_param(trial, name, spec, ctx)
+
+    # 1) common first (so count_param exists)
+    add_block(space.get("common", {}))
+    
+    # 2) then model-specific
+    if model_key:
+        if model_key:
+            add_block(space.get("models", {}).get(model_key, {}))
+    
+    # 3) train first (so count_param exists)
+    add_block(space.get("train", {}))
+    return ctx

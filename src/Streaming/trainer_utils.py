@@ -4,9 +4,9 @@ from collections import deque
 from typing import Callable, Dict
 from sklearn.metrics import roc_auc_score, average_precision_score
 
-from src.VAE_model.Streaming.distribution_analysis_tools import OnlineSigmaPrior
+from src.Streaming.distribution_analysis_tools import OnlineSigmaPrior
 
-from src.VAE_model.utils import _as_iso, MIN_TH_BOOTSTRAP
+from src.utils import _as_iso, MIN_TH_BOOTSTRAP
 
 @dataclass
 class ThresholdState:

@@ -5,15 +5,15 @@ from torch.optim import Adam
 
 from src.logging_utils import create_run_files_obj
 from src.Data_tools.dataset_loader import data_fn_builder
-from src.VAE_model.utils import format_metrics_stats, to_plain, make_positional_freqs, make_hourly_domain_freqs
-from src.VAE_model.env.streaming_env import StreamEnv
-from src.VAE_model.Streaming.streaming_loop import AnomalyDetection
-from src.VAE_model.VAE.mlp_VAE import MLP_VAE
-from src.VAE_model.VAE.lstm_VAE import LSTM_VAE
-from src.VAE_model.VAE.tf_VAE import TF_VAE
-from src.VAE_model.VAE.base_VAE import LossFunc
-from src.VAE_model.Streaming.trainer_utils import ThresholdState
-from src.VAE_model.Streaming.stream_trainer import StreamTrainer
+from src.utils import format_metrics_stats, to_plain, make_positional_freqs, make_hourly_domain_freqs
+from src.env.streaming_env import StreamEnv
+from src.Streaming.streaming_loop import AnomalyDetection
+from src.VAE.mlp_VAE import MLP_VAE
+from src.VAE.lstm_VAE import LSTM_VAE
+from src.VAE.tf_VAE import TF_VAE
+from src.VAE.base_VAE import LossFunc
+from src.Streaming.trainer_utils import ThresholdState
+from src.Streaming.stream_trainer import StreamTrainer
 
 
 class StreamEnvStandalone(StreamEnv):

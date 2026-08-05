@@ -1,9 +1,9 @@
 from typing import List, Optional
 import torch
 
-from src.VAE_model.VAE.transformer_utils import make_transformer_stack, sinusoidal_pe_additive_cached
-from src.VAE_model.VAE.base_VAE import LossFunc
-from src.VAE_model.VAE.mlp_VAE import MLP_VAE 
+from src.VAE.transformer_utils import make_transformer_stack, sinusoidal_pe_additive_cached
+from src.VAE.base_VAE import LossFunc
+from src.VAE.mlp_VAE import MLP_VAE 
 
 
 

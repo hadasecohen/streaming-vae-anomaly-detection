@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 from typing import List, Optional
 
-from src.VAE_model.VAE.base_VAE import VAE, LossFunc
-from src.VAE_model.utils import Activations
+from src.VAE.base_VAE import VAE, LossFunc
+from src.utils import Activations
 
 
 class _BN1d(nn.Module):

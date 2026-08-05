@@ -16,10 +16,10 @@ codebase — see [`DATA_LICENSE.md`](DATA_LICENSE.md) for what data is
 ```
 CSV (ERA5 hourly reanalysis)
   -> ERA5Adapter (src/Data_tools/era5/era5_adapter.py)   # scales, windows, splits warmup/test
-  -> AnomalyDetection (src/VAE_model/Streaming/streaming_loop.py)
+  -> AnomalyDetection (src/Streaming/streaming_loop.py)
        |-> train_warmup() -> offline_fit()                 # standard VAE training on warmup segment
        |-> run_stream() sample-by-sample                   # online step() loop
-  -> StreamTrainer (src/VAE_model/Streaming/stream_trainer.py)
+  -> StreamTrainer (src/Streaming/stream_trainer.py)
        |-> VAE forward pass (MLP / LSTM / TF_VAE)
        |-> multi-metric anomaly scoring (elbo, recon, kl, mu_norm, mah_diag, ...)
        |-> adaptive thresholding (rolling quantile + EMA)
@@ -27,7 +27,7 @@ CSV (ERA5 hourly reanalysis)
   -> runs/<scenario>/<arch>/standalone/
 ```
 
-Three VAE architectures are implemented in `src/VAE_model/VAE/`:
+Three VAE architectures are implemented in `src/VAE/`:
 - **MLP_VAE** — per-timestep MLP encoder/decoder, asymmetric depth supported
 - **LSTM_VAE** — recurrent encoder/decoder
 - **TF_VAE** — pure Transformer encoder/decoder with internal sinusoidal positional encoding
@@ -35,7 +35,7 @@ Three VAE architectures are implemented in `src/VAE_model/VAE/`:
 Each supports point mode (`T=1`) or window mode (`T=seq_len`), optional
 normalizing-flow posterior enrichment (`flow_type: planar`), and per-layer
 normalization. All tensors flowing through the pipeline are strictly 3-D:
-`(batch, time, features)` — see `src/VAE_model/VAE/base_VAE.py` for the
+`(batch, time, features)` — see `src/VAE/base_VAE.py` for the
 shared VAE base class (reparameterization, KL loss, pooling, reconstruction
 loss dispatch).
 

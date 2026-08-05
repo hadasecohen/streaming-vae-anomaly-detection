@@ -2,8 +2,8 @@
 import yaml
 import torch
 import argparse
-from src.VAE_model.utils import set_global_seed
-from src.VAE_model.env.streaming_env_standalone import StreamEnvStandalone
+from src.utils import set_global_seed
+from src.env.streaming_env_standalone import StreamEnvStandalone
 
 
 def run_trial(config_path: str, model_arch: str):
