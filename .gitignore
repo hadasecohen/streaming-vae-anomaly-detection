@@ -8,3 +8,5 @@ data/era5/*.csv
 *.egg-info/
 .venv/
 venv/
+
+git-cmds.txt
