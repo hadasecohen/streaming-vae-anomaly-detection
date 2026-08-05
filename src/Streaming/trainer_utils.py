@@ -4,7 +4,7 @@ from collections import deque
 from typing import Callable, Dict
 from sklearn.metrics import roc_auc_score, average_precision_score
 
-from src.Streaming.distribution_analysis_tools import OnlineSigmaPrior
+from src.Streaming.streaming_tools import OnlineSigmaPrior
 
 from src.utils import _as_iso, MIN_TH_BOOTSTRAP
 

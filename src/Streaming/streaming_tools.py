@@ -90,6 +90,35 @@ class PageHinkley:
 
         return False, score
 
+class OnlineSigmaPrior:
+    def __init__(self, alpha=0.01, clip_k=5.0, init_sigma=1e-3):
+        self.alpha = alpha
+        self.clip_k = clip_k
+        self.mu = None
+        self.var = init_sigma**2
+
+    def update(self, x):
+        if not np.isfinite(x):
+            return  # skip NaN/Inf — would permanently corrupt the EWMA variance
+        if self.mu is None:
+            self.mu = float(x)
+            return
+
+        sigma = (self.var ** 0.5)
+        lo = self.mu - self.clip_k * sigma
+        hi = self.mu + self.clip_k * sigma
+        x = float(np.clip(x, lo, hi))  # winsorize
+
+        a = self.alpha
+        delta = x - self.mu
+        self.mu += a * delta
+        # EWMA variance update
+        self.var = (1 - a) * self.var + a * (delta * delta)
+
+    @property
+    def sigma(self):
+        return float(max(self.var, 1e-24) ** 0.5)
+
 # Per-dimension Welford stats for vectors (mean + variance).
 class WelfordVec:
 
