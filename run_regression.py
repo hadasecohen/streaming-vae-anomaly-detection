@@ -340,6 +340,11 @@ def run_job(run_name: str, cfg: dict, run_module: str,
         yaml.dump(cfg, f, default_flow_style=False, allow_unicode=True, width=10000)
 
     env = os.environ.copy()
+    # Drop MPLBACKEND: when launched from a Jupyter cell, the kernel sets this to
+    # matplotlib_inline's backend, which is only registered inside a running IPython
+    # kernel. The subprocess below is a plain interpreter, so inheriting it makes
+    # matplotlib crash on import with "not a valid value for backend".
+    env.pop("MPLBACKEND", None)
     env["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"   # must be set before cuBLAS init (import torch)
     # Seed-dependent vars must be in the subprocess env before the interpreter starts —
     # setting them via os.environ inside the child process is too late.
@@ -359,7 +364,17 @@ def run_job(run_name: str, cfg: dict, run_module: str,
         log(f"        cmd : {' '.join(cmd)}")
         return run_name, 0
 
-    result = subprocess.run(cmd, env=env)
+    # Shared-cluster GPUs occasionally fail a run transiently (contention from other
+    # users' jobs); retry a couple of times before giving up rather than requiring
+    # a manual re-run.
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        result = subprocess.run(cmd, env=env)
+        if result.returncode == 0:
+            break
+        if attempt < max_attempts:
+            log(f"[suite] RETRY  {run_name!r}  rc={result.returncode}  (attempt {attempt}/{max_attempts})")
+            time.sleep(10)
     status = "OK" if result.returncode == 0 else f"FAILED(rc={result.returncode})"
     log(f"[suite] DONE   {run_name!r}  {status}")
     if result.returncode == 0:
