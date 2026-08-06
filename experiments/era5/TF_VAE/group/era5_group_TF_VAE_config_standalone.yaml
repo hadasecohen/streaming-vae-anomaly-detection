@@ -1,8 +1,8 @@
 
 # ERA5 hourly climate reanalysis — TF-VAE, window mode (group anomalies)
 #
-# Data: 105,192 hourly rows (4 years warmup + 8 years test), a real ERA5 slice (see DATA_LICENSE.md).
-# Warmup: first 4 years (35 064 rows) — all normal.
+# Data: 140,256 hourly rows (8 years warmup + 8 years test, 50:50), a real ERA5 slice (see DATA_LICENSE.md).
+# Warmup: first 8 years (70,128 rows) — all normal.
 # Test:   next  8 years (70,128 rows) — contains group anomalies.
 #
 # TF_VAE: pure transformer encoder+decoder, no recurrence.
@@ -27,7 +27,7 @@ data:
   name: era5
   data_path: data/era5/era5_group_anomalies.csv
   warmup_start: 0
-  warmup_end:   35064     # 4 years hourly (see DATA_LICENSE.md)
+  warmup_end:   70128     # 8 years hourly (see DATA_LICENSE.md)
   args:
     scaler_kind: zscore
     cyclic_time_features: false

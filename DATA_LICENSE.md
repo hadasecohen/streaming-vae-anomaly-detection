@@ -4,13 +4,14 @@
 
 The four CSVs under `data/era5/` (`reanalysis-era5-single-levels-timeseries.csv`,
 `era5_point_rare.csv`, `era5_contextual_anomalies.csv`, `era5_group_anomalies.csv`)
-are a real, 12-year slice of ERA5 hourly reanalysis data — not synthetic. Each
-file covers 1970-06-23 to 1982-06-23 (105,192 rows): 4 years of warmup
+are a real, 16-year slice of ERA5 hourly reanalysis data — not synthetic. Each
+file covers 1966-06-23 to 1982-06-23 (140,256 rows): 8 years of warmup
 immediately before, and 8 years of test immediately after, the same
 warmup/test split point (1974-06-23) used in the full-scale experiments this
-work is based on. `era5_point_rare.csv`, `era5_contextual_anomalies.csv`, and
-`era5_group_anomalies.csv` additionally carry synthetic point/contextual/group
-anomalies injected into the real values, in the test portion only.
+work is based on — an even 50:50 warmup/test split. `era5_point_rare.csv`,
+`era5_contextual_anomalies.csv`, and `era5_group_anomalies.csv` additionally
+carry synthetic point/contextual/group anomalies injected into the real
+values, in the test portion only.
 
 Source: ERA5 hourly reanalysis, European Centre for Medium-Range Weather
 Forecasts (ECMWF), distributed via the Copernicus Climate Data Store (CDS):
@@ -26,6 +27,6 @@ script's docstring for the expected layout).
 
 `experiments/era5/` is written for the full-scale real ERA5 export (755,568
 rows, 1940–2026) used during the original experiments. This repository
-includes only the 105,192-row slice described above, not the full export;
+includes only the 140,256-row slice described above, not the full export;
 swap `data_path` and `warmup_end` in any `experiments/era5/**/*.yaml` to
 point at your own full download to reproduce the original scale.

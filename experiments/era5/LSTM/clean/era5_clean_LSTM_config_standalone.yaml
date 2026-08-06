@@ -1,8 +1,8 @@
 
 # ERA5 hourly climate reanalysis — LSTM-VAE, window mode
 #
-# Data: 105,192 hourly rows (4 years warmup + 8 years test), a real ERA5 slice (see DATA_LICENSE.md).
-# Warmup: first 4 years (35 064 rows) — all normal.
+# Data: 140,256 hourly rows (8 years warmup + 8 years test, 50:50), a real ERA5 slice (see DATA_LICENSE.md).
+# Warmup: first 8 years (70,128 rows) — all normal.
 # Test:   next  8 years (70,128 rows) — contains injected anomalies (scenario-dependent).
 #
 # seq_len=24 (1 day window) is a natural fit for ERA5's diurnal cycle.
@@ -47,7 +47,7 @@ data:
   # ignored; the test stream starts at warmup_end.
   # ERA5 row ≈ 1 hour.  Full dataset: row 0 = 1940-01-01, row 755567 = 2026-03-11.
   warmup_start: 0 # 282227     # 1940-01-01  — set > 0 to skip early history
-  warmup_end:   35064     # 4 years hourly (see DATA_LICENSE.md)
+  warmup_end:   70128     # 8 years hourly (see DATA_LICENSE.md)
   args:
     scaler_kind: zscore
     # z_clip: 5.0
