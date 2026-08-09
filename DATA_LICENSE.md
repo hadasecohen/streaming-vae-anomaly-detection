@@ -4,9 +4,9 @@
 
 The four CSVs under `data/era5/` (`reanalysis-era5-single-levels-timeseries.csv`,
 `era5_point_rare.csv`, `era5_contextual_anomalies.csv`, `era5_group_anomalies.csv`)
-are a real, 16-year slice of ERA5 hourly reanalysis data — not synthetic. Each
-file covers 1966-06-23 to 1982-06-23 (140,256 rows): 8 years of warmup
-immediately before, and 8 years of test immediately after, the same
+are a real, 24-year slice of ERA5 hourly reanalysis data — not synthetic. Each
+file covers 1962-06-23 to 1986-06-23 (210,384 rows): 12 years of warmup
+immediately before, and 12 years of test immediately after, the same
 warmup/test split point (1974-06-23) used in the full-scale experiments this
 work is based on — an even 50:50 warmup/test split. `era5_point_rare.csv`,
 `era5_contextual_anomalies.csv`, and `era5_group_anomalies.csv` additionally
@@ -27,6 +27,6 @@ script's docstring for the expected layout).
 
 `experiments/era5/` is written for the full-scale real ERA5 export (755,568
 rows, 1940–2026) used during the original experiments. This repository
-includes only the 140,256-row slice described above, not the full export;
+includes only the 210,384-row slice described above, not the full export;
 swap `data_path` and `warmup_end` in any `experiments/era5/**/*.yaml` to
 point at your own full download to reproduce the original scale.

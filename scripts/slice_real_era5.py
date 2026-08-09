@@ -2,8 +2,8 @@
 """
 Build data/era5/*.csv from a real ERA5 export by slicing a short window
 centered on the same warmup/test boundary used in the full-scale thesis
-experiments (row 302227, 1974-06-23) — 8 years of real warmup immediately
-before the split, 8 years of real test immediately after it (50:50 split).
+experiments (row 302227, 1974-06-23) — 12 years of real warmup immediately
+before the split, 12 years of real test immediately after it (50:50 split).
 
 This requires access to the real, full-size source files (not included in
 this repo — see DATA_LICENSE.md). It is NOT run automatically; it documents
@@ -32,8 +32,8 @@ OUT_DIR = Path(__file__).resolve().parent.parent / "data" / "era5"
 # Matches the full-scale thesis split: warmup_end = row 302227 (1974-06-23).
 WARMUP_END_FULL = 302227
 YEAR_HOURS = 8766             # 365.25 days * 24h
-WARMUP_YEARS = 8
-TEST_YEARS = 8
+WARMUP_YEARS = 12
+TEST_YEARS = 12
 
 SOURCE_TO_OUTPUT = {
     "reanalysis-era5-single-levels-timeseries.csv": "reanalysis-era5-single-levels-timeseries.csv",

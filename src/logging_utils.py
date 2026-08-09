@@ -360,6 +360,7 @@ class TrialFilesObj:
     disabled_outputs: set of output names to skip. Recognised names:
       "latent_mahalanobis.png", "latent_norm_over_time.png",
       "latent_pca_2d.png", "latent_pca_3d", "latent_pca_3d_confusion",
+      "latent_pca_3d_month", "latent_umap",
       "scores_vs_thresholds.png", "metric_plot_graphs.png",
     """
     def __init__(self, trial_dir: str, verbosity: Verbosity, use_this_logger: Logger = None,
@@ -416,6 +417,8 @@ class TrialFilesObj:
             self.logger.add_visualisation_sink(plot_latent_pca_3d_confusion)
         if "latent_pca_3d_month" not in disabled_outputs:
             self.logger.add_visualisation_sink(plot_latent_pca_3d_month)
+        if "latent_umap" not in disabled_outputs:
+            self.logger.add_visualisation_sink(plot_latent_umap)
         if "latent_norm_over_time.png" not in disabled_outputs:
             self.logger.add_visualisation_sink(plot_latent_norm_over_time)
         if "latent_mahalanobis.png" not in disabled_outputs:

@@ -82,8 +82,8 @@ each composed from the shared fragments under `modules/` via `config_layers`.
 
 ## Data
 
-`data/era5/` holds a real, 16-year slice of ERA5 hourly reanalysis data
-(140,256 rows, 50:50 warmup/test) so every experiment config above runs standalone with zero
+`data/era5/` holds a real, 24-year slice of ERA5 hourly reanalysis data
+(210,384 rows, 50:50 warmup/test) so every experiment config above runs standalone with zero
 downloads. See [`DATA_LICENSE.md`](DATA_LICENSE.md) for provenance,
 attribution, and how to point configs at the full-scale real export instead.
 

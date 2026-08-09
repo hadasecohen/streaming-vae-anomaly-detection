@@ -21,6 +21,8 @@ runs:
   - ../../modules/anom_types/clean.yaml
   - ../../modules/stream/window.yaml
   - ../../modules/feat_eng/cyclic_recon.yaml
+  config:
+    plot: {latent_umap: true}
 
 - name: TF_VAE_Clean
   model_arch: TF_VAE
@@ -29,3 +31,5 @@ runs:
   - ../../modules/models/era5_TF_VAE.yaml
   - ../../modules/anom_types/clean.yaml
   - ../../modules/stream/window.yaml
+  config:
+    plot: {latent_umap: true}

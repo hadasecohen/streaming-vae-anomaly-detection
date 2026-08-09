@@ -1,6 +1,6 @@
 # ERA5 mini-dataset — shared base config for the case-study suites in notebooks/cases/.
 #
-# Data: 140,256 hourly rows (8 years warmup + 8 years test, 50:50), a real ERA5 slice
+# Data: 210,384 hourly rows (12 years warmup + 12 years test, 50:50), a real ERA5 slice
 # centered on the same warmup/test split used at full scale — see DATA_LICENSE.md.
 # Swap data_path for the full-scale export to match the thesis's original numbers;
 # the qualitative effects in each case hold on this shorter slice too, just with
@@ -22,7 +22,7 @@ common:
 data:
   name: era5
   warmup_start: 0
-  warmup_end: 70128        # 8 years hourly — see DATA_LICENSE.md
+  warmup_end: 105192       # 12 years hourly — see DATA_LICENSE.md
   args:
     scaler_kind: zscore
     cyclic_time_features: false   # overridden by feat_eng/cyclic_*.yaml layers

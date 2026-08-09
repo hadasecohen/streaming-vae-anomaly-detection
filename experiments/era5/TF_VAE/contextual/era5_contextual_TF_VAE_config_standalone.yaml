@@ -1,9 +1,9 @@
 
 # ERA5 hourly climate reanalysis — TF-VAE, window mode (contextual anomalies)
 #
-# Data: 140,256 hourly rows (8 years warmup + 8 years test, 50:50), a real ERA5 slice (see DATA_LICENSE.md).
-# Warmup: first 8 years (70,128 rows) — all normal.
-# Test:   next  8 years (70,128 rows) — contains contextual anomalies.
+# Data: 210,384 hourly rows (12 years warmup + 12 years test, 50:50), a real ERA5 slice (see DATA_LICENSE.md).
+# Warmup: first 12 years (105,192 rows) — all normal.
+# Test:   next  12 years (105,192 rows) — contains contextual anomalies.
 #
 # cyclic_time_features: true  — sin/cos(doy) + sin/cos(hod) added as input features.
 # Longer window (seq_len=336, 2 weeks) helps capture seasonal context.
@@ -24,7 +24,7 @@ data:
   name: era5
   data_path: data/era5/era5_contextual_anomalies.csv
   warmup_start: 0
-  warmup_end:   70128     # 8 years hourly (see DATA_LICENSE.md)
+  warmup_end:   105192    # 12 years hourly (see DATA_LICENSE.md)
   args:
     scaler_kind: zscore
     cyclic_time_features: true   # essential for contextual anomaly detection
