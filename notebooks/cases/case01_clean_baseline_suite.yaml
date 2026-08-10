@@ -33,7 +33,7 @@ runs:
   config:
     plot: {latent_umap: true}
     data:
-      data_path: /home/cohenhada/thesis_code_data_backup/Datasets/ERA5/reanalysis-era5-single-levels-timeseries.csv
+      data_path: data/era5/full_scale/reanalysis-era5-single-levels-timeseries.csv
       warmup_start: 0
       warmup_end: 302227
     stream: {max_steps: null}
@@ -48,7 +48,7 @@ runs:
   config:
     plot: {latent_umap: true}
     data:
-      data_path: /home/cohenhada/thesis_code_data_backup/Datasets/ERA5/reanalysis-era5-single-levels-timeseries.csv
+      data_path: data/era5/full_scale/reanalysis-era5-single-levels-timeseries.csv
       warmup_start: 0
       warmup_end: 302227
     stream: {max_steps: null}
