@@ -4,6 +4,11 @@ __pycache__/
 
 runs/
 
+# Full-scale real ERA5 source (~550MB total, not included in this repo — see
+# DATA_LICENSE.md). Local-only copy for full-scale experiments (e.g. case01's
+# full-scale override in case01_clean_baseline_suite.yaml).
+data/era5/full_scale/
+
 *.egg-info/
 .venv/
 venv/
