@@ -1,11 +1,12 @@
-# Layer: LSTM-VAE architecture
+# Layer: LSTM-VAE architecture — identical to
+# thesis_code/tests/regression/modules/models/era5_LSTM_v5.yaml
 model:
   type: "LSTM"
   use_layer_norm: true
   enc_hidden_dim: 128
-  enc_num_layers: 2
+  enc_num_layers: 3
   enc_dropout: 0.1
   dec_hidden_dim: 128
-  dec_num_layers: 2
+  dec_num_layers: 3
   dec_dropout: 0.0
   enc_bidirectional: false

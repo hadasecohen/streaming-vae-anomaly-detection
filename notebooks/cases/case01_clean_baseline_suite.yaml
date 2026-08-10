@@ -3,8 +3,17 @@
 # MLP-VAE-Cyclic against Transformer-VAE to see which architecture starts from
 # a calibrated, low false-positive rate vs. an early miscalibration burst.
 #
+# Unlike every other case notebook, this one runs on the FULL-SCALE real ERA5
+# export (755,568 rows), not the mini slice under data/era5/ — same warmup/test
+# split (row 302,227, 1974-06-23) and no stream.max_steps cap, exactly matching
+# thesis_code/tests/regression/experiments/q0/clean_baseline. This was a
+# deliberate choice to reproduce Fig 4.1/4.2/Table 4.1 exactly, at the cost of
+# requiring the full-scale source file locally (not included in this repo, not
+# Colab-portable — see DATA_LICENSE.md).
+#
 # Layering: era5_common -> models/era5_{MLP,TF_VAE} -> anom_types/clean
 #           -> stream/window -> feat_eng/cyclic_recon (MLP only)
+#           -> config: {data: full-scale path/split, stream: {max_steps: null}}
 
 run_module: regression.run_trial
 rq: case01_clean_baseline
@@ -23,6 +32,11 @@ runs:
   - ../../modules/feat_eng/cyclic_recon.yaml
   config:
     plot: {latent_umap: true}
+    data:
+      data_path: /home/cohenhada/thesis_code_data_backup/Datasets/ERA5/reanalysis-era5-single-levels-timeseries.csv
+      warmup_start: 0
+      warmup_end: 302227
+    stream: {max_steps: null}
 
 - name: TF_VAE_Clean
   model_arch: TF_VAE
@@ -33,3 +47,8 @@ runs:
   - ../../modules/stream/window.yaml
   config:
     plot: {latent_umap: true}
+    data:
+      data_path: /home/cohenhada/thesis_code_data_backup/Datasets/ERA5/reanalysis-era5-single-levels-timeseries.csv
+      warmup_start: 0
+      warmup_end: 302227
+    stream: {max_steps: null}

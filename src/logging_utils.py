@@ -218,12 +218,14 @@ class PredictionCsvSink:
             ]
 
     def __init__(self, csv_path: str):
+        # Always truncate: a trial_dir can be reused across independent reruns
+        # (same run_name/seed rerun later), and appending onto a stale file from
+        # a previous run silently corrupts every downstream count (fp/tn/n) —
+        # this is not a crash-resume mechanism, every trial starts fresh.
         self.csv_path = csv_path
-        need_header = not os.path.exists(self.csv_path) or os.path.getsize(self.csv_path) == 0
-        self.stream = open(self.csv_path, "a", newline="", buffering=1)
+        self.stream = open(self.csv_path, "w", newline="", buffering=1)
         self.writer = csv.DictWriter(self.stream, fieldnames=self.FIELDS)
-        if need_header:
-            self.stream.write("# " + ",".join(self.FIELDS) + "\n")
+        self.stream.write("# " + ",".join(self.FIELDS) + "\n")
 
     def __call__(self, kind: str, payload: Dict[str, Any]):
         if kind != "pred_outcome":

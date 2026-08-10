@@ -1,10 +1,13 @@
-# Layer: Transformer-VAE architecture
+# Layer: Transformer-VAE architecture — identical to
+# thesis_code/tests/regression/modules/models/era5_TF_VAE_v5.yaml
+# (use_multiscale/ms_num_scales dropped — not implemented in this port)
 model:
   type: "TF_VAE"
-  d_model: 64
+  d_model: 96
   num_enc_layers: 4
   num_dec_layers: 4
   nhead: 4
+  ff_dim: 256
   dropout: 0.1
   activation: gelu
   norm_first: true

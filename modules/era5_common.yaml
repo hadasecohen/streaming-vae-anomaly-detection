@@ -2,16 +2,20 @@
 #
 # Data: 210,384 hourly rows (12 years warmup + 12 years test, 50:50), a real ERA5 slice
 # centered on the same warmup/test split used at full scale — see DATA_LICENSE.md.
-# Swap data_path for the full-scale export to match the thesis's original numbers;
-# the qualitative effects in each case hold on this shorter slice too, just with
-# wider run-to-run noise.
+#
+# All values below are identical to thesis_code/tests/regression/modules/era5_common.yaml
+# except: warmup_start/warmup_end (this repo's smaller mini-slice row counts, not the
+# full-scale 302,227), and two things dropped because this port doesn't implement them:
+#   - training.band_cfg (online-threshold hysteresis band — removed from this port)
+#   - model.use_multiscale / model.ms_num_scales (multiscale fusion prefix — not ported)
 #
 # Layering order (see any notebooks/cases/case*_suite.yaml):
 #   era5_common.yaml -> models/era5_{ARCH}.yaml -> anom_types/{type}.yaml
-#     -> stream/{point,window}.yaml -> feat_eng/*.yaml (optional) -> run-level config:
+#     -> stream/{point,window}.yaml -> feat_eng/*.yaml (optional) -> ensemble/*.yaml (optional)
+#     -> pool_latent/*.yaml (optional) -> run-level config:
 
 common:
-  seed: 42
+  seed: 49
   logging:
     verbosity: INFO_HIGH   # SILENT=0; ERRORS=1; INFO_LOW=2; INFO_HIGH=3; DEBUG=4
   reporting:
@@ -29,33 +33,35 @@ data:
     val_ratio: 0.2
 
 model:
-  latent_dim: 12
+  latent_dim: 24
   recon_loss_kind: mse
   prior_variance: 1.0
   clamp_logvar: true
   clamp_bounds: [-4, 4]
-  free_bits: 0.5
-  pool_latent: true
+  free_bits: 0.0
+  pool_latent: false
   pooling: mean
+  kl_mode: norm          # mean over B,T,Z — scale O(1), beta is per-element weight
+  kl_auto_scale: true    # divides beta by kl_scale_factor(T); makes beta portable across modes
   use_pos_enc: false
 
 training:
+  training_loss: elbo
+  elbo_beta: 0.3
+  lambda_variance: 0.5
+  policy: normal_only
+  kl_anneal_epochs: 0
   offline_enabled: true
   offline_batch_size: 128
+  offline_epochs: 70
   lr_offline: 5e-4
   lr_online: 5e-5
   weight_decay: 1.0e-4
-  elbo_beta: 0.6
-  kl_anneal_epochs: 20
-  anom_if_score_above: 0.6    # the actual final decision threshold (ensemble_decision)
-  update_if_score_below: 0.5  # online-training gate — separate from the decision threshold
-  policy: normal_only
   clip_grads_norm: 2.0
-  do_kl_normalize: false
-  training_loss: elbo
-  lambda_variance: 0.5
-  hard_threshold_cut: true
+  update_if_score_below: 0.5
+  anom_if_score_above: 0.85   # the actual final decision threshold (ensemble_decision)
 
+  hard_threshold_cut: true
   threshold:
     q: 0.95
     buffer_length: 200
@@ -63,12 +69,12 @@ training:
 
   ensemble:
     metric_weights:
-      elbo: 0.0
-      recon: 0.0
+      recon: 1.0
       kl: 0.0
-      mah_full_cov: 0.0
+      elbo: 0.0
+      elbo_w_var: 0.0
+      mu_norm: 0.0
+      mah_diag: 0.0
       gmm_latent: 0.0
       logvar_sumexp: 0.0
-      elbo_w_var: 1.0
-      mu_norm: 0.0
       logvar_target_mse: 0.0

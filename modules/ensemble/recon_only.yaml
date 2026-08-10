@@ -1,0 +1,15 @@
+# Layer: score by reconstruction error only — this is era5_common's default,
+# kept here so a run can name the choice explicitly in its layer list.
+# Identical to thesis_code/tests/regression/modules/ensemble/recon_only.yaml.
+training:
+  ensemble:
+    metric_weights:
+      recon: 1.0
+      kl: 0.0
+      elbo: 0.0
+      elbo_w_var: 0.0
+      mu_norm: 0.0
+      mah_diag: 0.0
+      gmm_latent: 0.0
+      logvar_sumexp: 0.0
+      logvar_target_mse: 0.0

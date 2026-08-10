@@ -1,0 +1,56 @@
+# Layer: this repo's ORIGINAL (pre-thesis-alignment) hyperparameters, kept so the
+# two configurations can be run and compared directly instead of only in theory.
+#
+# Applied LAST (after era5_common.yaml + the model/anom_type/stream/feat_eng
+# layers), this overrides the now-thesis-matching shared defaults back to what
+# this repo actually shipped with before it was diffed against
+# thesis_code/tests/regression/modules/era5_common.yaml:
+#
+#              this repo (pre-fix)     thesis_code (now the default)
+#   latent_dim         12                        24
+#   free_bits          0.5                       0.0
+#   pool_latent        true                      false
+#   kl_mode            norm_T (implicit)         norm
+#   kl_auto_scale      false (implicit)          true
+#   elbo_beta          0.6                       0.3
+#   kl_anneal_epochs   20                        0
+#   offline_epochs     40 (implicit)             70
+#   anom_if_score_above 0.6                      0.85
+#   ensemble metric    elbo_w_var only           recon only
+#   seed               42                        49
+#   TF_VAE d_model     64                        96
+#   LSTM enc/dec layers 2                        3
+#
+# d_model/enc_num_layers/dec_num_layers below are harmless no-ops for
+# architectures that don't read them (config keys are read individually,
+# never blindly unpacked — see src/env/streaming_env_standalone.py).
+
+common:
+  seed: 42
+
+model:
+  latent_dim: 12
+  free_bits: 0.5
+  pool_latent: true
+  kl_mode: norm_T
+  kl_auto_scale: false
+  d_model: 64            # TF_VAE only
+  enc_num_layers: 2       # LSTM only
+  dec_num_layers: 2       # LSTM only
+
+training:
+  elbo_beta: 0.6
+  kl_anneal_epochs: 20
+  offline_epochs: 40
+  anom_if_score_above: 0.6
+  ensemble:
+    metric_weights:
+      recon: 0.0
+      kl: 0.0
+      elbo: 0.0
+      elbo_w_var: 1.0
+      mu_norm: 0.0
+      mah_diag: 0.0
+      gmm_latent: 0.0
+      logvar_sumexp: 0.0
+      logvar_target_mse: 0.0
