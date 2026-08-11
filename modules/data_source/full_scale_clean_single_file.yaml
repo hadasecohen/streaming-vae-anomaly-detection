@@ -1,0 +1,8 @@
+# Layer: full-scale ERA5 data, one file with a row-index warmup/test split.
+# warmup_end is required here — it's the only thing that marks where warmup
+# stops and the test stream starts in a single combined file.
+data:
+  data_path: data/era5/full_scale/reanalysis-era5-single-levels-timeseries.csv
+  warmup_start: 0
+  warmup_end: 302227
+stream: {max_steps: null}

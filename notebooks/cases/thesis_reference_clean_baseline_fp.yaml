@@ -1,0 +1,14 @@
+# Reference fp values extracted from:
+#   /home/cohenhada/thesis_code/link_to_cuda13/regression/final_results/q0_baseline/clean_baseline/cross_compare/performance_table.csv
+# Filtered to variant == 'Window_default'.
+# Architecture name mapping applied (thesis_code -> this repo): {'MLP_Recon': 'MLP_Cyclic'}
+# thesis_code's own 3-seed table (48/49/50) for the Clean/Window_default baseline comparison. Verified 2026-08-11.
+
+LSTM:
+  fp_by_seed: [154, 454, 698]
+MLP:
+  fp_by_seed: [266, 267, 275]
+MLP_Cyclic:
+  fp_by_seed: [172, 201, 206]
+TF_VAE:
+  fp_by_seed: [834, 923, 1584]

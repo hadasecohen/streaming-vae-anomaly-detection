@@ -12,13 +12,21 @@
 # thesis_code's own full run down to the same window count confirmed the
 # early-burst effect the thesis describes is already fully present by then —
 # so matching warmup length, not just window count, is what reproduces it.
-# Requires the full-scale source file locally (data/era5/full_scale/,
-# gitignored, not shipped in this repo — see DATA_LICENSE.md); not
-# Colab-portable.
+#
+# The data source (single combined file vs. pre-split warmup/test files) is
+# NOT set here — it's appended to each run's config_layers at invocation
+# time by the notebook (see the CASE_ID cell's DATA_SOURCE variable), via
+# one of:
+#   ../../modules/data_source/full_scale_clean_single_file.yaml
+#   ../../modules/data_source/full_scale_clean_split_files.yaml
+# The single-file source is gitignored (120MB, over GitHub's limit — see
+# DATA_LICENSE.md); the split-file source's two files are each under 100MB
+# and are committed. Neither is Colab-portable (both need the full-scale
+# data locally).
 #
 # Layering: era5_common -> models/era5_{MLP,LSTM,TF_VAE} -> anom_types/clean
 #           -> stream/window -> feat_eng/cyclic_recon (MLP_Cyclic only)
-#           -> config: {data: full-scale path/split, stream: {max_steps: null}}
+#           -> data_source/full_scale_clean_{single_file,split_files} (added by notebook)
 
 run_module: regression.run_trial
 rq: case01_clean_baseline
@@ -36,11 +44,6 @@ runs:
   - ../../modules/stream/window.yaml
   config:
     plot: {latent_umap: true}
-    data:
-      data_path: data/era5/full_scale/reanalysis-era5-single-levels-timeseries.csv
-      warmup_start: 0
-      warmup_end: 302227
-    stream: {max_steps: null}
 
 - name: MLP_Cyclic_Clean
   model_arch: MLP
@@ -52,11 +55,6 @@ runs:
   - ../../modules/feat_eng/cyclic_recon.yaml
   config:
     plot: {latent_umap: true}
-    data:
-      data_path: data/era5/full_scale/reanalysis-era5-single-levels-timeseries.csv
-      warmup_start: 0
-      warmup_end: 302227
-    stream: {max_steps: null}
 
 - name: LSTM_Clean
   model_arch: LSTM
@@ -67,11 +65,6 @@ runs:
   - ../../modules/stream/window.yaml
   config:
     plot: {latent_umap: true}
-    data:
-      data_path: data/era5/full_scale/reanalysis-era5-single-levels-timeseries.csv
-      warmup_start: 0
-      warmup_end: 302227
-    stream: {max_steps: null}
 
 - name: TF_VAE_Clean
   model_arch: TF_VAE
@@ -82,8 +75,3 @@ runs:
   - ../../modules/stream/window.yaml
   config:
     plot: {latent_umap: true}
-    data:
-      data_path: data/era5/full_scale/reanalysis-era5-single-levels-timeseries.csv
-      warmup_start: 0
-      warmup_end: 302227
-    stream: {max_steps: null}

@@ -24,11 +24,90 @@ def data_fn_builder(cfg, logger: Logger):
             raise ValueError(f"Unknown dataset name: {cfg['name']}. This curated build only supports 'era5'.")
 
 
+def _read_era5_raw(cfg):
+    """
+    Read the raw ERA5 dataframe in either of two equivalent modes, always
+    returning rows in the same warmup-then-test order so downstream code
+    (column drop/fill, adapter construction) is identical regardless of mode.
+
+    Mode 1 — single file, row-index split:
+      data_path    : path to one CSV spanning both warmup and test
+      warmup_start : int (default 0) — skip rows before this index
+      warmup_end   : int (required) — first row of the test stream
+
+    Mode 2 — two files, pre-split:
+      warmup_path  : path to the warmup-only CSV
+      test_path    : path to the test-only CSV
+      warmup_start : int (default 0) — skip rows before this index within
+                     the warmup file (rare; usually left at 0)
+
+    Exactly one mode's keys may be set. The two files in mode 2 must be in
+    chronological order with no overlap (warmup's last timestamp before
+    test's first) — this is checked explicitly, since a silent gap or
+    overlap here would corrupt the warmup/test boundary.
+
+    Returns (df_raw, warmup_start, warmup_length, data_path_display).
+    """
+    import pandas as pd
+
+    data_path = cfg.get("data_path")
+    warmup_path = cfg.get("warmup_path")
+    test_path = cfg.get("test_path")
+    two_file_mode = warmup_path is not None or test_path is not None
+
+    if data_path is not None and two_file_mode:
+        raise ValueError(
+            "ERA5 config: set either 'data_path' (single file + warmup_start/warmup_end) "
+            "or 'warmup_path'+'test_path' (two files) — not both."
+        )
+
+    if two_file_mode:
+        if warmup_path is None or test_path is None:
+            raise ValueError(
+                "ERA5 config: two-file mode requires both 'warmup_path' and 'test_path'."
+            )
+        warmup_path = Path(warmup_path)
+        test_path = Path(test_path)
+        warmup_raw = pd.read_csv(warmup_path, parse_dates=["valid_time"], low_memory=False)
+        test_raw = pd.read_csv(test_path, parse_dates=["valid_time"], low_memory=False)
+
+        if warmup_raw["valid_time"].max() >= test_raw["valid_time"].min():
+            raise ValueError(
+                "ERA5 two-file config: warmup_path's last timestamp "
+                f"({warmup_raw['valid_time'].max()}) is not before test_path's first "
+                f"({test_raw['valid_time'].min()}) — files must be in chronological "
+                "order with no overlap."
+            )
+
+        df_raw = pd.concat([warmup_raw, test_raw], ignore_index=True)
+        warmup_start = int(cfg.get("warmup_start", 0))
+        warmup_length = len(warmup_raw)
+        data_path_display = f"{warmup_path} + {test_path} (warmup+test)"
+    else:
+        if data_path is None:
+            raise ValueError(
+                "ERA5 config requires either 'data_path' (single file) or "
+                "'warmup_path'+'test_path' (two files)."
+            )
+        data_path = Path(data_path)
+        df_raw = pd.read_csv(data_path, parse_dates=["valid_time"], low_memory=False)
+        warmup_start = int(cfg.get("warmup_start", 0))
+        warmup_length = int(cfg.get("warmup_end", 0))  # warmup_end is the test-stream boundary
+        if warmup_length == 0:
+            raise ValueError(
+                "ERA5 config requires 'warmup_end' (the last warmup row / first test row). "
+                "Set it explicitly, e.g.  warmup_end: 302227"
+            )
+        data_path_display = str(data_path)
+
+    return df_raw, warmup_start, warmup_length, data_path_display
+
+
 def load_era5_dataset(cfg, logger: Logger):
     """
     Loader for ERA5 hourly climate reanalysis data.
 
-    The CSV may be:
+    The CSV(s) may be:
       (a) the raw ERA5 download (all normal, no is_anomaly column), or
       (b) an anomaly-injected file (has is_anomaly and anomaly_type columns).
 
@@ -38,15 +117,17 @@ def load_era5_dataset(cfg, logger: Logger):
       longitude    — constant (single grid point)
       anomaly_type — metadata column, not a feature
 
-    Warmup window: rows [warmup_start, warmup_end).
-      warmup_start (optional, default 0) — skip rows before this index.
-      warmup_end   (required) — first row of the test stream.
+    Warmup window: rows [warmup_start, warmup_end). The source data can be
+    given as one file with a row-index split, or as two pre-split files —
+    see `_read_era5_raw` for the two equivalent config shapes.
 
     Expected cfg keys
     -----------------
-    data_path   : path to the (possibly injected) ERA5 CSV
+    data_path   : (mode 1) path to the (possibly injected) ERA5 CSV
     warmup_start: int (default 0)
-    warmup_end  : int — first row of the test stream
+    warmup_end  : (mode 1, required) int — first row of the test stream
+    warmup_path : (mode 2) path to the warmup-only ERA5 CSV
+    test_path   : (mode 2) path to the test-only ERA5 CSV
     args        : optional dict
         z_clip                : float or null — symmetric z-score clipping
         scaler_kind            : "zscore" (default) | "minmax"
@@ -57,7 +138,6 @@ def load_era5_dataset(cfg, logger: Logger):
 
     DROP_COLS = {"sst", "latitude", "longitude", "anomaly_type"}
 
-    data_path = Path(cfg["data_path"])
     args = cfg.get("args", {}) or {}
     z_clip               = args.get("z_clip", None)
     scaler_kind          = args.get("scaler_kind", "zscore")
@@ -66,8 +146,8 @@ def load_era5_dataset(cfg, logger: Logger):
     val_ratio            = args.get("val_ratio", 0.2)
     cyclic_time_features = args.get("cyclic_time_features", False)
 
-    # --- load CSV ---
-    df_raw = pd.read_csv(data_path, parse_dates=["valid_time"], low_memory=False)
+    # --- load CSV(s) ---
+    df_raw, warmup_start, warmup_length, data_path_display = _read_era5_raw(cfg)
     df_raw = df_raw.set_index("valid_time")
 
     # Drop constant / all-NaN / metadata columns
@@ -88,14 +168,6 @@ def load_era5_dataset(cfg, logger: Logger):
     timestamps = df_raw.index.to_numpy()
     T = len(X_df)
 
-    warmup_start = int(cfg.get("warmup_start", 0))
-    warmup_length = int(cfg.get("warmup_end", 0))   # warmup_end is the test-stream boundary
-    if warmup_length == 0:
-        raise ValueError(
-            "ERA5 config requires 'warmup_end' (the last warmup row / first test row). "
-            "Set it explicitly, e.g.  warmup_end: 302227"
-        )
-
     n_test       = T - warmup_length
     n_test_anom  = int(y_ser.iloc[warmup_length:].sum())
     logger.info_low(lambda: (
@@ -108,7 +180,7 @@ def load_era5_dataset(cfg, logger: Logger):
         "#   test rows:              {}\n"
         "#   test anomalies:         {}  ({:.2f}% of test)\n"
     ).format(
-        data_path, T,
+        data_path_display, T,
         X_df.shape[1], list(X_df.columns),
         warmup_start, warmup_length,
         n_test,

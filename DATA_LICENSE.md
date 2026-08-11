@@ -27,6 +27,26 @@ script's docstring for the expected layout).
 
 `experiments/era5/` is written for the full-scale real ERA5 export (755,568
 rows, 1940–2026) used during the original experiments. This repository
-includes only the 210,384-row slice described above, not the full export;
-swap `data_path` and `warmup_end` in any `experiments/era5/**/*.yaml` to
-point at your own full download to reproduce the original scale.
+includes only the 210,384-row slice described above by default, not the
+full export; swap `data_path` and `warmup_end` in any
+`experiments/era5/**/*.yaml` to point at your own full download to
+reproduce the original scale.
+
+### Full-scale clean (no injected anomalies) data — included
+
+`data/era5/full_scale/era5_clean_warmup.csv` (302,227 rows) and
+`era5_clean_test.csv` (453,341 rows) together *are* the full-scale export
+above, split at the same warmup/test boundary (1974-06-23) used throughout
+this repo — pre-split so each file stays under GitHub's 100MB limit and can
+be committed (the single combined 755,568-row file is ~120MB, over that
+limit, and stays local-only/gitignored). Same source and license as the
+mini datasets above (Copernicus, reuse with attribution).
+
+`notebooks/cases/case01_clean_baseline_suite.yaml`'s `DATA_SOURCE` toggle
+(set in the case01 notebook) selects between this two-file mode and the
+single-file mode; both read identical rows in identical order — see
+`src/Data_tools/dataset_loader.py`'s `_read_era5_raw`.
+
+The other three full-scale anomaly-injected exports (`era5_point_*.csv`,
+`era5_contextual_*.csv`, `era5_group_*.csv`) are not yet split and remain
+local-only/gitignored.
