@@ -3,6 +3,7 @@ __pycache__/
 .ipynb_checkpoints/
 
 runs/
+scratchpad/
 
 # Full-scale real ERA5 source (~550MB total, not included in this repo — see
 # DATA_LICENSE.md). Local-only copy for full-scale experiments (e.g. case01's
@@ -13,4 +14,12 @@ data/era5/full_scale/
 .venv/
 venv/
 
+# Local-only tooling that reaches outside this repo (e.g. into thesis_code,
+# a machine-local path not shipped here). Only these scripts' *outputs*
+# (small, self-contained reference files) are meant to be committed.
+scripts/local/
+
+scripts/compare_to_thesis.py
+scripts/generate_mini_era5.py
+scripts/slice_real_era5.py
 git-cmds.txt

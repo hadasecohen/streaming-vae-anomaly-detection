@@ -329,12 +329,12 @@ class HumanFriendlyRunLog:
     ]
 
     def __init__(self, log_path: str):
+        # Always truncate — see PredictionCsvSink for why (reused trial_dir
+        # across independent reruns must not append onto a stale file).
         self.log_path = log_path
-        need_header = not os.path.exists(self.log_path) or os.path.getsize(self.log_path) == 0
-        self.stream = open(self.log_path, "a", newline="", buffering=1)
+        self.stream = open(self.log_path, "w", newline="", buffering=1)
         self.writer = csv.DictWriter(self.stream, fieldnames=self.FIELDS)
-        if need_header:
-            self.stream.write("# " + ",".join(self.FIELDS) + "\n")
+        self.stream.write("# " + ",".join(self.FIELDS) + "\n")
 
     def __call__(self, kind: str, payload: Dict[str, Any]):
         if kind != "human_friendly":
@@ -377,7 +377,8 @@ class TrialFilesObj:
         if use_this_logger is None :
             # Human-readable / JSONL text log
             self.log_path              = os.path.join(self.trial_dir, "trial.log")
-            self._log_fh = open(self.log_path, "a", buffering=1)
+            # Always truncate — see PredictionCsvSink for why.
+            self._log_fh = open(self.log_path, "w", buffering=1)
             self.logger  = Logger(paths=self.paths, level=verbosity, stream=self._log_fh)
         else :
             self.logger = use_this_logger
@@ -460,7 +461,11 @@ class RunFilesObj:
         self.paths=Trial_Paths(self.run_dir)
 
         self.log_path        = os.path.join(self.run_dir, "run.log")
-        self._log_fh = open(self.log_path, "a", buffering=1)
+        # Always truncate — see PredictionCsvSink for why (run_dir gets reused
+        # across independent reruns of the same case/arch/seed combination;
+        # appending onto a stale run.log silently doubles every step count
+        # and confuses anyone reading it as one coherent run).
+        self._log_fh = open(self.log_path, "w", buffering=1)
         self.logger  = Logger(self.paths, level=verbosity, stream=self._log_fh)
 
         # NEW: keep track of child trials to close them later
