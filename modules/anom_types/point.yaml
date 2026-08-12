@@ -1,3 +1,14 @@
-# Layer: point (isolated spike) anomaly dataset
+# Layer: point (isolated spike) anomaly dataset. Full-scale by default
+# (pre-split warmup/test files, each under GitHub's 100MB limit — see
+# DATA_LICENSE.md). The warmup file is shared with the clean case: warmup
+# portion is anomaly-free and byte-identical regardless of anomaly type
+# (verified directly), so era5_clean_warmup.csv is reused here rather than
+# duplicated. era5_point_test.csv is sliced from the "rare" point-anomaly
+# export (era5_point_hard.csv is also available locally as an alternative,
+# not yet split). For a smaller/faster dataset, layer
+# modules/data_source/mini_50pct_point.yaml or mini_28pct_point.yaml after
+# this instead.
 data:
-  data_path: data/era5/era5_point_rare.csv
+  data_path: null
+  warmup_path: data/era5/full_scale/split/era5_clean_warmup.csv
+  test_path: data/era5/full_scale/split/era5_point_test.csv

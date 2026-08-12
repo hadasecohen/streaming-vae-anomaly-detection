@@ -1,3 +1,12 @@
-# Layer: clean data (no injected anomalies) — false-positive-rate baseline
+# Layer: clean data (no injected anomalies) — false-positive-rate baseline.
+# Full-scale by default (pre-split warmup/test files, each under GitHub's
+# 100MB limit — see DATA_LICENSE.md). No warmup_end here: the split point is
+# implicit in which file a row lives in, so the loader derives it from the
+# warmup file's row count. For a smaller/faster dataset, layer one of
+# modules/data_source/mini_50pct_clean.yaml or mini_28pct_clean.yaml after
+# this instead (they null out warmup_path/test_path and set data_path +
+# warmup_start/warmup_end explicitly).
 data:
-  data_path: data/era5/reanalysis-era5-single-levels-timeseries.csv
+  data_path: null
+  warmup_path: data/era5/full_scale/split/era5_clean_warmup.csv
+  test_path: data/era5/full_scale/split/era5_clean_test.csv

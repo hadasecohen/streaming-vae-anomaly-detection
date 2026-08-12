@@ -62,12 +62,16 @@ logs and metrics to `runs/<scenario>/<arch>/standalone/run.log`.
 and runs the same MLP/group experiment on a free Colab GPU runtime — no
 local setup, no data download (the mini dataset ships with the repo).
 
-[`notebooks/cases/`](notebooks/cases/) has 10 further notebooks, each
+[`notebooks/cases/`](notebooks/cases/) has 11 further notebooks, each
 reproducing one specific finding from the thesis this code is based on
 (prediction-threshold calibration, cyclic time features, latent
 dimensionality, window size/stride, ...) as a small 2–4-run comparison with
 its own suite YAML — see the markdown cell at the top of each for what it
-reproduces.
+reproduces. Each defaults to the full-scale ERA5 data (`DATA_SOURCE =
+"full_split_files"` in its setup cell) rather than the mini dataset below —
+see
+[`case00_dataset_scale_impact.ipynb`](notebooks/cases/case00_dataset_scale_impact.ipynb)
+for why that choice of scale can flip the architecture ranking.
 
 ## Multi-run tooling
 
@@ -82,10 +86,13 @@ each composed from the shared fragments under `modules/` via `config_layers`.
 
 ## Data
 
-`data/era5/` holds a real, 24-year slice of ERA5 hourly reanalysis data
-(210,384 rows, 50:50 warmup/test) so every experiment config above runs standalone with zero
-downloads. See [`DATA_LICENSE.md`](DATA_LICENSE.md) for provenance,
-attribution, and how to point configs at the full-scale real export instead.
+`data/era5/mini_50pct/` holds a real slice of ERA5 hourly reanalysis data
+(377,784 rows, 40:60 warmup/test, matching the full-scale export's own
+proportions) so the `experiments/era5/` quickstart configs above run
+standalone with zero downloads. The `notebooks/cases/` notebooks default to
+the full-scale export instead (`data/era5/full_scale/split/`, also shipped —
+see above). See [`DATA_LICENSE.md`](DATA_LICENSE.md) for provenance,
+attribution, and full details on both.
 
 ## License
 

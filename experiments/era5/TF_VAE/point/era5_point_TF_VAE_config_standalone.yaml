@@ -1,11 +1,11 @@
 
 # ERA5 hourly climate reanalysis — TF-VAE, window mode (point anomalies)
 #
-# Data: 210,384 hourly rows (12 years warmup + 12 years test, 50:50), a real ERA5 slice (see DATA_LICENSE.md).
-# Warmup: first 12 years (105,192 rows) — all normal.
-# Test:   next  12 years (105,192 rows) — contains point anomalies.
+# Data: 377,784 hourly rows (~17.25 years warmup + ~26.5 years test, 40:60), a real ERA5 slice (see DATA_LICENSE.md).
+# Warmup: first ~17.25 years (151,114 rows) — all normal.
+# Test:   remaining ~26.5 years (226,670 rows) — contains point anomalies.
 #
-# warmup_start=282227 matches the standalone tests for LSTM/MLP for point anomaly comparison.
+# warmup_start=133582 matches the standalone tests for LSTM/MLP for point anomaly comparison.
 
 common:
   # device: cpu
@@ -21,9 +21,9 @@ common:
 
 data:
   name: era5
-  data_path: data/era5/era5_point_rare.csv
-  warmup_start: 87660    # last 2 years of warmup only (point-scenario short local training)
-  warmup_end:   105192    # 12 years hourly (see DATA_LICENSE.md)
+  data_path: data/era5/mini_50pct/era5_point_rare.csv
+  warmup_start: 133582   # last 2 years of warmup only (point-scenario short local training)
+  warmup_end:   151114    # 40% of the 377,784-row mini_50pct dataset (see DATA_LICENSE.md)
   args:
     scaler_kind: zscore
     cyclic_time_features: false

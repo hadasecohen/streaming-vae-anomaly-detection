@@ -1,0 +1,10 @@
+# Layer: the mini_50pct (377,784-row, ~50% of full-scale) point-anomaly
+# dataset — same source data and warmup/test boundary (1974-06-23) as the
+# full-scale split files, just less of it. Committed to the repo (see
+# DATA_LICENSE.md).
+data:
+  data_path: data/era5/mini_50pct/era5_point_rare.csv
+  warmup_path: null
+  test_path: null
+  warmup_start: 0
+  warmup_end: 151114

@@ -1,3 +1,12 @@
-# Layer: contextual (locally-plausible but seasonally/diurnally wrong) anomaly dataset
+# Layer: contextual (locally-plausible but seasonally/diurnally wrong) anomaly
+# dataset. Full-scale by default (pre-split warmup/test files, each under
+# GitHub's 100MB limit — see DATA_LICENSE.md). The warmup file is shared with
+# the clean case: warmup portion is anomaly-free and byte-identical
+# regardless of anomaly type (verified directly), so era5_clean_warmup.csv is
+# reused here rather than duplicated. For a smaller/faster dataset, layer
+# modules/data_source/mini_50pct_contextual.yaml or mini_28pct_contextual.yaml
+# after this instead.
 data:
-  data_path: data/era5/era5_contextual_anomalies.csv
+  data_path: null
+  warmup_path: data/era5/full_scale/split/era5_clean_warmup.csv
+  test_path: data/era5/full_scale/split/era5_contextual_test.csv

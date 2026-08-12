@@ -71,6 +71,18 @@ def _read_era5_raw(cfg):
         warmup_raw = pd.read_csv(warmup_path, parse_dates=["valid_time"], low_memory=False)
         test_raw = pd.read_csv(test_path, parse_dates=["valid_time"], low_memory=False)
 
+        # A clean (anomaly-free) warmup file paired with an anomaly-injected
+        # test file won't have the same columns — e.g. a shared
+        # era5_clean_warmup.csv has no is_anomaly column at all, while an
+        # injected test file does. Reconcile before concat: whichever side
+        # lacks is_anomaly gets it filled with 0, so the combined column is
+        # always a clean int, never NaN (pd.concat would otherwise silently
+        # upcast it to float64 with NaN for the missing side's rows).
+        if "is_anomaly" not in warmup_raw.columns:
+            warmup_raw["is_anomaly"] = 0
+        if "is_anomaly" not in test_raw.columns:
+            test_raw["is_anomaly"] = 0
+
         if warmup_raw["valid_time"].max() >= test_raw["valid_time"].min():
             raise ValueError(
                 "ERA5 two-file config: warmup_path's last timestamp "

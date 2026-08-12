@@ -1,11 +1,16 @@
-# ERA5 mini-dataset — shared base config for the case-study suites in notebooks/cases/.
+# ERA5 shared base config for the case-study suites in notebooks/cases/.
 #
-# Data: 210,384 hourly rows (12 years warmup + 12 years test, 50:50), a real ERA5 slice
-# centered on the same warmup/test split used at full scale — see DATA_LICENSE.md.
+# Data: full-scale by default (755,568 hourly rows, 302,227 warmup + 453,341 test) —
+# see DATA_LICENSE.md. modules/anom_types/*.yaml supplies the actual data_path /
+# warmup_path+test_path for each anomaly type (full-scale split files by default);
+# warmup_start/warmup_end below are only consulted in single-file mode (e.g.
+# modules/data_source/full_single_file_clean.yaml) — split-files mode derives
+# the split point from the warmup file's own row count instead. A mini_50pct_*.yaml
+# or mini_28pct_*.yaml data_source layer overrides both data_path and these bounds
+# for a smaller/faster dataset.
 #
 # All values below are identical to thesis_code/tests/regression/modules/era5_common.yaml
-# except: warmup_start/warmup_end (this repo's smaller mini-slice row counts, not the
-# full-scale 302,227), and two things dropped because this port doesn't implement them:
+# except two things dropped because this port doesn't implement them:
 #   - training.band_cfg (online-threshold hysteresis band — removed from this port)
 #   - model.use_multiscale / model.ms_num_scales (multiscale fusion prefix — not ported)
 #
@@ -15,7 +20,7 @@
 #     -> pool_latent/*.yaml (optional) -> run-level config:
 
 common:
-  seed: 49
+  seed: 48
   logging:
     verbosity: INFO_HIGH   # SILENT=0; ERRORS=1; INFO_LOW=2; INFO_HIGH=3; DEBUG=4
   reporting:
@@ -26,7 +31,7 @@ common:
 data:
   name: era5
   warmup_start: 0
-  warmup_end: 105192       # 12 years hourly — see DATA_LICENSE.md
+  warmup_end: 302227       # full-scale split point (1974-06-23) — only used in single-file mode; see header above
   args:
     scaler_kind: zscore
     cyclic_time_features: false   # overridden by feat_eng/cyclic_*.yaml layers
