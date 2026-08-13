@@ -1,11 +1,16 @@
-# Case 6 — Reconstruction loss x cyclic conditioning (~ Fig 4.14)
-# Point anomalies, point mode. MSE amplifies the isolated spike into a high
-# score. Once the model is also conditioned on cyclic time features (tighter
-# expectation of "normal"), MAE's linear penalty stops amplifying deviations
-# the same way — the thesis found this flattens the anomaly-score distribution.
+# Case 6 — Effect of reconstruction-loss magnitude weighting (~ thesis section 2.4,
+# Weighted Mean Squared Error; Table 4.14-style comparison)
+# Contextual anomalies, window mode, MLP-VAE and Transformer-VAE (both plain,
+# no cyclic time features). Sweeps recon_loss_kind across mse, wmse, mae —
+# three different ways of magnifying (or not) large per-feature reconstruction
+# error. wmse weights each feature by inverse warmup-variance (low-variance,
+# normally-stable features are penalised more when they deviate), computed
+# automatically from the warmup split — see src/VAE/base_VAE.py's
+# vae_wmse_loss/set_feature_weights and src/Streaming/streaming_loop.py's
+# train_warmup for where those default weights are derived.
 #
-# Layering: era5_common -> models/era5_MLP -> anom_types/point -> stream/point
-#           -> feat_eng/{cyclic_off, cyclic_recon} -> config: {model: {recon_loss_kind}}
+# Layering: era5_common -> models/era5_{MLP,TF_VAE} -> anom_types/contextual
+#           -> stream/window -> config: {model: {recon_loss_kind: N}}
 
 run_module: regression.run_trial
 rq: case06_reconstruction_loss
@@ -14,32 +19,56 @@ output_dir: runs/regression/case06_reconstruction_loss
 
 runs:
 
-- name: MLP_plain_mse
+- name: MLP_mse
   model_arch: MLP
-  compare: {anomaly: Point, arch: MLP, section: recon_loss, variant: plain_mse, order: 1}
+  compare: {anomaly: Contextual, arch: MLP, section: recon_loss, variant: mse, order: 1}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
-  - ../../modules/anom_types/point.yaml
-  - ../../modules/stream/point.yaml
-  - ../../modules/feat_eng/cyclic_off.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
   config: {model: {recon_loss_kind: mse}}
 
-- name: MLP_cyclic_mse
+- name: MLP_wmse
   model_arch: MLP
-  compare: {anomaly: Point, arch: MLP, section: recon_loss, variant: cyclic_mse, order: 2}
+  compare: {anomaly: Contextual, arch: MLP, section: recon_loss, variant: wmse, order: 2}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
-  - ../../modules/anom_types/point.yaml
-  - ../../modules/stream/point.yaml
-  - ../../modules/feat_eng/cyclic_recon.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {model: {recon_loss_kind: wmse}}
+
+- name: MLP_mae
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: recon_loss, variant: mae, order: 3}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {model: {recon_loss_kind: mae}}
+
+- name: TF_VAE_mse
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: recon_loss, variant: mse, order: 4}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
   config: {model: {recon_loss_kind: mse}}
 
-- name: MLP_cyclic_mae
-  model_arch: MLP
-  compare: {anomaly: Point, arch: MLP, section: recon_loss, variant: cyclic_mae, order: 3}
+- name: TF_VAE_wmse
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: recon_loss, variant: wmse, order: 5}
   config_layers:
-  - ../../modules/models/era5_MLP.yaml
-  - ../../modules/anom_types/point.yaml
-  - ../../modules/stream/point.yaml
-  - ../../modules/feat_eng/cyclic_recon.yaml
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {model: {recon_loss_kind: wmse}}
+
+- name: TF_VAE_mae
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: recon_loss, variant: mae, order: 6}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
   config: {model: {recon_loss_kind: mae}}

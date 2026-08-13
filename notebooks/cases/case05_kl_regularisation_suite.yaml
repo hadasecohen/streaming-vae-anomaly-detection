@@ -1,41 +1,70 @@
-# Case 5 — KL free-bits sweet spot (~ Fig 4.13, Table 4.8 section c)
-# Transformer-VAE, contextual anomalies, window mode. free_bits=0 lets the
-# expressive TF decoder bypass the latent code (weak KL signal); a moderate
-# floor forces every dimension to carry some information; too large a floor
-# adds noise back in. Expect a middle value to win.
+# Case 5 — Effects of KL regularisation (~ thesis section 4.3.3)
+# Contextual anomalies, window mode, MLP-VAE and LSTM-VAE. Sweeps the KL
+# weight (elbo_beta) across 0.1, 1.0, 3.0 to show that LSTM-VAE stays
+# stable at high beta while MLP-VAE's detection performance drops. This
+# suite demonstrates the empirical pattern; it does not establish why it
+# holds architecturally.
 #
-# Layering: era5_common -> models/era5_TF_VAE -> anom_types/contextual
-#           -> stream/window -> config: {model: {free_bits: N}}
+# Layering: era5_common -> models/era5_{MLP,LSTM} -> anom_types/contextual
+#           -> stream/window -> config: {training: {elbo_beta: N}}
 
 run_module: regression.run_trial
-rq: case05_free_bits
+rq: case05_kl_regularisation
 base_config: ../../modules/era5_common.yaml
-output_dir: runs/regression/case05_free_bits
+output_dir: runs/regression/case05_kl_regularisation
 
 runs:
 
-- name: TF_free_bits_0
-  model_arch: TF_VAE
-  compare: {anomaly: Contextual, arch: TF_VAE, section: free_bits, variant: "0.0", order: 1}
+- name: MLP_beta_0_1
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: beta, variant: "0.1", order: 1}
   config_layers:
-  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/models/era5_MLP.yaml
   - ../../modules/anom_types/contextual.yaml
   - ../../modules/stream/window.yaml
-  config: {model: {free_bits: 0.0}}
+  config: {training: {elbo_beta: 0.1}}
 
-- name: TF_free_bits_baseline
-  model_arch: TF_VAE
-  compare: {anomaly: Contextual, arch: TF_VAE, section: free_bits, variant: "0.5", order: 2}
+- name: MLP_beta_1_0
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: beta, variant: "1.0", order: 2}
   config_layers:
-  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/models/era5_MLP.yaml
   - ../../modules/anom_types/contextual.yaml
   - ../../modules/stream/window.yaml
+  config: {training: {elbo_beta: 1.0}}
 
-- name: TF_free_bits_high
-  model_arch: TF_VAE
-  compare: {anomaly: Contextual, arch: TF_VAE, section: free_bits, variant: "2.0", order: 3}
+- name: MLP_beta_3_0
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: beta, variant: "3.0", order: 3}
   config_layers:
-  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/models/era5_MLP.yaml
   - ../../modules/anom_types/contextual.yaml
   - ../../modules/stream/window.yaml
-  config: {model: {free_bits: 2.0}}
+  config: {training: {elbo_beta: 3.0}}
+
+- name: LSTM_beta_0_1
+  model_arch: LSTM
+  compare: {anomaly: Contextual, arch: LSTM, section: beta, variant: "0.1", order: 4}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {training: {elbo_beta: 0.1}}
+
+- name: LSTM_beta_1_0
+  model_arch: LSTM
+  compare: {anomaly: Contextual, arch: LSTM, section: beta, variant: "1.0", order: 5}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {training: {elbo_beta: 1.0}}
+
+- name: LSTM_beta_3_0
+  model_arch: LSTM
+  compare: {anomaly: Contextual, arch: LSTM, section: beta, variant: "3.0", order: 6}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {training: {elbo_beta: 3.0}}

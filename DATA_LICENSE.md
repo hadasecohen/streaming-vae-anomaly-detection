@@ -55,7 +55,7 @@ reuses `era5_clean_warmup.csv` above instead of shipping a second copy.
 
 `modules/anom_types/contextual.yaml` points at these two files directly —
 `case02_cyclic_features.ipynb`, `case04_latent_dimension.ipynb`,
-`case05_free_bits.ipynb`, `case07_point_vs_window.ipynb`,
+`case05_kl_regularisation.ipynb`, `case07_point_vs_window.ipynb`,
 `case08_stride_alignment.ipynb`, and `case09_ema_freezing.ipynb` use this
 data with `DATA_SOURCE = "full_split_files"` (default).
 
