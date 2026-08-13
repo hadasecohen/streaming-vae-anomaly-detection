@@ -1,8 +1,10 @@
-# Case 4 — Latent dimensionality (~ Fig 4.12)
-# Contextual anomalies, window mode, no cyclic features (so the model must infer
-# seasonal structure from the climate variables alone). MLP-VAE is expected to
-# need a much larger bottleneck than LSTM-VAE, whose recurrence already carries
-# most of the seasonal trajectory.
+# Case 4 — Effect of latent dimensionality (~ thesis section 4.3.2)
+# Contextual anomalies, window mode, no cyclic features (so the model must
+# infer seasonal structure from the climate variables alone). MLP-VAE has no
+# other way to represent "what time of year is this", so it should need a
+# much larger bottleneck than at low Z. LSTM-VAE's recurrence already
+# carries most of the seasonal trajectory, so its latent code mainly needs
+# to encode the residual — expect it to be far less sensitive to Z.
 #
 # Layering: era5_common -> models/era5_{MLP,LSTM} -> anom_types/contextual
 #           -> stream/window -> feat_eng/cyclic_off -> config: {model: {latent_dim: N}}
@@ -24,9 +26,29 @@ runs:
   - ../../modules/feat_eng/cyclic_off.yaml
   config: {model: {latent_dim: 3}}
 
+- name: MLP_Z8
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: latent_dim, variant: "8", order: 2}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {latent_dim: 8}}
+
+- name: MLP_Z24
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: latent_dim, variant: "24", order: 3}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {latent_dim: 24}}
+
 - name: MLP_Z48
   model_arch: MLP
-  compare: {anomaly: Contextual, arch: MLP, section: latent_dim, variant: "48", order: 2}
+  compare: {anomaly: Contextual, arch: MLP, section: latent_dim, variant: "48", order: 4}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
   - ../../modules/anom_types/contextual.yaml
@@ -36,7 +58,7 @@ runs:
 
 - name: LSTM_Z3
   model_arch: LSTM
-  compare: {anomaly: Contextual, arch: LSTM, section: latent_dim, variant: "3", order: 3}
+  compare: {anomaly: Contextual, arch: LSTM, section: latent_dim, variant: "3", order: 5}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
   - ../../modules/anom_types/contextual.yaml
@@ -44,9 +66,29 @@ runs:
   - ../../modules/feat_eng/cyclic_off.yaml
   config: {model: {latent_dim: 3}}
 
+- name: LSTM_Z8
+  model_arch: LSTM
+  compare: {anomaly: Contextual, arch: LSTM, section: latent_dim, variant: "8", order: 6}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {latent_dim: 8}}
+
+- name: LSTM_Z24
+  model_arch: LSTM
+  compare: {anomaly: Contextual, arch: LSTM, section: latent_dim, variant: "24", order: 7}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {latent_dim: 24}}
+
 - name: LSTM_Z48
   model_arch: LSTM
-  compare: {anomaly: Contextual, arch: LSTM, section: latent_dim, variant: "48", order: 4}
+  compare: {anomaly: Contextual, arch: LSTM, section: latent_dim, variant: "48", order: 8}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
   - ../../modules/anom_types/contextual.yaml
