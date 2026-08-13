@@ -10,12 +10,6 @@ scratchpad/
 # under GitHub's 100MB limit) is shipped — raw_files/ never is.
 data/era5/full_scale/raw_files/
 
-# Smaller 50:50 (12y/12y, ~28% of full-scale) mini-dataset variant, kept
-# alongside the current default data/era5/mini_50pct/ for case00's
-# three-way dataset-scale comparison — local-only, not shipped (see
-# DATA_LICENSE.md).
-data/era5/mini_28pct/
-
 *.egg-info/
 .venv/
 venv/

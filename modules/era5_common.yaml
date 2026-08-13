@@ -20,7 +20,7 @@
 #     -> pool_latent/*.yaml (optional) -> run-level config:
 
 common:
-  seed: 48
+  seed: 49
   logging:
     verbosity: INFO_HIGH   # SILENT=0; ERRORS=1; INFO_LOW=2; INFO_HIGH=3; DEBUG=4
   reporting:

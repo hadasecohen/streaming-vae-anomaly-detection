@@ -85,13 +85,13 @@ case notebook can select one via `DATA_SOURCE = "mini_50pct"` or
 `"mini_28pct"`, each an explicit `modules/data_source/mini_{50,28}pct_{type}.yaml`
 layer (one per anomaly type: `clean`, `contextual`, `group`, `point`).
 
-**Using a mini dataset changes the false-positive-rate ranking across
-architectures** — in some cases reversing it relative to full-scale, because
-Transformer-VAE's early-miscalibration-burst mechanism needs enough warmup
-data to actually manifest. See `case00_dataset_scale_impact.ipynb`, which
-runs the same suite at all three scales side by side. Treat mini-scale
-comparisons as provisional/faster-iteration, not a substitute for the
-full-scale default.
+**Using a mini dataset changes each architecture's own false-positive rate**
+— e.g. Transformer-VAE trends toward a lower FPR at mini scale than at full
+scale, because its early-miscalibration-burst mechanism needs enough warmup
+data to actually manifest. See `case01_clean_baseline.ipynb`, which runs the
+same suite at all three scales side by side and compares each architecture
+against its own results at the other scales. Treat mini-scale results as
+provisional/faster-iteration, not a substitute for the full-scale default.
 
 ### `mini_50pct/` (shipped)
 
@@ -112,13 +112,12 @@ warmup/test bounds than that script's own defaults — `lo=151113, hi=528897`
 against the full-scale files, rather than the script's default
 `WARMUP_YEARS=12, TEST_YEARS=12` (which produce `mini_28pct/` below instead).
 
-### `mini_28pct/` (local-only, not shipped)
+### `mini_28pct/` (shipped)
 
 An earlier, smaller 50:50 (12y/12y, 210,384-row, ~28% of the full-scale row
 count) version of the same four files, kept at `data/era5/mini_28pct/` for
-`case00_dataset_scale_impact.ipynb`'s three-way dataset-scale comparison —
-gitignored, not committed (see `.gitignore`). This is exactly
-`scripts/slice_real_era5.py`'s own default output (`WARMUP_YEARS=12,
+`case01_clean_baseline.ipynb`'s three-way dataset-scale comparison. This is
+exactly `scripts/slice_real_era5.py`'s own default output (`WARMUP_YEARS=12,
 TEST_YEARS=12`, `OUT_DIR` pointed at `mini_28pct/`): 105,192 rows of warmup,
 105,192 rows of test, split at the same 1974-06-23 boundary.
 

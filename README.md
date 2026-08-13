@@ -70,8 +70,9 @@ its own suite YAML — see the markdown cell at the top of each for what it
 reproduces. Each defaults to the full-scale ERA5 data (`DATA_SOURCE =
 "full_split_files"` in its setup cell) rather than the mini dataset below —
 see
-[`case00_dataset_scale_impact.ipynb`](notebooks/cases/case00_dataset_scale_impact.ipynb)
-for why that choice of scale can flip the architecture ranking.
+[`case01_clean_baseline.ipynb`](notebooks/cases/case01_clean_baseline.ipynb)
+for why that choice of scale matters (it compares its own four-architecture
+suite across all three dataset scales directly).
 
 ## Multi-run tooling
 
