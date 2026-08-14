@@ -1,0 +1,87 @@
+# Case 10 — Effect of positional encoding (~ thesis section 4.5.2,
+# Table 4.22)
+# Contextual anomalies, window mode, no cyclic time features (so any
+# temporal signal comes only from positional encoding or recurrence, not
+# from explicit calendar features). Compares MLP-VAE and LSTM-VAE, each at
+# a baseline (no PE) and two PE placements using domain-agnostic ("generic",
+# powers-of-2 Fourier frequencies) vs. domain-specific ("hourly", frequencies
+# tuned to the 24h/168h/336h ERA5 periodicities) frequency sets:
+#   MLP-VAE:  baseline, decoder-only generic, decoder-only hourly
+#   LSTM-VAE: baseline, encoder-only generic, encoder-only hourly
+# The thesis found the effect of PE depends on where it's injected and how
+# the architecture already represents time: MLP-VAE (no memory of previous
+# timesteps) benefits from decoder-side PE regardless of frequency choice;
+# LSTM-VAE (which already carries positional ordering through recurrence)
+# only benefits from domain-specific (hourly) encoder-side PE, since generic
+# PE is largely redundant with what recurrence already provides.
+#
+# Layering: era5_common -> models/era5_{MLP,LSTM} -> anom_types/contextual
+#           -> stream/window -> feat_eng/cyclic_off
+#           -> config: {model: {pos_enc: N, use_hourly_freqs: bool}}
+
+run_module: regression.run_trial
+rq: case10_positional_encoding
+base_config: ../../modules/era5_common.yaml
+output_dir: runs/regression/case10_positional_encoding
+
+runs:
+
+- name: MLP_baseline
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: mlp_pos_enc, variant: baseline, order: 1}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {pos_enc: none}}
+
+- name: MLP_decoder_generic
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: mlp_pos_enc, variant: decoder_generic, order: 2}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {pos_enc: dec, use_hourly_freqs: false}}
+
+- name: MLP_decoder_hourly
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP, section: mlp_pos_enc, variant: decoder_hourly, order: 3}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {pos_enc: dec, use_hourly_freqs: true}}
+
+- name: LSTM_baseline
+  model_arch: LSTM
+  compare: {anomaly: Contextual, arch: LSTM, section: lstm_pos_enc, variant: baseline, order: 1}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {pos_enc: none}}
+
+- name: LSTM_encoder_generic
+  model_arch: LSTM
+  compare: {anomaly: Contextual, arch: LSTM, section: lstm_pos_enc, variant: encoder_generic, order: 2}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {pos_enc: enc, use_hourly_freqs: false}}
+
+- name: LSTM_encoder_hourly
+  model_arch: LSTM
+  compare: {anomaly: Contextual, arch: LSTM, section: lstm_pos_enc, variant: encoder_hourly, order: 3}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_off.yaml
+  config: {model: {pos_enc: enc, use_hourly_freqs: true}}

@@ -56,8 +56,8 @@ reuses `era5_clean_warmup.csv` above instead of shipping a second copy.
 `modules/anom_types/contextual.yaml` points at these two files directly —
 `case02_cyclic_features.ipynb`, `case04_latent_dimension.ipynb`,
 `case05_kl_regularisation.ipynb`, `case07_point_vs_window.ipynb`,
-`case08_stride_alignment.ipynb`, and `case09_ema_freezing.ipynb` use this
-data with `DATA_SOURCE = "full_split_files"` (default).
+`case08_stride_alignment.ipynb`, and `case10_positional_encoding.ipynb` use
+this data with `DATA_SOURCE = "full_split_files"` (default).
 
 ### Full-scale group- and point-anomaly data — included
 
@@ -72,8 +72,8 @@ so neither ships a separate warmup file.
 
 `modules/anom_types/group.yaml` and `modules/anom_types/point.yaml` point at
 these files directly — `case03_threshold_calibration.ipynb` and
-`case10_lstm_cyclic_stability.ipynb` use the group data,
-`case06_reconstruction_loss.ipynb` uses the point data, all with
+`case09_ema_freezing.ipynb` use the group data (point.yaml's point data is
+not currently used by any case notebook), all with
 `DATA_SOURCE = "full_split_files"` (default).
 
 ## Mini ERA5 datasets — opt-in, smaller/faster alternative
