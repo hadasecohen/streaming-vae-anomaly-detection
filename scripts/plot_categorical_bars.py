@@ -49,9 +49,20 @@ _ARCH_ORDER = ["MLP", "LSTM", "MLP_Attn", "LSTM_Attn", "TF_VAE"]
 DEFAULT_VARIANT_ORDER = ["mse", "wmse", "mae", "huber"]
 
 
+def _numeric_or_str(v: str):
+    """Sort key that orders numeric-looking variants (stride, latent_dim,
+    threshold, ...) by value rather than lexicographically — "6" < "12" < "24",
+    not "12" < "24" < "6"."""
+    try:
+        return (0, float(v))
+    except ValueError:
+        return (1, v)
+
+
 def _variant_sort_key(variants: list) -> list:
     known = [v for v in DEFAULT_VARIANT_ORDER if v in variants]
-    unknown = sorted(v for v in variants if v not in DEFAULT_VARIANT_ORDER)
+    unknown = sorted((v for v in variants if v not in DEFAULT_VARIANT_ORDER),
+                      key=_numeric_or_str)
     return known + unknown
 
 

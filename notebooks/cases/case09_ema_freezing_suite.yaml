@@ -1,13 +1,18 @@
-# Case 9 — Rolling-threshold EMA freezing (~ Fig 4.17, 4.18)
-# Contextual anomalies, window mode. ema=0 freezes the adaptive threshold at its
-# warmup-calibrated value (no online recalibration). MLP-VAE-Cyclic is expected
-# to stay roughly as good as its adaptive baseline; Transformer-VAE is expected
-# to collapse because its score distribution keeps drifting away from the frozen
-# warmup calibration.
+# Case 9 — Effects of rolling prediction threshold tuning (~ thesis section
+# 4.4.4, Table 4.18, Figure 4.17)
+# Group anomalies, window mode, LSTM-VAE only. Sweeps the adaptive
+# threshold's EMA smoothing factor across 0.0, 0.05, 0.2, 0.5, 0.8.
+# ema=0.0 freezes the threshold at its warmup-calibrated value (no online
+# recalibration); higher ema values let the rolling threshold track the
+# live score distribution more aggressively. Group anomalies (collective
+# mean-shift blocks) are a comparatively easy scenario for feed-forward
+# models — MLP-VAE and MLP-VAE-Cyclic detect a mean shift directly, without
+# needing any recurrence or attention over the sequence — so this case
+# isolates LSTM-VAE specifically to show how its recurrent score dynamics
+# respond to different threshold-adaptation rates on this anomaly type.
 #
-# Layering: era5_common -> models/era5_{MLP,TF_VAE} -> anom_types/contextual
-#           -> stream/window -> feat_eng/cyclic_recon (MLP only)
-#           -> config: {training: {threshold: {ema: N}}}
+# Layering: era5_common -> models/era5_LSTM -> anom_types/group
+#           -> stream/window -> config: {training: {threshold: {ema: N}}}
 
 run_module: regression.run_trial
 rq: case09_ema_freezing
@@ -16,38 +21,47 @@ output_dir: runs/regression/case09_ema_freezing
 
 runs:
 
-- name: MLP_Cyclic_ema_baseline
-  model_arch: MLP
-  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: ema, variant: "0.2", order: 1}
+- name: LSTM_ema_0_00
+  model_arch: LSTM
+  compare: {anomaly: Group, arch: LSTM, section: ema, variant: "0.0", order: 1}
   config_layers:
-  - ../../modules/models/era5_MLP.yaml
-  - ../../modules/anom_types/contextual.yaml
-  - ../../modules/stream/window.yaml
-  - ../../modules/feat_eng/cyclic_recon.yaml
-
-- name: MLP_Cyclic_ema_frozen
-  model_arch: MLP
-  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: ema, variant: "0.0", order: 2}
-  config_layers:
-  - ../../modules/models/era5_MLP.yaml
-  - ../../modules/anom_types/contextual.yaml
-  - ../../modules/stream/window.yaml
-  - ../../modules/feat_eng/cyclic_recon.yaml
-  config: {training: {threshold: {ema: 0.0}}}
-
-- name: TF_ema_baseline
-  model_arch: TF_VAE
-  compare: {anomaly: Contextual, arch: TF_VAE, section: ema, variant: "0.2", order: 1}
-  config_layers:
-  - ../../modules/models/era5_TF_VAE.yaml
-  - ../../modules/anom_types/contextual.yaml
-  - ../../modules/stream/window.yaml
-
-- name: TF_ema_frozen
-  model_arch: TF_VAE
-  compare: {anomaly: Contextual, arch: TF_VAE, section: ema, variant: "0.0", order: 2}
-  config_layers:
-  - ../../modules/models/era5_TF_VAE.yaml
-  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/group.yaml
   - ../../modules/stream/window.yaml
   config: {training: {threshold: {ema: 0.0}}}
+
+- name: LSTM_ema_0_05
+  model_arch: LSTM
+  compare: {anomaly: Group, arch: LSTM, section: ema, variant: "0.05", order: 2}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/group.yaml
+  - ../../modules/stream/window.yaml
+  config: {training: {threshold: {ema: 0.05}}}
+
+- name: LSTM_ema_0_2
+  model_arch: LSTM
+  compare: {anomaly: Group, arch: LSTM, section: ema, variant: "0.2", order: 3}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/group.yaml
+  - ../../modules/stream/window.yaml
+  # ema: 0.2 is already the era5_common.yaml default — no override needed
+
+- name: LSTM_ema_0_5
+  model_arch: LSTM
+  compare: {anomaly: Group, arch: LSTM, section: ema, variant: "0.5", order: 4}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/group.yaml
+  - ../../modules/stream/window.yaml
+  config: {training: {threshold: {ema: 0.5}}}
+
+- name: LSTM_ema_0_8
+  model_arch: LSTM
+  compare: {anomaly: Group, arch: LSTM, section: ema, variant: "0.8", order: 5}
+  config_layers:
+  - ../../modules/models/era5_LSTM.yaml
+  - ../../modules/anom_types/group.yaml
+  - ../../modules/stream/window.yaml
+  config: {training: {threshold: {ema: 0.8}}}

@@ -1,12 +1,18 @@
-# Case 8 — Stride / phase alignment (~ Table 4.20, MLP-VAE-Cyclic stride story)
-# Contextual anomalies, MLP-VAE-Cyclic, fixed 1-week window. Stride controls how
-# the window's starting hour drifts relative to the diurnal cycle: stride=1 means
-# almost every window starts at a different phase (decoupled from hour-of-day),
-# while stride=24 keeps every window phase-aligned. The thesis found MLP-VAE-Cyclic
-# is unusually sensitive to this because its cyclic features assume a stable phase.
+# Case 8 — Effects of window size and stride (~ thesis section 4.4.5,
+# Table 4.20, Figures 4.20 and 4.21)
+# Contextual anomalies, fixed 1-week window (seq_len=168). Stride controls
+# how the window's starting hour advances relative to the diurnal cycle:
+# a small stride means consecutive windows overlap heavily and drift through
+# many different phases, while a large stride keeps windows more
+# phase-aligned (stride=24 advances exactly one day at a time). Two
+# architectures are compared: MLP-VAE-Cyclic (strides 12/24/48), whose
+# explicit cyclic features assume a stable phase and are expected to be
+# unusually sensitive to stride, and Transformer-VAE (strides 6/12/24),
+# which has no such assumption.
 #
-# Layering: era5_common -> models/era5_MLP -> anom_types/contextual -> stream/window
-#           -> feat_eng/cyclic_recon -> config: {stream: {stride: N}}
+# Layering: era5_common -> models/era5_{MLP,TF_VAE} -> anom_types/contextual
+#           -> stream/window -> feat_eng/cyclic_recon (MLP only)
+#           -> config: {stream: {stride: N}}
 
 run_module: regression.run_trial
 rq: case08_stride_alignment
@@ -15,19 +21,9 @@ output_dir: runs/regression/case08_stride_alignment
 
 runs:
 
-- name: MLP_Cyclic_stride_1
-  model_arch: MLP
-  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: stride, variant: "1", order: 1}
-  config_layers:
-  - ../../modules/models/era5_MLP.yaml
-  - ../../modules/anom_types/contextual.yaml
-  - ../../modules/stream/window.yaml
-  - ../../modules/feat_eng/cyclic_recon.yaml
-  config: {stream: {stride: 1}}
-
 - name: MLP_Cyclic_stride_12
   model_arch: MLP
-  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: stride, variant: "12", order: 2}
+  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: mlp_cyclic_stride, variant: "12", order: 1}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
   - ../../modules/anom_types/contextual.yaml
@@ -37,10 +33,47 @@ runs:
 
 - name: MLP_Cyclic_stride_24
   model_arch: MLP
-  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: stride, variant: "24", order: 3}
+  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: mlp_cyclic_stride, variant: "24", order: 2}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
   - ../../modules/anom_types/contextual.yaml
   - ../../modules/stream/window.yaml
   - ../../modules/feat_eng/cyclic_recon.yaml
+  # stride: 24 is already the stream/window.yaml default — no override needed
+
+- name: MLP_Cyclic_stride_48
+  model_arch: MLP
+  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: mlp_cyclic_stride, variant: "48", order: 3}
+  config_layers:
+  - ../../modules/models/era5_MLP.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  - ../../modules/feat_eng/cyclic_recon.yaml
+  config: {stream: {stride: 48}}
+
+- name: TF_VAE_stride_6
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: tf_vae_stride, variant: "6", order: 1}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {stream: {stride: 6}}
+
+- name: TF_VAE_stride_12
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: tf_vae_stride, variant: "12", order: 2}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
+  config: {stream: {stride: 12}}
+
+- name: TF_VAE_stride_24
+  model_arch: TF_VAE
+  compare: {anomaly: Contextual, arch: TF_VAE, section: tf_vae_stride, variant: "24", order: 3}
+  config_layers:
+  - ../../modules/models/era5_TF_VAE.yaml
+  - ../../modules/anom_types/contextual.yaml
+  - ../../modules/stream/window.yaml
   # stride: 24 is already the stream/window.yaml default — no override needed
