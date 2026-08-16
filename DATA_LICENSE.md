@@ -35,8 +35,8 @@ be committed (the single combined 755,568-row file,
 is ~120MB, over that limit, and stays local-only/gitignored).
 
 `modules/anom_types/clean.yaml` points at these two files directly —
-`case01_clean_baseline.ipynb` and `case11_original_repo_config.ipynb` use
-this data with `DATA_SOURCE = "full_split_files"` (default). A
+`case01_clean_baseline.ipynb` uses this data with
+`DATA_SOURCE = "full_split_files"` (default). A
 `"full_single_file"` option is also available in case01 (and only case01):
 one full-scale CSV (`raw_files/reanalysis-era5-single-levels-timeseries.csv`,
 gitignored) plus `warmup_start`/`warmup_end` row indices, via
