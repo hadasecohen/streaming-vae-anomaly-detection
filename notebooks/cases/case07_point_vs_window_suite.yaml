@@ -34,7 +34,7 @@ runs:
 
 - name: MLP_cyclic_point
   model_arch: MLP
-  compare: {anomaly: Contextual, arch: MLP, section: cyclic, variant: point, order: 1}
+  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: cyclic, variant: point, order: 1}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
   - ../../modules/anom_types/contextual.yaml
@@ -43,7 +43,7 @@ runs:
 
 - name: MLP_cyclic_window
   model_arch: MLP
-  compare: {anomaly: Contextual, arch: MLP, section: cyclic, variant: window, order: 2}
+  compare: {anomaly: Contextual, arch: MLP_Cyclic, section: cyclic, variant: window, order: 2}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
   - ../../modules/anom_types/contextual.yaml

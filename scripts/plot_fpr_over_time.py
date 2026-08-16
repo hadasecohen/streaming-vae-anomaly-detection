@@ -266,13 +266,27 @@ def plot_metric(ax, runs_for_anomaly, metric, window, arch_order, smooth=0, shad
     """Plot one metric panel. Returns collected series dict for table use."""
     series_by_arch = collect_arch_series(runs_for_anomaly, metric, window, arch_order,
                                          smooth=smooth, fill_nan=fill_nan)
+    arches_present = {a for (a, _) in series_by_arch}
     multi_variant = len({v for (_, v) in series_by_arch}) > 1
+    # Single architecture, multiple variants (e.g. one arch swept over EMA/
+    # threshold/stride values): COLORS is keyed by arch, so every line would
+    # otherwise share one color. Assign each variant its own color from a
+    # qualitative colormap instead; keep the normal per-arch coloring
+    # whenever more than one architecture is present.
+    variant_color_by_key = {}
+    if len(arches_present) == 1 and multi_variant:
+        variants_sorted = sorted({v for (_, v) in series_by_arch})
+        cmap = matplotlib.colormaps.get_cmap("tab10" if len(variants_sorted) <= 10 else "tab20")
+        variant_color_by_key = {
+            (next(iter(arches_present)), v): mcolors.to_hex(cmap(i / max(len(variants_sorted) - 1, 1)))
+            for i, v in enumerate(variants_sorted)
+        }
     for (arch, variant), (x, mean_v, std_v, mat, _, _, _ces) in series_by_arch.items():
-        color = COLORS.get(arch, "#888888")
+        color = variant_color_by_key.get((arch, variant)) or COLORS.get(arch, "#888888")
         label = ARCH_LABELS.get(arch, arch)
         if multi_variant:
             label = f"{label} ({variant})"
-        ls = _variant_linestyle(variant) if multi_variant else "-"
+        ls = _variant_linestyle(variant) if (multi_variant and not variant_color_by_key) else "-"
         ax.plot(x, mean_v, label=label, color=color, lw=lw, linestyle=ls)
         if shade:
             ax.fill_between(x,
