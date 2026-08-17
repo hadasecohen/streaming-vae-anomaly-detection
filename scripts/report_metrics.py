@@ -66,7 +66,7 @@ def _run(cmd: list[str], project_root: Path) -> bool:
 
 def run_cross_compare(session_dir: Path, project_root: Path,
                       extra_args: list[str]) -> bool:
-    cmd = [sys.executable, "cross_compare.py", str(session_dir)] + extra_args
+    cmd = [sys.executable, str(Path("scripts") / "cross_compare.py"), str(session_dir)] + extra_args
     print(f"  [cc] {' '.join(str(a) for a in cmd)}")
     return _run(cmd, project_root)
 
@@ -208,11 +208,11 @@ def main():
     if not root.is_dir():
         sys.exit(f"ERROR: not a directory: {root}")
 
-    # Locate project root (the directory containing cross_compare.py) to run it from there
+    # Locate project root (the directory containing scripts/cross_compare.py) to run it from there
     project_root = root
-    while not (project_root / "cross_compare.py").exists() and project_root.parent != project_root:
+    while not (project_root / "scripts" / "cross_compare.py").exists() and project_root.parent != project_root:
         project_root = project_root.parent
-    if not (project_root / "cross_compare.py").exists():
+    if not (project_root / "scripts" / "cross_compare.py").exists():
         project_root = Path.cwd()
 
     # Root may itself be a session dir

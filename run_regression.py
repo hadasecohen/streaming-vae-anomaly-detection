@@ -70,7 +70,7 @@ from pathlib import Path
 from datetime import datetime
 from itertools import product
 
-_CROSS_COMPARE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cross_compare.py")
+_CROSS_COMPARE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "cross_compare.py")
 
 # ── session logger ─────────────────────────────────────────────────────────────
 # Mirrors all [suite] output to both stdout and <session_dir>/suite.log so the
