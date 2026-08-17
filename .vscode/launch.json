@@ -1,0 +1,247 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ERA5 Baseline - Group LSTM standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.baseline.Group_LSTM.run_era5_group_LSTM_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "1"
+            }
+        },
+        {
+            "name": "ERA5 Baseline - Group Transformer standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.baseline.Group_Transformer.run_era5_group_Transformer_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "2"
+            }
+        },
+        {
+            "name": "ERA5 Baseline - Group MLP standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.baseline.Group_MLP.run_era5_group_MLP_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "2"
+            }
+        },
+        {
+            "name": "ERA5 Baseline - Group MLP Cyclic standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.baseline.Group_MLP_Cyclic.run_era5_group_MLP_Cyclic_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "1"
+            }
+        },
+        {
+            "name": "ERA5 Baseline - Contextual LSTM standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.baseline.Contextual_LSTM.run_era5_contextual_LSTM_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0"
+            }
+        },
+        {
+            "name": "ERA5 Baseline - Contextual MLP standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.baseline.Contextual_MLP.run_era5_contextual_MLP_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "2"
+            }
+        },
+        {
+            "name": "ERA5 Baseline - Contextual MLP Cyclic standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.baseline.Contextual_MLP_Cyclic.run_era5_contextual_MLP_Cyclic_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0"
+            }
+        },
+        {
+            "name": "ERA5 Baseline - Contextual Transformer standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.baseline.Contextual_Transformer.run_era5_contextual_Transformer_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "1"
+            }
+        },
+        {
+            "name": "ERA5 Baseline - Point MLP standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.baseline.Point_MLP.run_era5_point_MLP_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "1"
+            }
+        },
+        {
+            "name": "ERA5 Baseline - Point MLP Cyclic standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.baseline.Point_MLP_Cyclic.run_era5_point_MLP_Cyclic_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "2"
+            }
+        },
+
+
+        {
+            "name": "ERA5 Finetuned - Contextual LSTM standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.finetuned.Contextual_LSTM.run_era5_contextual_LSTM_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "1"
+            }
+        },
+        {
+            "name": "ERA5 Finetuned - Contextual MLP standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.finetuned.Contextual_MLP.run_era5_contextual_MLP_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "2"
+            }
+        },
+        {
+            "name": "ERA5 Finetuned - Contextual MLP Cyclic standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.finetuned.Contextual_MLP_Cyclic.run_era5_contextual_MLP_Cyclic_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "1"
+            }
+        },
+        {
+            "name": "ERA5 Finetuned - Contextual Transformer standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.finetuned.Contextual_Transformer.run_era5_contextual_Transformer_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "2"
+            }
+        },
+        {
+            "name": "ERA5 Finetuned - Group LSTM standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.finetuned.Group_LSTM.run_era5_group_LSTM_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "1"
+            }
+        },
+        {
+            "name": "ERA5 Finetuned - Group MLP standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.finetuned.Group_MLP.run_era5_group_MLP_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "2"
+            }
+        },
+        {
+            "name": "ERA5 Finetuned - Group MLP Cyclic standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.finetuned.Group_MLP_Cyclic.run_era5_group_MLP_Cyclic_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "1"
+            }
+        },
+        {
+            "name": "ERA5 Finetuned - Group Transformer standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.finetuned.Group_Transformer.run_era5_group_Transformer_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "2"
+            }
+        },
+        {
+            "name": "ERA5 Finetuned - Point MLP standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.finetuned.Point_MLP.run_era5_point_MLP_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "1"
+            }
+        },
+        {
+            "name": "ERA5 Finetuned - Point MLP Cyclic standalone",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.finetuned.Point_MLP_Cyclic.run_era5_point_MLP_Cyclic_standalone",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "2"
+            }
+        }
+    ]
+}
