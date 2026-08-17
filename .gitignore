@@ -3,7 +3,7 @@ __pycache__/
 .ipynb_checkpoints/
 
 git_personal_token
-
+CLAUDE.md
 runs/
 scratchpad/
 notebooks/colab/

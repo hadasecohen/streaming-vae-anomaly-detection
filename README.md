@@ -11,46 +11,6 @@ This is a curated, from-scratch-reviewed subset of a larger research
 codebase — see [`DATA_LICENSE.md`](DATA_LICENSE.md) for what data is
 (and isn't) included.
 
-## Architecture
-
-```
-CSV (ERA5 hourly reanalysis)
-  -> ERA5Adapter (src/Data_tools/era5/era5_adapter.py)   # scales, windows, splits warmup/test
-  -> AnomalyDetection (src/Streaming/streaming_loop.py)
-       |-> train_warmup() -> offline_fit()                 # standard VAE training on warmup segment
-       |-> run_stream() sample-by-sample                   # online step() loop
-  -> StreamTrainer (src/Streaming/stream_trainer.py)
-       |-> VAE forward pass (MLP / LSTM / TF_VAE)
-       |-> multi-metric anomaly scoring (elbo, recon, kl, mu_norm, mah_diag, ...)
-       |-> adaptive thresholding (rolling quantile + EMA)
-       |-> online gradient update (normal-only or all samples)
-  -> runs/standalone_tests/<baseline|finetuned>/<Anomaly>_<Arch>/
-```
-
-Three VAE architectures are implemented in `src/VAE/`:
-- **MLP_VAE** — per-timestep MLP encoder/decoder, asymmetric depth supported
-- **LSTM_VAE** — recurrent encoder/decoder
-- **TF_VAE** — pure Transformer encoder/decoder with internal sinusoidal positional encoding
-
-Each supports point mode (`T=1`) or window mode (`T=seq_len`), optional
-normalizing-flow posterior enrichment (`flow_type: planar`), and per-layer
-normalization. All tensors flowing through the pipeline are strictly 3-D:
-`(batch, time, features)` — see `src/VAE/base_VAE.py` for the
-shared VAE base class (reparameterization, KL loss, pooling, reconstruction
-loss dispatch).
-
-## Anomaly scenarios
-
-`standalone_tests/{baseline,finetuned}/<Anomaly>_<Arch>/` covers three
-anomaly types: `Contextual` (locally wrong seasonal/diurnal pattern),
-`Group` (collective mean-shift blocks), and `Point` (isolated spikes).
-`Contextual` and `Group` are available for all four architectures
-(`MLP`, `MLP_Cyclic`, `LSTM`, `Transformer`); `Point` only for `MLP` and
-`MLP_Cyclic` (point-mode streaming isn't a meaningful test for LSTM/Transformer
-— see `case07_point_vs_window.ipynb`'s Scope section for why). Each
-`<Anomaly>_<Arch>` pairs a `baseline` config against a `finetuned` one with
-adjusted hyperparameters.
-
 ## Quickstart
 
 ```bash
@@ -89,6 +49,46 @@ see
 [`case01_clean_baseline.ipynb`](notebooks/cases/case01_clean_baseline.ipynb)
 for why that choice of scale matters (it compares its own four-architecture
 suite across all three dataset scales directly).
+
+## Anomaly scenarios
+
+`standalone_tests/{baseline,finetuned}/<Anomaly>_<Arch>/` covers three
+anomaly types: `Contextual` (locally wrong seasonal/diurnal pattern),
+`Group` (collective mean-shift blocks), and `Point` (isolated spikes).
+`Contextual` and `Group` are available for all four architectures
+(`MLP`, `MLP_Cyclic`, `LSTM`, `Transformer`); `Point` only for `MLP` and
+`MLP_Cyclic` (point-mode streaming isn't a meaningful test for LSTM/Transformer
+— see `case07_point_vs_window.ipynb`'s Scope section for why). Each
+`<Anomaly>_<Arch>` pairs a `baseline` config against a `finetuned` one with
+adjusted hyperparameters.
+
+## Architecture
+
+```
+CSV (ERA5 hourly reanalysis)
+  -> ERA5Adapter (src/Data_tools/era5/era5_adapter.py)   # scales, windows, splits warmup/test
+  -> AnomalyDetection (src/Streaming/streaming_loop.py)
+       |-> train_warmup() -> offline_fit()                 # standard VAE training on warmup segment
+       |-> run_stream() sample-by-sample                   # online step() loop
+  -> StreamTrainer (src/Streaming/stream_trainer.py)
+       |-> VAE forward pass (MLP / LSTM / TF_VAE)
+       |-> multi-metric anomaly scoring (elbo, recon, kl, mu_norm, mah_diag, ...)
+       |-> adaptive thresholding (rolling quantile + EMA)
+       |-> online gradient update (normal-only or all samples)
+  -> runs/standalone_tests/<baseline|finetuned>/<Anomaly>_<Arch>/
+```
+
+Three VAE architectures are implemented in `src/VAE/`:
+- **MLP_VAE** — per-timestep MLP encoder/decoder, asymmetric depth supported
+- **LSTM_VAE** — recurrent encoder/decoder
+- **TF_VAE** — pure Transformer encoder/decoder with internal sinusoidal positional encoding
+
+Each supports point mode (`T=1`) or window mode (`T=seq_len`), optional
+normalizing-flow posterior enrichment (`flow_type: planar`), and per-layer
+normalization. All tensors flowing through the pipeline are strictly 3-D:
+`(batch, time, features)` — see `src/VAE/base_VAE.py` for the
+shared VAE base class (reparameterization, KL loss, pooling, reconstruction
+loss dispatch).
 
 ## Multi-run tooling
 
