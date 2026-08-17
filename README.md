@@ -68,6 +68,12 @@ finetuned config instead of the baseline one, and `--gpu N` to pick a GPU
 
 ## Colab (GPU)
 
+Every notebook under `notebooks/colab/` (and `notebooks/demo_colab.ipynb`)
+opens directly in Colab via the "Open In Colab" badge in its first cell. To
+open any other notebook in this repo the same way without a badge, just
+swap `github.com` for `githubtocolab.com` in its URL, e.g.
+`https://githubtocolab.com/hadasecohen/streaming-vae-anomaly-detection/blob/main/notebooks/cases/case01_clean_baseline.ipynb`.
+
 [`notebooks/demo_colab.ipynb`](notebooks/demo_colab.ipynb) clones this repo
 and runs `demo.py` on a free Colab GPU runtime — set `ANOM`/`ARCH`/`BEST`/`GPU`
 in its first code cell, no local setup needed.
