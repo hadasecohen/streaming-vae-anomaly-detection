@@ -2,9 +2,11 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
+git_personal_token
+
 runs/
 scratchpad/
-
+notebooks/colab/
 # Full-scale real ERA5 source (~550MB, not included in this repo — see
 # DATA_LICENSE.md). Local-only; only data/era5/full_scale/split/ (each file
 # under GitHub's 100MB limit) is shipped — raw_files/ never is.
@@ -23,3 +25,4 @@ scripts/compare_to_thesis.py
 scripts/generate_mini_era5.py
 scripts/slice_real_era5.py
 git-cmds.txt
+
