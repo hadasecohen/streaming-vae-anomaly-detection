@@ -12,7 +12,7 @@
 # Layering: era5_common -> models/era5_{MLP,TF_VAE} -> anom_types/contextual
 #           -> stream/window -> config: {model: {recon_loss_kind: N}}
 
-run_module: regression.run_trial
+run_module: scripts.trial.run_trial
 rq: case06_reconstruction_loss
 base_config: ../../modules/era5_common.yaml
 output_dir: runs/regression/case06_reconstruction_loss

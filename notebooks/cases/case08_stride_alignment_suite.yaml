@@ -14,7 +14,7 @@
 #           -> stream/window -> feat_eng/cyclic_recon (MLP only)
 #           -> config: {stream: {stride: N}}
 
-run_module: regression.run_trial
+run_module: scripts.trial.run_trial
 rq: case08_stride_alignment
 base_config: ../../modules/era5_common.yaml
 output_dir: runs/regression/case08_stride_alignment

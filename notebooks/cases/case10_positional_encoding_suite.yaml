@@ -19,7 +19,7 @@
 #           -> stream/window -> feat_eng/cyclic_off
 #           -> config: {model: {pos_enc: N, use_hourly_freqs: bool}}
 
-run_module: regression.run_trial
+run_module: scripts.trial.run_trial
 rq: case10_positional_encoding
 base_config: ../../modules/era5_common.yaml
 output_dir: runs/regression/case10_positional_encoding

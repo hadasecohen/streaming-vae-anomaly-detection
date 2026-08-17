@@ -9,7 +9,7 @@
 # Layering: era5_common -> models/era5_LSTM -> anom_types/group
 #           -> stream/window -> config: {training: {anom_if_score_above: N}}
 
-run_module: regression.run_trial
+run_module: scripts.trial.run_trial
 rq: case03_threshold_calibration
 base_config: ../../modules/era5_common.yaml
 output_dir: runs/regression/case03_threshold_calibration

@@ -8,7 +8,7 @@
 # Layering: era5_common -> models/era5_{MLP,LSTM} -> anom_types/contextual
 #           -> stream/window -> config: {training: {elbo_beta: N}}
 
-run_module: regression.run_trial
+run_module: scripts.trial.run_trial
 rq: case05_kl_regularisation
 base_config: ../../modules/era5_common.yaml
 output_dir: runs/regression/case05_kl_regularisation

@@ -1,7 +1,7 @@
 
 import os
 
-from regression.run_trial import run_trial
+from scripts.trial.run_trial import run_trial
 
 if __name__ == "__main__":
 

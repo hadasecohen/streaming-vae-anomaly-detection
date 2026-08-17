@@ -28,7 +28,7 @@
 #           -> stream/window -> feat_eng/cyclic_recon (MLP_Cyclic only)
 #           -> data_source/<layer for the selected DATA_SOURCE> (added by notebook, if any)
 
-run_module: regression.run_trial
+run_module: scripts.trial.run_trial
 rq: case01_clean_baseline
 base_config: ../../modules/era5_common.yaml
 output_dir: runs/regression/case01_clean_baseline

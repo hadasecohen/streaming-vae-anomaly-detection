@@ -6,7 +6,7 @@
 # Layering: era5_common -> models/era5_MLP -> anom_types/contextual -> stream/window
 #           -> feat_eng/{cyclic_off, cyclic_on, cyclic_recon}
 
-run_module: regression.run_trial
+run_module: scripts.trial.run_trial
 rq: case02_cyclic_features
 base_config: ../../modules/era5_common.yaml
 output_dir: runs/regression/case02_cyclic_features
