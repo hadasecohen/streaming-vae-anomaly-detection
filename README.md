@@ -24,7 +24,7 @@ CSV (ERA5 hourly reanalysis)
        |-> multi-metric anomaly scoring (elbo, recon, kl, mu_norm, mah_diag, ...)
        |-> adaptive thresholding (rolling quantile + EMA)
        |-> online gradient update (normal-only or all samples)
-  -> runs/<scenario>/<arch>/standalone/
+  -> runs/standalone_tests/<baseline|finetuned>/<Anomaly>_<Arch>/
 ```
 
 Three VAE architectures are implemented in `src/VAE/`:
@@ -41,28 +41,38 @@ loss dispatch).
 
 ## Anomaly scenarios
 
-`experiments/era5/<ARCH>/<scenario>/` covers four scenarios per architecture:
-`clean` (no anomalies), `point` (isolated spikes), `contextual` (locally
-wrong seasonal/diurnal pattern), `group` (collective mean-shift blocks).
+`standalone_tests/{baseline,finetuned}/<Anomaly>_<Arch>/` covers three
+anomaly types: `Contextual` (locally wrong seasonal/diurnal pattern),
+`Group` (collective mean-shift blocks), and `Point` (isolated spikes).
+`Contextual` and `Group` are available for all four architectures
+(`MLP`, `MLP_Cyclic`, `LSTM`, `Transformer`); `Point` only for `MLP` and
+`MLP_Cyclic` (point-mode streaming isn't a meaningful test for LSTM/Transformer
+— see `case07_point_vs_window.ipynb`'s Scope section for why). Each
+`<Anomaly>_<Arch>` pairs a `baseline` config against a `finetuned` one with
+adjusted hyperparameters.
 
 ## Quickstart
 
 ```bash
 pip install -r requirements.txt
-python -m experiments.era5.MLP.group.run_era5_group_MLP_standalone
+python demo.py
 ```
 
-Swap `MLP` for `LSTM` or `TF_VAE`, and `group` for `clean` / `point` / `contextual`,
-to run any of the 12 architecture × scenario combinations. Each run writes
-logs and metrics to `runs/<scenario>/<arch>/standalone/run.log`.
+Runs `MLP_Cyclic` on `Contextual` anomalies by default. Pick any other
+combination with `--anom {point,group,contextual}` and
+`--arch {mlp,mlp_cyclic,lstm,transformer}`; add `--best` to run the
+finetuned config instead of the baseline one, and `--gpu N` to pick a GPU
+(point-mode runs always use CPU regardless of `--gpu`). See `python demo.py
+--help` for the full option list. Each run writes logs and metrics to the
+`run_dir` printed at the top of its output.
 
 ## Colab (GPU)
 
 [`notebooks/demo_colab.ipynb`](notebooks/demo_colab.ipynb) clones this repo
-and runs the same MLP/group experiment on a free Colab GPU runtime — no
-local setup, no data download (the mini dataset ships with the repo).
+and runs `demo.py` on a free Colab GPU runtime — set `ANOM`/`ARCH`/`BEST`/`GPU`
+in its first code cell, no local setup needed.
 
-[`notebooks/cases/`](notebooks/cases/) has 11 further notebooks, each
+[`notebooks/cases/`](notebooks/cases/) has 10 further notebooks, each
 reproducing one specific finding from the thesis this code is based on
 (prediction-threshold calibration, cyclic time features, latent
 dimensionality, window size/stride, ...) as a small 2–4-run comparison with
@@ -87,13 +97,13 @@ each composed from the shared fragments under `modules/` via `config_layers`.
 
 ## Data
 
-`data/era5/mini_50pct/` holds a real slice of ERA5 hourly reanalysis data
-(377,784 rows, 40:60 warmup/test, matching the full-scale export's own
-proportions) so the `experiments/era5/` quickstart configs above run
-standalone with zero downloads. The `notebooks/cases/` notebooks default to
-the full-scale export instead (`data/era5/full_scale/split/`, also shipped —
-see above). See [`DATA_LICENSE.md`](DATA_LICENSE.md) for provenance,
-attribution, and full details on both.
+`data/era5/full_scale/split/` holds the real ERA5 hourly reanalysis export
+this work is based on, pre-split into warmup/test files — both `demo.py`'s
+`standalone_tests/` configs and the `notebooks/cases/` notebooks default to
+this data. `data/era5/mini_50pct/` and `data/era5/mini_28pct/` are smaller,
+faster-iteration real slices the case notebooks can opt into via
+`DATA_SOURCE`. See [`DATA_LICENSE.md`](DATA_LICENSE.md) for provenance,
+attribution, and full details on all three.
 
 ## License
 

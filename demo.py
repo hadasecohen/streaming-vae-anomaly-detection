@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Streaming VAE Anomaly Detection — quick-start demo.
 
-Runs one config from experiments/baseline/ (or experiments/finetuned/ with
---best) end to end: offline warmup training + online streaming anomaly
+Runs one config from standalone_tests/baseline/ (or standalone_tests/finetuned/
+with --best) end to end: offline warmup training + online streaming anomaly
 detection on a real ERA5 slice.
 
 Usage:
@@ -71,7 +71,7 @@ def resolve_experiment(anom: str, arch: str, best: bool):
     arch_dir = ARCH_ALIASES[arch]
     tuning = "finetuned" if best else "baseline"
     dirname = f"{anomaly}_{arch_dir}"
-    experiment_dir = f"experiments/{tuning}/{dirname}"
+    experiment_dir = f"standalone_tests/{tuning}/{dirname}"
 
     config_matches = glob.glob(f"{experiment_dir}/*_config_standalone.yaml")
     if not config_matches:

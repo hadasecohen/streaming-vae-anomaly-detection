@@ -121,12 +121,11 @@ exactly `scripts/slice_real_era5.py`'s own default output (`WARMUP_YEARS=12,
 TEST_YEARS=12`, `OUT_DIR` pointed at `mini_28pct/`): 105,192 rows of warmup,
 105,192 rows of test, split at the same 1974-06-23 boundary.
 
-## `experiments/era5/`
+## `standalone_tests/`
 
-`experiments/era5/**/*.yaml` (the standalone, non-case-notebook configs run
-via `python -m experiments.era5.<ARCH>.<scenario>.run_era5_..._standalone`)
-are independent of the `DATA_SOURCE`/data_source-layer system above — they
-hardcode `data_path` directly, currently pointed at `data/era5/mini_50pct/`
-with `warmup_end: 151114`. Swap `data_path` and `warmup_end` in any of these
-files to point at `data/era5/full_scale/raw_files/` (`warmup_end: 302227`)
-to run them at full scale instead.
+`standalone_tests/{baseline,finetuned}/<Anomaly>_<Arch>/*.yaml` (run via
+`python demo.py` or `python -m standalone_tests.<baseline|finetuned>.<Anomaly>_<Arch>.run_era5_..._standalone`)
+are independent of the `DATA_SOURCE`/data_source-layer system above — each
+hardcodes `warmup_path`/`test_path` directly, pointed at the full-scale split
+files under `data/era5/full_scale/split/` described above (the same files
+`DATA_SOURCE = "full_split_files"` resolves to in the case notebooks).
