@@ -197,6 +197,7 @@ def format_metrics_stats(
     top_metrics: Optional[List[str]] = None,
     score_keys: Optional[List[str]] = None,
     include_counts: bool = True,
+    include_threshold_tuning: bool = True,
 ) -> str:
     """
     Turn your nested dict into readable tables.
@@ -255,47 +256,50 @@ def format_metrics_stats(
                     f"Counts: n={_fmt_num(n)}  n_finite={_fmt_num(n_fin)}  pos={_fmt_num(n_pos)}  neg={_fmt_num(n_neg)}"
                 )
 
-    # --- Threshold tuning / search ---
-    tuning        = metrics_stats.get("final_threshold_tuning", {})
-    tuning_f2     = metrics_stats.get("final_threshold_tuning_f2", {})
-    tuning_youden = metrics_stats.get("final_threshold_tuning_youden", {})
-    search        = metrics_stats.get("final_threshold_search", {})
+    # --- Threshold tuning / search (post-hoc optimal thresholds — not meaningful
+    # on a streaming run, where the threshold is fixed online; skippable via
+    # include_threshold_tuning) ---
+    if include_threshold_tuning:
+        tuning        = metrics_stats.get("final_threshold_tuning", {})
+        tuning_f2     = metrics_stats.get("final_threshold_tuning_f2", {})
+        tuning_youden = metrics_stats.get("final_threshold_tuning_youden", {})
+        search        = metrics_stats.get("final_threshold_search", {})
 
-    def _fmt_thr_block(title: str, d: Dict[str, Any]) -> str:
-        if not isinstance(d, dict) or not d:
-            return ""
-        parts = [title]
-        thr = d.get("best_thr_f1", d.get("thr"))
-        if thr is not None:
-            parts.append(f"  thr={_fmt_num(thr, nd)}")
+        def _fmt_thr_block(title: str, d: Dict[str, Any]) -> str:
+            if not isinstance(d, dict) or not d:
+                return ""
+            parts = [title]
+            thr = d.get("best_thr_f1", d.get("thr"))
+            if thr is not None:
+                parts.append(f"  thr={_fmt_num(thr, nd)}")
 
-        best_stats = d.get("best_stats")
-        if isinstance(best_stats, dict):
-            core = ["f1", "f2", "precision", "recall", "accuracy", "tp", "fp", "tn", "fn"]
-            s = "  " + "  ".join(f"{k}={_fmt_num(best_stats.get(k), nd)}" for k in core if k in best_stats)
-            parts.append(s)
-        else:
-            core = ["f1", "f2", "precision", "recall", "accuracy"]
-            s = "  " + "  ".join(f"{k}={_fmt_num(d.get(k), nd)}" for k in core if k in d)
-            if s.strip():
+            best_stats = d.get("best_stats")
+            if isinstance(best_stats, dict):
+                core = ["f1", "f2", "precision", "recall", "accuracy", "tp", "fp", "tn", "fn"]
+                s = "  " + "  ".join(f"{k}={_fmt_num(best_stats.get(k), nd)}" for k in core if k in best_stats)
                 parts.append(s)
-        return "\n".join(parts)
+            else:
+                core = ["f1", "f2", "precision", "recall", "accuracy"]
+                s = "  " + "  ".join(f"{k}={_fmt_num(d.get(k), nd)}" for k in core if k in d)
+                if s.strip():
+                    parts.append(s)
+            return "\n".join(parts)
 
-    block = _fmt_thr_block("THRESHOLD TUNING (optimize F1)", tuning)
-    if block:
-        lines.append(block)
+        block = _fmt_thr_block("THRESHOLD TUNING (optimize F1)", tuning)
+        if block:
+            lines.append(block)
 
-    block = _fmt_thr_block("THRESHOLD TUNING (optimize F2)", tuning_f2)
-    if block:
-        lines.append(block)
+        block = _fmt_thr_block("THRESHOLD TUNING (optimize F2)", tuning_f2)
+        if block:
+            lines.append(block)
 
-    block = _fmt_thr_block("THRESHOLD TUNING (Youden J)", tuning_youden)
-    if block:
-        lines.append(block)
+        block = _fmt_thr_block("THRESHOLD TUNING (Youden J)", tuning_youden)
+        if block:
+            lines.append(block)
 
-    block = _fmt_thr_block("THRESHOLD SEARCH", search)
-    if block:
-        lines.append(block)
+        block = _fmt_thr_block("THRESHOLD SEARCH", search)
+        if block:
+            lines.append(block)
 
     # fallback if nothing formatted
     if not lines:

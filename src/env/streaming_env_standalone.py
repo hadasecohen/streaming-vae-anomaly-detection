@@ -485,7 +485,9 @@ class StreamEnvStandalone(StreamEnv):
         except Exception as _perf_err:
             self.trial_files_output.logger.info_low(f"[perf] tracking failed: {_perf_err}")
 
-        self.trial_files_output.logger.info_low(lambda: format_metrics_stats(metrics_stats, nd=3))
+        self.trial_files_output.logger.info_low(
+            lambda: format_metrics_stats(metrics_stats, nd=3, include_threshold_tuning=False)
+        )
         self.trial_files_output.close()
         
         
