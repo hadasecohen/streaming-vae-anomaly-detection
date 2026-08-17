@@ -18,6 +18,7 @@ import glob
 import sys
 import tempfile
 
+import torch
 import yaml
 
 from scripts.trial.run_trial import run_trial
@@ -91,13 +92,28 @@ def main(argv=None):
         cfg = yaml.safe_load(f)
     model_arch = cfg["model"]["type"]
 
+    new_device = None
     if args.anom == "point":
         # Point mode streams one gradient step per row with no batching, which
         # is faster on CPU than GPU for this access pattern — every Point_*
         # config is pinned to device: cpu, and --gpu does not override that.
         pass
+    elif not torch.cuda.is_available():
+        # Don't write cuda:N into the config if this torch install/runtime has
+        # no working CUDA — that fails deep inside run_trial with a confusing
+        # "torch._C has no attribute _cuda_setDevice" instead of a clear message.
+        print(
+            "WARNING: no CUDA device available (torch.cuda.is_available() is "
+            "False) — running on CPU instead. In Colab, check Runtime -> "
+            "Change runtime type -> GPU.",
+            file=sys.stderr,
+        )
+        new_device = "cpu"
     else:
-        cfg["common"]["device"] = f"cuda:{args.gpu}"
+        new_device = f"cuda:{args.gpu}"
+
+    if new_device is not None:
+        cfg["common"]["device"] = new_device
         # run_trial reads config_path from disk itself, so the override is
         # written to a temp copy rather than mutating the tracked config.
         tmp = tempfile.NamedTemporaryFile(
