@@ -10,7 +10,7 @@ Usage:
     python demo.py --anom point --arch mlp
     python demo.py --anom group --arch lstm --best
     python demo.py --anom contextual --arch transformer
-    python demo.py --gpu 1                       # pin to cuda:1 (default: cuda:0)
+    python demo.py --gpu 1                       # pin to cuda:1 (default: cuda:0; ignored for --anom point)
 """
 
 import argparse
@@ -59,8 +59,9 @@ def parse_args(argv=None):
         help="Run the finetuned config instead of the baseline one",
     )
     parser.add_argument(
-        "--gpu", type=int, default=None, metavar="N",
-        help="GPU index to run on, e.g. --gpu 1 for cuda:1 (default: cuda:0, as set in the config)",
+        "--gpu", type=int, default=0, metavar="N",
+        help="GPU index to run on, e.g. --gpu 1 for cuda:1 (default: 0). "
+             "Ignored for --anom point, which always runs on CPU.",
     )
     return parser.parse_args(argv)
 
@@ -90,7 +91,12 @@ def main(argv=None):
         cfg = yaml.safe_load(f)
     model_arch = cfg["model"]["type"]
 
-    if args.gpu is not None:
+    if args.anom == "point":
+        # Point mode streams one gradient step per row with no batching, which
+        # is faster on CPU than GPU for this access pattern — every Point_*
+        # config is pinned to device: cpu, and --gpu does not override that.
+        pass
+    else:
         cfg["common"]["device"] = f"cuda:{args.gpu}"
         # run_trial reads config_path from disk itself, so the override is
         # written to a temp copy rather than mutating the tracked config.
