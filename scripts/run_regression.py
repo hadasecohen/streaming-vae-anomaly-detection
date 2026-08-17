@@ -7,14 +7,14 @@ each combination on top of a base config, and runs them in parallel across
 available GPUs.
 
 Usage (run from the project root):
-    python run_regression.py path/to/suite.yaml
-    python run_regression.py suite.yaml --dry-run
-    python run_regression.py suite.yaml --gpus 0,1
-    python run_regression.py suite.yaml --session runs/regression/era5_golden/session_20260320_011131
-    python run_regression.py suite.yaml --session runs/regression/era5_golden/session_20260320_011131 --skip-existing
+    python scripts/run_regression.py path/to/suite.yaml
+    python scripts/run_regression.py suite.yaml --dry-run
+    python scripts/run_regression.py suite.yaml --gpus 0,1
+    python scripts/run_regression.py suite.yaml --session runs/regression/era5_golden/session_20260320_011131
+    python scripts/run_regression.py suite.yaml --session runs/regression/era5_golden/session_20260320_011131 --skip-existing
 
 Background (survives window close):
-    nohup python run_regression.py suite.yaml --session <session_dir> --skip-existing &
+    nohup python scripts/run_regression.py suite.yaml --session <session_dir> --skip-existing &
     tail -f <session_dir>/suite.log      # follow progress from any terminal
     cat  <session_dir>/suite_summary.txt # clean pass/fail/skip/disabled report
 
@@ -70,7 +70,7 @@ from pathlib import Path
 from datetime import datetime
 from itertools import product
 
-_CROSS_COMPARE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "cross_compare.py")
+_CROSS_COMPARE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cross_compare.py")
 
 # ── session logger ─────────────────────────────────────────────────────────────
 # Mirrors all [suite] output to both stdout and <session_dir>/suite.log so the

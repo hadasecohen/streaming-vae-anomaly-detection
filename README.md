@@ -86,13 +86,13 @@ suite across all three dataset scales directly).
 
 ## Multi-run tooling
 
-- `run_regression.py` — reads a suite YAML, runs multiple configs in parallel across GPUs
+- `scripts/run_regression.py` — reads a suite YAML, runs multiple configs in parallel across GPUs
 - `scripts/cross_compare.py` — summarizes a completed session into a comparison table + plots
 - `scripts/report_metrics.py` — walks a session tree and optionally invokes `scripts/cross_compare.py` (`--cc`)
 - `scripts/trial/run_trial.py` — the single-config runner these suites launch as a subprocess (`python -m scripts.trial.run_trial <config.yaml> <ARCH>`)
 
 `notebooks/cases/*_suite.yaml` are worked examples of the suite YAML schema
-(see the docstring at the top of `run_regression.py` for the full schema),
+(see the docstring at the top of `scripts/run_regression.py` for the full schema),
 each composed from the shared fragments under `modules/` via `config_layers`.
 
 ## Data
