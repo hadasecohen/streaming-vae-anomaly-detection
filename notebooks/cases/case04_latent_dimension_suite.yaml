@@ -12,7 +12,7 @@
 run_module: scripts.trial.run_trial
 rq: case04_latent_dimension
 base_config: ../../modules/era5_common.yaml
-output_dir: runs/regression/case04_latent_dimension
+output_dir: runs/trials_suite/case04_latent_dimension
 
 runs:
 

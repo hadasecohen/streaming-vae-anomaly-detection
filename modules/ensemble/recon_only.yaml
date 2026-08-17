@@ -1,6 +1,6 @@
 # Layer: score by reconstruction error only — this is era5_common's default,
 # kept here so a run can name the choice explicitly in its layer list.
-# Identical to thesis_code/tests/regression/modules/ensemble/recon_only.yaml.
+# Identical to thesis_code/tests/trials_suite/modules/ensemble/recon_only.yaml.
 training:
   ensemble:
     metric_weights:

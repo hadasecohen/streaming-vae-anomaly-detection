@@ -9,7 +9,7 @@
 # or mini_28pct_*.yaml data_source layer overrides both data_path and these bounds
 # for a smaller/faster dataset.
 #
-# All values below are identical to thesis_code/tests/regression/modules/era5_common.yaml
+# All values below are identical to thesis_code/tests/trials_suite/modules/era5_common.yaml
 # except two things dropped because this port doesn't implement them:
 #   - training.band_cfg (online-threshold hysteresis band — removed from this port)
 #   - model.use_multiscale / model.ms_num_scales (multiscale fusion prefix — not ported)

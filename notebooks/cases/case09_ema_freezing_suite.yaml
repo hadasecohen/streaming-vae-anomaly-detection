@@ -17,7 +17,7 @@
 run_module: scripts.trial.run_trial
 rq: case09_ema_freezing
 base_config: ../../modules/era5_common.yaml
-output_dir: runs/regression/case09_ema_freezing
+output_dir: runs/trials_suite/case09_ema_freezing
 
 runs:
 

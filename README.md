@@ -1,15 +1,21 @@
 # Streaming Anomaly Detection with VAEs
 
-A streaming anomaly detection system for ERA5 hourly climate reanalysis data
-(temperature, wind, pressure, precipitation, radiation). A Variational
-Autoencoder is trained offline on a warmup segment, then updated online
-one sample (or window) at a time while streaming through the rest of the
-series, flagging anomalies from reconstruction error, KL divergence, and
-latent-space statistics with an adaptive rolling-quantile threshold.
+This repository contains a curated implementation of the streaming anomaly-detection framework developed for my thesis.
 
-This is a curated, from-scratch-reviewed subset of a larger research
-codebase — see [`DATA_LICENSE.md`](DATA_LICENSE.md) for what data is
-(and isn't) included.
+The thesis studies how different VAE architectures and streaming configurations affect anomaly detection in temporally dependent data. The experiments use hourly ERA5 climate reanalysis data and compare four architectures:
+
+- **MLP-VAE**
+- **MLP-VAE-Cyclic**
+- **LSTM-VAE**
+- **Transformer-VAE**
+
+Rather than reproducing the complete research codebase, this repository focuses on a selected set of representative test scenarios. Each scenario was chosen to demonstrate one of the main behaviours observed in the thesis, such as the effect of cyclic time features, window size and stride, latent dimensionality, prediction thresholds, or online adaptation.
+
+The detector is first trained on a warmup segment assumed to contain normal data. It is then evaluated in streaming mode, processing either individual timesteps or temporal windows. During the stream, the model may continue updating its parameters, while anomaly scores and thresholds are adapted over time.
+
+Anomalies are detected from VAE reconstruction behaviour, with additional latent-space and ELBO-related metrics available in the framework. The prediction threshold is based on an adaptive rolling score distribution rather than a fixed raw reconstruction-error value.
+
+See [`DATA_LICENSE.md`](DATA_LICENSE.md) for details about the ERA5 data included in this repository.
 
 ## Quickstart
 
@@ -18,98 +24,406 @@ pip install -r requirements.txt
 python demo.py
 ```
 
-Runs `MLP_Cyclic` on `Contextual` anomalies by default. Pick any other
-combination with `--anom {point,group,contextual}` and
-`--arch {mlp,mlp_cyclic,lstm,transformer}`; add `--best` to run the
-finetuned config instead of the baseline one, and `--gpu N` to pick a GPU
-(point-mode runs always use CPU regardless of `--gpu`). See `python demo.py
---help` for the full option list. Each run writes logs and metrics to the
-`run_dir` printed at the top of its output.
+The demo runs a full test for one model on one anomaly type. Reasonable demo results would indicate that the source-code editor/colab environments are capable of running the notebooks of testcases. 
+By default, the demo runs **MLP-VAE-Cyclic** on the **Contextual** anomaly scenario.
 
-## Colab (GPU)
+Other combinations can be selected using:
 
-Every notebook under `notebooks/colab/` (and `notebooks/demo_colab.ipynb`)
-opens directly in Colab via the "Open In Colab" badge in its first cell. To
-open any other notebook in this repo the same way without a badge, just
-swap `github.com` for `githubtocolab.com` in its URL, e.g.
-`https://githubtocolab.com/hadasecohen/streaming-vae-anomaly-detection/blob/main/notebooks/cases/case01_clean_baseline.ipynb`.
-
-[`notebooks/demo_colab.ipynb`](notebooks/demo_colab.ipynb) clones this repo
-and runs `demo.py` on a free Colab GPU runtime — set `ANOM`/`ARCH`/`BEST`/`GPU`
-in its first code cell, no local setup needed.
-
-[`notebooks/cases/`](notebooks/cases/) has 10 further notebooks, each
-reproducing one specific finding from the thesis this code is based on
-(prediction-threshold calibration, cyclic time features, latent
-dimensionality, window size/stride, ...) as a small 2–4-run comparison with
-its own suite YAML — see the markdown cell at the top of each for what it
-reproduces. Each defaults to the full-scale ERA5 data (`DATA_SOURCE =
-"full_split_files"` in its setup cell) rather than the mini dataset below —
-see
-[`case01_clean_baseline.ipynb`](notebooks/cases/case01_clean_baseline.ipynb)
-for why that choice of scale matters (it compares its own four-architecture
-suite across all three dataset scales directly).
-
-## Anomaly scenarios
-
-`standalone_tests/{baseline,finetuned}/<Anomaly>_<Arch>/` covers three
-anomaly types: `Contextual` (locally wrong seasonal/diurnal pattern),
-`Group` (collective mean-shift blocks), and `Point` (isolated spikes).
-`Contextual` and `Group` are available for all four architectures
-(`MLP`, `MLP_Cyclic`, `LSTM`, `Transformer`); `Point` only for `MLP` and
-`MLP_Cyclic` (point-mode streaming isn't a meaningful test for LSTM/Transformer
-— see `case07_point_vs_window.ipynb`'s Scope section for why). Each
-`<Anomaly>_<Arch>` pairs a `baseline` config against a `finetuned` one with
-adjusted hyperparameters.
-
-## Architecture
-
-```
-CSV (ERA5 hourly reanalysis)
-  -> ERA5Adapter (src/Data_tools/era5/era5_adapter.py)   # scales, windows, splits warmup/test
-  -> AnomalyDetection (src/Streaming/streaming_loop.py)
-       |-> train_warmup() -> offline_fit()                 # standard VAE training on warmup segment
-       |-> run_stream() sample-by-sample                   # online step() loop
-  -> StreamTrainer (src/Streaming/stream_trainer.py)
-       |-> VAE forward pass (MLP / LSTM / TF_VAE)
-       |-> multi-metric anomaly scoring (elbo, recon, kl, mu_norm, mah_diag, ...)
-       |-> adaptive thresholding (rolling quantile + EMA)
-       |-> online gradient update (normal-only or all samples)
-  -> runs/standalone_tests/<baseline|finetuned>/<Anomaly>_<Arch>/
+```bash
+python demo.py --anom point --arch mlp
+python demo.py --anom group --arch lstm
+python demo.py --anom contextual --arch transformer
 ```
 
-Three VAE architectures are implemented in `src/VAE/`:
-- **MLP_VAE** — per-timestep MLP encoder/decoder, asymmetric depth supported
-- **LSTM_VAE** — recurrent encoder/decoder
-- **TF_VAE** — pure Transformer encoder/decoder with internal sinusoidal positional encoding
+Available anomaly types:
 
-Each supports point mode (`T=1`) or window mode (`T=seq_len`), optional
-normalizing-flow posterior enrichment (`flow_type: planar`), and per-layer
-normalization. All tensors flowing through the pipeline are strictly 3-D:
-`(batch, time, features)` — see `src/VAE/base_VAE.py` for the
-shared VAE base class (reparameterization, KL loss, pooling, reconstruction
-loss dispatch).
+```text
+point
+group
+contextual
+```
 
-## Multi-run tooling
+Available architectures:
 
-- `scripts/run_regression.py` — reads a suite YAML, runs multiple configs in parallel across GPUs
-- `scripts/cross_compare.py` — summarizes a completed session into a comparison table + plots
-- `scripts/report_metrics.py` — walks a session tree and optionally invokes `scripts/cross_compare.py` (`--cc`)
-- `scripts/trial/run_trial.py` — the single-config runner these suites launch as a subprocess (`python -m scripts.trial.run_trial <config.yaml> <ARCH>`)
+```text
+mlp
+mlp_cyclic
+lstm
+transformer
+```
 
-`notebooks/cases/*_suite.yaml` are worked examples of the suite YAML schema
-(see the docstring at the top of `scripts/run_regression.py` for the full schema),
-each composed from the shared fragments under `modules/` via `config_layers`.
+Finetuned config instead of the common baseline:
+
+```bash
+--best
+```
+
+To select a GPU:
+
+```bash
+--gpu N
+```
+
+Point-mode experiments run on CPU regardless of the selected GPU.
+
+For the complete set of options:
+
+```bash
+python demo.py --help
+```
+
+Each run prints its output directory at startup and stores its logs and metrics there.
+
+## Colab
+
+The notebooks under [`notebooks/cases/`](notebooks/cases/) and [`notebooks/demo_colab.ipynb`](notebooks/demo_colab.ipynb) can be opened directly in Google Colab.
+
+The main Colab notebook:
+
+[`notebooks/demo_colab.ipynb`](notebooks/demo_colab.ipynb)
+
+clones the repository and runs `demo.py`. The anomaly type, architecture, configuration, and GPU can be selected from the first code cell.
+
+Other notebooks in the repository can also be opened in Colab by replacing:
+
+```text
+github.com
+```
+
+with:
+
+```text
+githubtocolab.com
+```
+
+in the notebook URL.
+
+For example:
+
+```text
+https://githubtocolab.com/hadasecohen/streaming-vae-anomaly-detection/blob/main/notebooks/cases/case01_clean_baseline.ipynb
+```
+
+## Selected Thesis Scenarios
+
+The directory:
+
+[`notebooks/cases/`](notebooks/cases/)
+
+contains a set of small experiments selected from the thesis.
+
+These notebooks are not intended to reproduce every experiment in the thesis. Instead, they provide relatively small comparisons that demonstrate some of the more interesting findings.
+
+Examples include:
+
+- baseline false-positive behaviour on clean ERA5 data;
+- the effect of cyclic time features on contextual anomalies;
+- prediction-threshold calibration;
+- point versus window streaming;
+- latent dimensionality;
+- online model adaptation;
+- window size and stride;
+- selected VAE configuration effects.
+
+Each notebook contains a short explanation at the beginning describing:
+
+- what thesis question or observation it represents;
+- which configurations are compared;
+- what result to look for;
+- how the scenario relates to the full experiment.
+
+Most notebooks perform only a small number of runs so that the behaviour can be inspected without reproducing the complete experimental sweep.
+
+The case notebooks use their own suite YAML files and default to the full ERA5 split:
+
+```python
+DATA_SOURCE = "full_split_files"
+```
+
+Smaller ERA5 subsets are also available for faster execution.
+
+[`case01_clean_baseline.ipynb`](notebooks/cases/case01_clean_baseline.ipynb) compares the available dataset scales directly and shows why dataset size can affect the observed streaming behaviour.
+
+## Anomaly Scenarios
+
+Three synthetic anomaly types are used.
+
+### Point anomalies
+
+Point anomalies are isolated deviations affecting a single timestep.
+
+They are useful for examining detection when temporal context is not required and the anomaly can be identified mainly from the current observation.
+
+### Group anomalies
+
+Group anomalies are sustained abnormal shifts over a period of time.
+
+In the thesis, the two MLP based models group anomalies are unusual individually. Hence the ERA5 dataset with synthetic group anomalies is less used in the repository's selected testcases.
+
+### Contextual anomalies
+
+Contextual anomalies contain values that may be individually plausible but occur in the wrong temporal context.
+
+For example, a climate pattern may resemble normal behaviour from another season.
+
+These scenarios are particularly useful for examining whether temporal context is learned from a window or supplied explicitly through cyclic calendar features.
+
+Most testcases selected for this repository use the  injected contextual anomalies dataset.
+
+## Baseline and Fine-Tuned Configurations
+
+The directory structure:
+
+```text
+standalone_tests/
+    baseline/
+    finetuned/
+```
+
+contains representative configurations for each architecture and anomaly type.
+
+Each scenario compares a common baseline configuration with a configuration adjusted according to the corresponding thesis experiments.
+
+For example:
+
+```text
+standalone_tests/baseline/Contextual_MLP_Cyclic/
+standalone_tests/finetuned/Contextual_MLP_Cyclic/
+```
+
+The purpose is not to claim that the fine-tuned configuration is universally optimal. The thesis shows that VAE performance depends on the interaction between architecture, anomaly type, temporal representation, and streaming configuration.
+
+The fine-tuned configurations therefore represent settings that performed well for every model on every anomaly type, under the experimental conditions used in the thesis.
+
+## Framework Overview
+
+The streaming pipeline is approximately:
+
+```text
+ERA5 hourly data
+    |
+    v
+ERA5Adapter
+    |
+    |-- scaling
+    |-- warmup/test split
+    |-- point or window construction
+    |-- add cyclic/positional features 
+    |
+    v
+AnomalyDetection
+    |
+    |-- train_warmup()
+    |-- run_stream()
+    |
+    v
+StreamTrainer
+    |
+    |-- VAE forward pass
+    |-- reconstruction / ELBO / latent metrics
+    |-- confidence calculation
+    |-- prediction
+    |-- adaptive score threshold
+    |-- optional online model update
+    |
+    v
+Run metrics and logs
+```
+
+The main implementation is located under:
+
+```text
+src/
+```
+
+
+## VAE Architectures
+
+The VAE implementations are located under:
+
+```text
+src/VAE/
+```
+
+### MLP-VAE
+
+A feed-forward VAE in which timesteps are processed without an internal recurrent or attention mechanism.
+
+The thesis experiments show that this relatively simple architecture can remain highly competitive when the anomaly is primarily value-based or when the required temporal information is supplied explicitly.
+
+### MLP-VAE-Cyclic
+
+An MLP-VAE extended with cyclic representations of known temporal variables.
+
+This variant of MLP-VAE model was studied during the thesis experiments to determine whether explicit calendar information could compensate for the lack of a sequential architecture.
+
+It was particularly effective for contextual anomalies in the ERA5 stream.
+
+### LSTM-VAE
+
+A recurrent VAE that represents temporal progression through LSTM layers.
+
+It is useful for examining settings in which neighbouring observations and their order contribute to the anomaly representation.
+
+### Transformer-VAE
+
+A Transformer-based VAE using self-attention and positional encoding.
+
+It provides the capacity to model relationships between positions within the input window. The thesis experiments examine how this architecture behaves under different streaming, latent, and threshold configurations, rather than assuming that attention is always beneficial.
+
+All architectures use the shared VAE functionality in:
+
+```text
+src/VAE/base_VAE.py
+```
+
+including reparameterisation, KL loss, reconstruction-loss handling, and common tensor processing.
+
+The pipeline uses tensors in the form:
+
+```text
+(batch, time, features)
+```
+
+## Streaming Behaviour
+
+The main distinction in the framework is between **point mode** and **window mode**.
+
+In point mode:
+
+```text
+T = 1
+```
+
+and each observation is scored independently.
+
+In window mode:
+
+```text
+T = seq_len
+```
+
+and a complete temporal window is processed at each streaming step.
+
+Window size and stride are important experimental parameters because they determine:
+
+- how much temporal context is available;
+- how much consecutive windows overlap;
+- how much of a window is occupied by an anomaly;
+- how frequently the model and threshold are updated.
+
+During streaming, the framework provides configurations for updating both the VAE weights and the adaptive score threshold.
+
+The raw anomaly-score threshold is estimated from recent scores using a rolling quantile and exponential smoothing. Each score is then converted to a confidence value based on scores' distance from this adaptive threshold. The final binary prediction uses a separate fixed confidence threshold.
+
+This distinction allows the raw-score distribution to adapt over time while keeping the prediction criterion defined in a common confidence space.
+
+## Multi-Run Experiments
+
+The repository also contains notebooks that run small controlled experiment suites.
+
+### Run a suite
+
+```text
+scripts/run_all_trials.py
+```
+
+Reads a suite YAML file and launches multiple experiment configurations, optionally across several GPUs.
+
+### Compare completed runs
+
+```text
+scripts/cross_compare.py
+```
+
+Produces comparison tables and plots for a completed experiment session.
+
+### Report metrics
+
+```text
+scripts/report_metrics.py
+```
+
+Collects metrics across a session tree and can invoke the cross-comparison tooling.
+
+### Single trial runner
+
+```text
+scripts/trial/run_trial.py
+```
+
+Runs one configuration and architecture:
+
+```bash
+python -m scripts.trial.run_trial <config.yaml> <ARCH>
+```
+
+Unlike the demo, where configuration files are fixed, the run_trial method takes a yaml config file as input, which is used to generate the environment (data adapter, VAE, offline and online learning, results) of each trial in a trial suite.
+
+
+The YAML files beside the case notebooks provide practical examples of the experiment-suite format.
+
+Shared configuration fragments are stored under:
+
+```text
+modules/
+```
+
+and combined through `config_layers`.
+
+### Seeds and reproducibility
+
+Every run is controlled by `common.seed` in its config. If left unset, a
+time-based seed is generated automatically, so results are not reproducible
+run to run unless a seed is pinned explicitly.
+
+A single seed is not a reliable basis for comparing architectures or
+configurations. `case01_clean_baseline.ipynb` shows this directly: seven
+otherwise-identical LSTM-VAE runs on the same clean baseline, differing only
+by seed, produced false-positive rates ranging from 22.4% to 89.6%. Drawing
+a conclusion from one seed risks mistaking run-to-run noise for a genuine
+effect of the variable being tested.
+
+`scripts/run_all_trials.py --seed` overrides `common.seed` for every run in the suite and is embedded in the output path (`seed_N/`), so results from different seeds land side by side instead of overwriting each other. `scripts/cross_compare.py` then aggregates across the `seed_N/` directories it finds, reporting mean/std rather than a single run's numbers.
 
 ## Data
 
-`data/era5/full_scale/split/` holds the real ERA5 hourly reanalysis export
-this work is based on, pre-split into warmup/test files — both `demo.py`'s
-`standalone_tests/` configs and the `notebooks/cases/` notebooks default to
-this data. `data/era5/mini_50pct/` and `data/era5/mini_28pct/` are smaller,
-faster-iteration real slices the case notebooks can opt into via
-`DATA_SOURCE`. See [`DATA_LICENSE.md`](DATA_LICENSE.md) for provenance,
-attribution, and full details on all three.
+The main ERA5 dataset used by the repository is stored under:
+
+```text
+data/era5/full_scale/split/
+```
+
+It contains hourly ERA5 reanalysis data pre-split into warmup and streaming-test segments.
+
+Two smaller real-data subsets are also included:
+
+```text
+data/era5/mini_50pct/
+data/era5/mini_28pct/
+```
+
+These are intended mainly for faster execution and experimentation.
+
+The full thesis results were produced under controlled experimental configurations and should not be assumed to reproduce exactly when the dataset scale, architecture parameters, or streaming settings are changed.
+
+For data provenance, attribution, and licensing information, see:
+
+[`DATA_LICENSE.md`](DATA_LICENSE.md)
+
+## Scope
+
+This repository is intended as a reproducible demonstration of selected thesis experiments, not as a complete general-purpose anomaly-detection library.
+
+The results represented here are specific to:
+
+- ERA5 climate data;
+- the selected variables;
+- the injected anomaly definitions;
+- the tested streaming configurations;
+- the VAE implementations used in the thesis.
+
+The main purpose of the repository is to make the experimental behaviour easier to inspect and reproduce, and to provide concrete examples of how architecture, temporal representation, and streaming configuration interact in VAE-based anomaly detection.
 
 ## License
 

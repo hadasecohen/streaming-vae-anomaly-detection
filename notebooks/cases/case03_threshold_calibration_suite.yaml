@@ -12,7 +12,7 @@
 run_module: scripts.trial.run_trial
 rq: case03_threshold_calibration
 base_config: ../../modules/era5_common.yaml
-output_dir: runs/regression/case03_threshold_calibration
+output_dir: runs/trials_suite/case03_threshold_calibration
 
 runs:
 

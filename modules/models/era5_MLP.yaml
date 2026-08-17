@@ -1,5 +1,5 @@
 # Layer: MLP-VAE architecture — identical to
-# thesis_code/tests/regression/modules/models/era5_MLP_v5.yaml (~703k params at latent_dim=24)
+# thesis_code/tests/trials_suite/modules/models/era5_MLP_v5.yaml (~703k params at latent_dim=24)
 model:
   type: "MLP"
   hidden_dims:     [512, 512, 384]

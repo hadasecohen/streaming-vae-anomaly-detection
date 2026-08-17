@@ -17,7 +17,7 @@
 run_module: scripts.trial.run_trial
 rq: case08_stride_alignment
 base_config: ../../modules/era5_common.yaml
-output_dir: runs/regression/case08_stride_alignment
+output_dir: runs/trials_suite/case08_stride_alignment
 
 runs:
 

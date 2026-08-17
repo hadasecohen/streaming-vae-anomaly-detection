@@ -16,9 +16,9 @@ value that suite's config_layers used for `compare.section`, e.g.
 "recon_loss", "beta", "threshold").
 
 Usage (from project root):
-    python scripts/plot_categorical_bars.py runs/regression/case06_reconstruction_loss --section recon_loss
-    python scripts/plot_categorical_bars.py runs/regression/case06_reconstruction_loss --section recon_loss --metric f1
-    python scripts/plot_categorical_bars.py runs/regression/case06_reconstruction_loss --section recon_loss --anomaly Contextual
+    python scripts/plot_categorical_bars.py runs/trials_suite/case06_reconstruction_loss --section recon_loss
+    python scripts/plot_categorical_bars.py runs/trials_suite/case06_reconstruction_loss --section recon_loss --metric f1
+    python scripts/plot_categorical_bars.py runs/trials_suite/case06_reconstruction_loss --section recon_loss --anomaly Contextual
 """
 
 import argparse

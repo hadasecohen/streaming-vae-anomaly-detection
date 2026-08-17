@@ -1,5 +1,5 @@
 # Layer: score by logvar-target MSE only.
-# Identical to thesis_code/tests/regression/modules/ensemble/logvar_target_mse.yaml.
+# Identical to thesis_code/tests/trials_suite/modules/ensemble/logvar_target_mse.yaml.
 training:
   ensemble:
     metric_weights:

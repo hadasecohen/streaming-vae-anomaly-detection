@@ -22,7 +22,7 @@
 run_module: scripts.trial.run_trial
 rq: case10_positional_encoding
 base_config: ../../modules/era5_common.yaml
-output_dir: runs/regression/case10_positional_encoding
+output_dir: runs/trials_suite/case10_positional_encoding
 
 runs:
 

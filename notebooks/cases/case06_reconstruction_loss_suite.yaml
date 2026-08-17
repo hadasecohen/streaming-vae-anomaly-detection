@@ -15,7 +15,7 @@
 run_module: scripts.trial.run_trial
 rq: case06_reconstruction_loss
 base_config: ../../modules/era5_common.yaml
-output_dir: runs/regression/case06_reconstruction_loss
+output_dir: runs/trials_suite/case06_reconstruction_loss
 
 runs:
 

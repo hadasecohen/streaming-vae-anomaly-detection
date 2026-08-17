@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 """
-Regression suite runner.
+Trials suite runner.
 
 Reads a suite YAML, generates all enabled level-combinations, deep-merges
 each combination on top of a base config, and runs them in parallel across
 available GPUs.
 
 Usage (run from the project root):
-    python scripts/run_regression.py path/to/suite.yaml
-    python scripts/run_regression.py suite.yaml --dry-run
-    python scripts/run_regression.py suite.yaml --gpus 0,1
-    python scripts/run_regression.py suite.yaml --session runs/regression/era5_golden/session_20260320_011131
-    python scripts/run_regression.py suite.yaml --session runs/regression/era5_golden/session_20260320_011131 --skip-existing
+    python scripts/run_all_trials.py path/to/suite.yaml
+    python scripts/run_all_trials.py suite.yaml --dry-run
+    python scripts/run_all_trials.py suite.yaml --gpus 0,1
+    python scripts/run_all_trials.py suite.yaml --session runs/trials_suite/era5_golden/session_20260320_011131
+    python scripts/run_all_trials.py suite.yaml --session runs/trials_suite/era5_golden/session_20260320_011131 --skip-existing
 
 Background (survives window close):
-    nohup python scripts/run_regression.py suite.yaml --session <session_dir> --skip-existing &
+    nohup python scripts/run_all_trials.py suite.yaml --session <session_dir> --skip-existing &
     tail -f <session_dir>/suite.log      # follow progress from any terminal
     cat  <session_dir>/suite_summary.txt # clean pass/fail/skip/disabled report
 
@@ -440,7 +440,7 @@ def write_suite_summary(
 # ── main ───────────────────────────────────────────────────────────────────────
 
 def main():
-    parser = argparse.ArgumentParser(description="Regression suite runner")
+    parser = argparse.ArgumentParser(description="Trials suite runner")
     parser.add_argument(
         "suite", nargs="?",
         default=os.path.join(os.getcwd(), "default_suite.yaml"),
@@ -491,7 +491,7 @@ def main():
             base_cfg = yaml.safe_load(f) or {}
 
     run_module  = suite.get("run_module", None)
-    output_base = suite.get("output_dir", "runs/regression")
+    output_base = suite.get("output_dir", "runs/trials_suite")
     if not os.path.isabs(output_base):
         output_base = os.path.join(os.getcwd(), output_base)
     if args.session:

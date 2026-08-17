@@ -5,7 +5,7 @@
 # false-positive rate vs. an early miscalibration burst.
 #
 # Runs on the FULL-SCALE real ERA5 export (755,568 rows, warmup_end=302227,
-# no stream.max_steps cap), exactly matching thesis_code/tests/regression/
+# no stream.max_steps cap), exactly matching thesis_code/tests/trials_suite/
 # experiments/q0/clean_baseline — a deliberate choice for this comparison:
 # testing on the mini 12-year slice showed the opposite FP ordering from the
 # thesis (TF_VAE calibrating *better* than MLP-Cyclic), and slicing
@@ -31,7 +31,7 @@
 run_module: scripts.trial.run_trial
 rq: case01_clean_baseline
 base_config: ../../modules/era5_common.yaml
-output_dir: runs/regression/case01_clean_baseline
+output_dir: runs/trials_suite/case01_clean_baseline
 
 runs:
 

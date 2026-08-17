@@ -9,7 +9,7 @@
 run_module: scripts.trial.run_trial
 rq: case02_cyclic_features
 base_config: ../../modules/era5_common.yaml
-output_dir: runs/regression/case02_cyclic_features
+output_dir: runs/trials_suite/case02_cyclic_features
 
 runs:
 

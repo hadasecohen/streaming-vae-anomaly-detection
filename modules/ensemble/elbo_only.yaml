@@ -1,5 +1,5 @@
 # Layer: score by full ELBO only.
-# Identical to thesis_code/tests/regression/modules/ensemble/elbo_only.yaml.
+# Identical to thesis_code/tests/trials_suite/modules/ensemble/elbo_only.yaml.
 training:
   ensemble:
     metric_weights:

@@ -1,5 +1,5 @@
 # Layer: Transformer-VAE architecture — identical to
-# thesis_code/tests/regression/modules/models/era5_TF_VAE_v5.yaml
+# thesis_code/tests/trials_suite/modules/models/era5_TF_VAE_v5.yaml
 # (use_multiscale/ms_num_scales dropped — not implemented in this port)
 model:
   type: "TF_VAE"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Report F1 and AUC across all regression session directories.
+Report F1 and AUC across all trials suite session directories.
 
 A session dir is any directory whose immediate children include anomaly-type
 subdirs (Contextual, Group, Point, Clean) or that already has cross_compare
@@ -8,19 +8,19 @@ output.  The script walks up to 2 levels below <root> to find them.
 
 Usage:
     # Read existing cross_compare output from all session dirs under v7/
-    python scripts/report_metrics.py runs/regression/v7
+    python scripts/report_metrics.py runs/trials_suite/v7
 
     # Run cross_compare first, then report
-    python scripts/report_metrics.py runs/regression/v7 --cc
+    python scripts/report_metrics.py runs/trials_suite/v7 --cc
 
     # Also generate analysis tables and plots
-    python scripts/report_metrics.py runs/regression/v7 --cc --table --plots
+    python scripts/report_metrics.py runs/trials_suite/v7 --cc --table --plots
 
     # Single session dir
-    python scripts/report_metrics.py runs/regression/v7/q1_arch/threshold_sweep --cc
+    python scripts/report_metrics.py runs/trials_suite/v7/q1_arch/threshold_sweep --cc
 
     # Pass extra flags through to cross_compare
-    python scripts/report_metrics.py runs/regression/v7 --cc --pca --exclude MLP
+    python scripts/report_metrics.py runs/trials_suite/v7 --cc --pca --exclude MLP
 """
 
 import argparse
@@ -162,10 +162,10 @@ def print_session_summary(session_dir: Path, root: Path, df: pd.DataFrame) -> No
             print(f"    {str(name):<55}  F1={f1}  AP={ap}  AUC={auc}{seed_s}")
 
 
-def _latest_regression_root() -> Path:
-    reg = Path("runs/regression")
+def _latest_trials_suite_root() -> Path:
+    reg = Path("runs/trials_suite")
     if not reg.exists():
-        reg = Path(__file__).resolve().parent.parent / "runs" / "regression"
+        reg = Path(__file__).resolve().parent.parent / "runs" / "trials_suite"
     versions = sorted(reg.glob("v*"), key=lambda p: int(p.name[1:]) if p.name[1:].isdigit() else 0)
     return versions[-1] if versions else reg
 
@@ -175,7 +175,7 @@ def main():
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    _default_root = str(_latest_regression_root())
+    _default_root = str(_latest_trials_suite_root())
     parser.add_argument("root", nargs="?", default=_default_root,
                         help=f"Session dir or parent dir containing session dirs "
                              f"(default: {_default_root})")

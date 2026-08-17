@@ -1,5 +1,5 @@
 # Layer: LSTM-VAE architecture — identical to
-# thesis_code/tests/regression/modules/models/era5_LSTM_v5.yaml
+# thesis_code/tests/trials_suite/modules/models/era5_LSTM_v5.yaml
 model:
   type: "LSTM"
   use_layer_norm: true

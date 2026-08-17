@@ -528,7 +528,7 @@ def create_run_files_obj(logging_cfg: Dict[str, Any]) -> RunFilesObj :
         # Auto-generated paths get a uniqueness suffix (_1, _2, ...) to avoid collisions.
         run_dir = resolve_unique_dir(base)
     else:
-        # Explicitly specified path (e.g. set by regression runner): use as-is so
+        # Explicitly specified path (e.g. set by the trials suite runner): use as-is so
         # outputs land in the same directory as _suite_config.yaml.
         os.makedirs(base, exist_ok=True)
         run_dir = base

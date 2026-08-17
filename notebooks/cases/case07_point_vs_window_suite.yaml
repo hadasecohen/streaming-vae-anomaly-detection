@@ -10,7 +10,7 @@
 run_module: scripts.trial.run_trial
 rq: case07_point_vs_window
 base_config: ../../modules/era5_common.yaml
-output_dir: runs/regression/case07_point_vs_window
+output_dir: runs/trials_suite/case07_point_vs_window
 
 runs:
 

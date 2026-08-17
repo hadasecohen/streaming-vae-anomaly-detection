@@ -1,5 +1,5 @@
 # Layer: force CPU for point-mode runs — identical to
-# thesis_code/tests/regression/modules/models/era5_Point_ext_default_v5.yaml
+# thesis_code/tests/trials_suite/modules/models/era5_Point_ext_default_v5.yaml
 # Point mode streams one gradient step per row with no batching, so per-op
 # launch overhead dominates and it runs faster on CPU than GPU.
 common:

@@ -7,10 +7,10 @@ the stream.  Works on both clean baseline (FPR only) and anomaly experiments.
 
 Usage:
     # Clean baseline — FPR only (no positives)
-    python scripts/plot_fpr_over_time.py runs/regression/v7/q0_baseline/clean_baseline
+    python scripts/plot_fpr_over_time.py runs/trials_suite/v7/q0_baseline/clean_baseline
 
     # Anomaly experiment — F1 over time
-    python scripts/plot_fpr_over_time.py runs/regression/v7/q1_arch/arch_comparison_best --metric f1
+    python scripts/plot_fpr_over_time.py runs/trials_suite/v7/q1_arch/arch_comparison_best --metric f1
 
     # Multiple metrics
     python scripts/plot_fpr_over_time.py <session_dir> --metric fpr recall

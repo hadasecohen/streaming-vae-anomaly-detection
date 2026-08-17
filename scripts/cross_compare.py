@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """
-Post-regression cross-comparison report.
+Post-trials-suite cross-comparison report.
 
 Scans a session directory, extracts metrics from all completed trial runs,
 and generates cross-comparison plots grouped by anomaly type.
 
 Usage:
-     <session_dir>
-    python tests/regression/cross_compare.pypython tests/regression/cross_compare.py <session_dir> --pca
-    python tests/regression/cross_compare.py runs/regression/era5_golden/  # uses latest session
+    python scripts/cross_compare.py <session_dir> --pca
+    python scripts/cross_compare.py runs/trials_suite/era5_golden/  # uses latest session
 
 Outputs in <session_dir>/cross_compare/:
     performance_table.csv - one row per run: F1/AUC/Precision/Recall at your configured
@@ -355,7 +354,7 @@ def discover_runs(session_dir: Path, recursive: bool = False) -> list[dict]:
             continue
         seen.add(d)
 
-        # Load the suite config written by run_regression for this run.
+        # Load the suite config written by run_all_trials for this run.
         # Primary location: same directory as trial_predictions.csv.
         # Fallback: sibling directory without the _N suffix — handles the legacy
         # layout where resolve_unique_dir bumped seed_42/ → seed_42_1/ for outputs
@@ -2149,7 +2148,7 @@ def plot_cost_efficiency(runs: list[dict], out_dir: Path) -> None:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Cross-comparison report for a regression session",
+        description="Cross-comparison report for a trials suite session",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=textwrap.dedent(__doc__).strip(),
     )
@@ -2164,7 +2163,7 @@ def main():
                              "(stale runs with wrong KL scale)")
     parser.add_argument("--recursive", action="store_true",
                         help="Also scan one level of sub-directories for trial runs. "
-                             "Used by run_regression when sub-suites have their own "
+                             "Used by run_all_trials when sub-suites have their own "
                              "output directories under the session root.")
     parser.add_argument("--output-dir", default=None,
                         help="Directory to write cross_compare outputs into "
