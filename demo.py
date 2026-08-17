@@ -10,11 +10,13 @@ Usage:
     python demo.py --anom point --arch mlp
     python demo.py --anom group --arch lstm --best
     python demo.py --anom contextual --arch transformer
+    python demo.py --gpu 1                       # pin to cuda:1 (default: cuda:0)
 """
 
 import argparse
 import glob
 import sys
+import tempfile
 
 import yaml
 
@@ -56,6 +58,10 @@ def parse_args(argv=None):
         "--best", action="store_true",
         help="Run the finetuned config instead of the baseline one",
     )
+    parser.add_argument(
+        "--gpu", type=int, default=None, metavar="N",
+        help="GPU index to run on, e.g. --gpu 1 for cuda:1 (default: cuda:0, as set in the config)",
+    )
     return parser.parse_args(argv)
 
 
@@ -84,9 +90,21 @@ def main(argv=None):
         cfg = yaml.safe_load(f)
     model_arch = cfg["model"]["type"]
 
+    if args.gpu is not None:
+        cfg["common"]["device"] = f"cuda:{args.gpu}"
+        # run_trial reads config_path from disk itself, so the override is
+        # written to a temp copy rather than mutating the tracked config.
+        tmp = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".yaml", prefix=f"demo_{dirname}_", delete=False,
+        )
+        yaml.safe_dump(cfg, tmp, sort_keys=False)
+        tmp.close()
+        config_path = tmp.name
+
     print(f"Experiment : {tuning}/{dirname}")
     print(f"Config     : {config_path}")
     print(f"Model arch : {model_arch}  (cyclic_recon={cfg['model'].get('cyclic_recon', False)})")
+    print(f"Device     : {cfg['common']['device']}")
     print(f"Run dir    : {cfg['common']['logging']['run_dir']}")
     print()
 
