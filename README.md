@@ -19,13 +19,21 @@ See [`DATA_LICENSE.md`](DATA_LICENSE.md) for details about the ERA5 data include
 
 ## Quickstart
 
+The framework may be tried by running `demo.py` from a local terminal, or by running 
+[`notebooks/demo_colab.ipynb`](notebooks/demo_colab.ipynb) on Google Colab, which 
+runs the same demo on Colab GPU runtime. It needs a couple of extra one-time steps (a GitHub token secret, runtime selection), see [Colab](#colab) section below.
+
+To execute `demo.py`:
+
 ```bash
 pip install -r requirements.txt
 python demo.py
 ```
 
-The demo runs a full test for one model on one anomaly type. Reasonable demo results would indicate that the source-code editor/colab environments are capable of running the notebooks of testcases. 
+The demo runs one fixed model on one fixed anomaly type — it is not meant for comparing architectures or tuning hyperparameters, and its configuration is not user-editable. Its purpose is a quick, simple environment check: a successful run confirms the local or Colab environment is set up correctly and shows what one model's output looks like, before moving on to the added complexity of a full test suite.
 By default, the demo runs **MLP-VAE-Cyclic** on the **Contextual** anomaly scenario.
+
+The demo's output will include commands such as  `python -m scripts.trial.run_trial <config> <ARCH>` used for the trial it just ran, pointing to a config under [`standalone_tests/`](#baseline-and-fine-tuned-configurations), which is convenient for setting models for comparison or tuning configurations.
 
 Other combinations can be selected using:
 

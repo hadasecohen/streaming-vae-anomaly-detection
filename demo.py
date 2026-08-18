@@ -87,6 +87,7 @@ def resolve_experiment(anom: str, arch: str, best: bool):
 def main(argv=None):
     args = parse_args(argv)
     tuning, dirname, config_path = resolve_experiment(args.anom, args.arch, args.best)
+    tracked_config_path = config_path  # the real standalone_tests/ path, before any temp-file device override below
 
     with open(config_path) as f:
         cfg = yaml.safe_load(f)
@@ -128,6 +129,13 @@ def main(argv=None):
     print(f"Model arch : {model_arch}  (cyclic_recon={cfg['model'].get('cyclic_recon', False)})")
     print(f"Device     : {cfg['common']['device']}")
     print(f"Run dir    : {cfg['common']['logging']['run_dir']}")
+    print()
+    print("This demo runs one fixed model/anomaly pair for a quick environment check.")
+    print("To compare architectures or tune hyperparameters directly, run the same")
+    print("experiment via its tracked config instead of demo.py:")
+    print()
+    print("    pip install -r requirements.txt")
+    print(f"    python -m scripts.trial.run_trial {tracked_config_path} {model_arch}")
     print()
 
     run_trial(config_path, model_arch)
