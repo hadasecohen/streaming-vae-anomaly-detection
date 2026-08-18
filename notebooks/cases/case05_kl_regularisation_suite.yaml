@@ -16,7 +16,6 @@ output_dir: runs/trials_suite/case05_kl_regularisation
 runs:
 
 - name: MLP_beta_0_1
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: beta, variant: "0.1", order: 1}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -25,7 +24,6 @@ runs:
   config: {training: {elbo_beta: 0.1}}
 
 - name: MLP_beta_1_0
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: beta, variant: "1.0", order: 2}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -34,7 +32,6 @@ runs:
   config: {training: {elbo_beta: 1.0}}
 
 - name: MLP_beta_3_0
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: beta, variant: "3.0", order: 3}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -43,7 +40,6 @@ runs:
   config: {training: {elbo_beta: 3.0}}
 
 - name: LSTM_beta_0_1
-  model_arch: LSTM
   compare: {anomaly: Contextual, arch: LSTM, section: beta, variant: "0.1", order: 4}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -52,7 +48,6 @@ runs:
   config: {training: {elbo_beta: 0.1}}
 
 - name: LSTM_beta_1_0
-  model_arch: LSTM
   compare: {anomaly: Contextual, arch: LSTM, section: beta, variant: "1.0", order: 5}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -61,7 +56,6 @@ runs:
   config: {training: {elbo_beta: 1.0}}
 
 - name: LSTM_beta_3_0
-  model_arch: LSTM
   compare: {anomaly: Contextual, arch: LSTM, section: beta, variant: "3.0", order: 6}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml

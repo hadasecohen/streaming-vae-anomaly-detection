@@ -15,7 +15,6 @@ output_dir: runs/trials_suite/case07_point_vs_window
 runs:
 
 - name: MLP_plain_point
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: plain, variant: point, order: 1}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -24,7 +23,6 @@ runs:
   - ../../modules/feat_eng/cyclic_off.yaml
 
 - name: MLP_plain_window
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: plain, variant: window, order: 2}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -33,7 +31,6 @@ runs:
   - ../../modules/feat_eng/cyclic_off.yaml
 
 - name: MLP_cyclic_point
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP_Cyclic, section: cyclic, variant: point, order: 1}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -42,7 +39,6 @@ runs:
   - ../../modules/feat_eng/cyclic_recon.yaml
 
 - name: MLP_cyclic_window
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP_Cyclic, section: cyclic, variant: window, order: 2}
   config_layers:
   - ../../modules/models/era5_MLP.yaml

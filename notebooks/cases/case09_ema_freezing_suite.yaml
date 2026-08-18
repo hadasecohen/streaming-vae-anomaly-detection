@@ -22,7 +22,6 @@ output_dir: runs/trials_suite/case09_ema_freezing
 runs:
 
 - name: LSTM_ema_0_00
-  model_arch: LSTM
   compare: {anomaly: Group, arch: LSTM, section: ema, variant: "0.0", order: 1}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -31,7 +30,6 @@ runs:
   config: {training: {threshold: {ema: 0.0}}}
 
 - name: LSTM_ema_0_05
-  model_arch: LSTM
   compare: {anomaly: Group, arch: LSTM, section: ema, variant: "0.05", order: 2}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -40,7 +38,6 @@ runs:
   config: {training: {threshold: {ema: 0.05}}}
 
 - name: LSTM_ema_0_2
-  model_arch: LSTM
   compare: {anomaly: Group, arch: LSTM, section: ema, variant: "0.2", order: 3}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -49,7 +46,6 @@ runs:
   # ema: 0.2 is already the era5_common.yaml default — no override needed
 
 - name: LSTM_ema_0_5
-  model_arch: LSTM
   compare: {anomaly: Group, arch: LSTM, section: ema, variant: "0.5", order: 4}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -58,7 +54,6 @@ runs:
   config: {training: {threshold: {ema: 0.5}}}
 
 - name: LSTM_ema_0_8
-  model_arch: LSTM
   compare: {anomaly: Group, arch: LSTM, section: ema, variant: "0.8", order: 5}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml

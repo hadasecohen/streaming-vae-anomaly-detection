@@ -33,7 +33,7 @@ python demo.py
 The demo runs one fixed model on one fixed [anomaly type](#anomaly-scenarios) — it is not meant for comparing [architectures](#vae-architectures) or tuning hyperparameters, and its configuration is not user-editable. Its purpose is a quick, simple environment check: a successful run confirms the local or Colab environment is set up correctly and shows what one model's output looks like, before moving on to the added complexity of a full test suite.
 By default, the demo runs **MLP-VAE-Cyclic** on the **Contextual** anomaly scenario.
 
-The demo's output will include commands such as  `python -m scripts.trial.run_trial <config> <ARCH>` used for the trial it just ran, pointing to a config under [`standalone_tests/`](#baseline-and-fine-tuned-configurations), which is convenient for setting models for comparison or tuning configurations.
+The demo's output will include a command such as `python -m scripts.trial.run_trial <config>` for the trial it just ran, pointing to a config under [`standalone_tests/`](#baseline-and-fine-tuned-configurations), which is convenient for setting models for comparison or tuning configurations.
 
 Other combinations can be selected using:
 
@@ -125,7 +125,7 @@ standalone_tests/
 contains representative configurations for each [architecture](#vae-architectures) and [anomaly type](#anomaly-scenarios), run directly via:
 
 ```bash
-python -m scripts.trial.run_trial <config.yaml> <ARCH>
+python -m scripts.trial.run_trial <config.yaml>
 ```
 
 Each scenario compares a common baseline configuration with a configuration adjusted according to the corresponding thesis experiments.
@@ -366,13 +366,13 @@ Collects metrics across a session tree and can invoke the cross-comparison tooli
 scripts/trial/run_trial.py
 ```
 
-Runs one configuration and architecture:
+Runs one configuration:
 
 ```bash
-python -m scripts.trial.run_trial <config.yaml> <ARCH>
+python -m scripts.trial.run_trial <config.yaml>
 ```
 
-Unlike the demo, where configuration files are fixed, the run_trial method takes a yaml config file as input, which is used to generate the environment (data adapter, VAE, offline and online learning, results) of each trial in a trial suite.
+The architecture is read from the config's own `model.type` field, so it doesn't need to be passed separately (an explicit `<ARCH>` second argument is still accepted as an override, but is redundant in normal use). Unlike the demo, where configuration files are fixed, the run_trial method takes a yaml config file as input, which is used to generate the environment (data adapter, VAE, offline and online learning, results) of each trial in a trial suite.
 
 
 The YAML files beside the case notebooks provide practical examples of the experiment-suite format.

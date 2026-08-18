@@ -7,8 +7,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_group_LSTM_config_standalone.yaml",
-                "LSTM"
+                "standalone_tests/baseline/era5_group_LSTM_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -23,8 +22,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_group_Transformer_config_standalone.yaml",
-                "TF_VAE"
+                "standalone_tests/baseline/era5_group_Transformer_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -39,8 +37,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_group_MLP_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/baseline/era5_group_MLP_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -55,8 +52,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_group_MLP_Cyclic_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/baseline/era5_group_MLP_Cyclic_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -71,8 +67,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_contextual_LSTM_config_standalone.yaml",
-                "LSTM"
+                "standalone_tests/baseline/era5_contextual_LSTM_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -87,8 +82,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_contextual_MLP_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/baseline/era5_contextual_MLP_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -103,8 +97,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_contextual_MLP_Cyclic_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/baseline/era5_contextual_MLP_Cyclic_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -119,8 +112,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_contextual_Transformer_config_standalone.yaml",
-                "TF_VAE"
+                "standalone_tests/baseline/era5_contextual_Transformer_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -135,8 +127,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_point_MLP_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/baseline/era5_point_MLP_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -151,8 +142,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_point_MLP_Cyclic_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/baseline/era5_point_MLP_Cyclic_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -167,8 +157,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/finetuned/era5_contextual_LSTM_config_standalone.yaml",
-                "LSTM"
+                "standalone_tests/finetuned/era5_contextual_LSTM_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -183,8 +172,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/finetuned/era5_contextual_MLP_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/finetuned/era5_contextual_MLP_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -199,8 +187,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/finetuned/era5_contextual_MLP_Cyclic_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/finetuned/era5_contextual_MLP_Cyclic_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -215,8 +202,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/finetuned/era5_contextual_Transformer_config_standalone.yaml",
-                "TF_VAE"
+                "standalone_tests/finetuned/era5_contextual_Transformer_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -231,8 +217,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/finetuned/era5_group_LSTM_config_standalone.yaml",
-                "LSTM"
+                "standalone_tests/finetuned/era5_group_LSTM_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -247,8 +232,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/finetuned/era5_group_MLP_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/finetuned/era5_group_MLP_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -263,8 +247,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/finetuned/era5_group_MLP_Cyclic_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/finetuned/era5_group_MLP_Cyclic_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -279,8 +262,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/finetuned/era5_group_Transformer_config_standalone.yaml",
-                "TF_VAE"
+                "standalone_tests/finetuned/era5_group_Transformer_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -295,8 +277,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/finetuned/era5_point_MLP_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/finetuned/era5_point_MLP_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -311,8 +292,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/finetuned/era5_point_MLP_Cyclic_config_standalone.yaml",
-                "MLP"
+                "standalone_tests/finetuned/era5_point_MLP_Cyclic_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",

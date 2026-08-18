@@ -17,7 +17,6 @@ output_dir: runs/trials_suite/case03_threshold_calibration
 runs:
 
 - name: LSTM_threshold_0_7
-  model_arch: LSTM
   compare: {anomaly: Group, arch: LSTM, section: threshold, variant: "0.7", order: 1}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -26,7 +25,6 @@ runs:
   config: {training: {anom_if_score_above: 0.7}}
 
 - name: LSTM_threshold_0_8
-  model_arch: LSTM
   compare: {anomaly: Group, arch: LSTM, section: threshold, variant: "0.8", order: 2}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -35,7 +33,6 @@ runs:
   config: {training: {anom_if_score_above: 0.8}}
 
 - name: LSTM_threshold_0_9
-  model_arch: LSTM
   compare: {anomaly: Group, arch: LSTM, section: threshold, variant: "0.9", order: 3}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -44,7 +41,6 @@ runs:
   config: {training: {anom_if_score_above: 0.9}}
 
 - name: LSTM_threshold_0_95
-  model_arch: LSTM
   compare: {anomaly: Group, arch: LSTM, section: threshold, variant: "0.95", order: 4}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml

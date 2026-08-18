@@ -17,7 +17,6 @@ output_dir: runs/trials_suite/case04_latent_dimension
 runs:
 
 - name: MLP_Z3
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: latent_dim, variant: "3", order: 1}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -27,7 +26,6 @@ runs:
   config: {model: {latent_dim: 3}}
 
 - name: MLP_Z8
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: latent_dim, variant: "8", order: 2}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -37,7 +35,6 @@ runs:
   config: {model: {latent_dim: 8}}
 
 - name: MLP_Z24
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: latent_dim, variant: "24", order: 3}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -47,7 +44,6 @@ runs:
   config: {model: {latent_dim: 24}}
 
 - name: MLP_Z48
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: latent_dim, variant: "48", order: 4}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -57,7 +53,6 @@ runs:
   config: {model: {latent_dim: 48}}
 
 - name: LSTM_Z3
-  model_arch: LSTM
   compare: {anomaly: Contextual, arch: LSTM, section: latent_dim, variant: "3", order: 5}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -67,7 +62,6 @@ runs:
   config: {model: {latent_dim: 3}}
 
 - name: LSTM_Z8
-  model_arch: LSTM
   compare: {anomaly: Contextual, arch: LSTM, section: latent_dim, variant: "8", order: 6}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -77,7 +71,6 @@ runs:
   config: {model: {latent_dim: 8}}
 
 - name: LSTM_Z24
-  model_arch: LSTM
   compare: {anomaly: Contextual, arch: LSTM, section: latent_dim, variant: "24", order: 7}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -87,7 +80,6 @@ runs:
   config: {model: {latent_dim: 24}}
 
 - name: LSTM_Z48
-  model_arch: LSTM
   compare: {anomaly: Contextual, arch: LSTM, section: latent_dim, variant: "48", order: 8}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml

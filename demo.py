@@ -135,7 +135,7 @@ def main(argv=None):
     print("experiment via its tracked config instead of demo.py:")
     print()
     print("    pip install -r requirements.txt")
-    print(f"    python -m scripts.trial.run_trial {tracked_config_path} {model_arch}")
+    print(f"    python -m scripts.trial.run_trial {tracked_config_path}")
     print()
 
     run_trial(config_path, model_arch)

@@ -27,7 +27,6 @@ output_dir: runs/trials_suite/case10_positional_encoding
 runs:
 
 - name: MLP_baseline
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: mlp_pos_enc, variant: baseline, order: 1}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -37,7 +36,6 @@ runs:
   config: {model: {pos_enc: none}}
 
 - name: MLP_decoder_generic
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: mlp_pos_enc, variant: decoder_generic, order: 2}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -47,7 +45,6 @@ runs:
   config: {model: {pos_enc: dec, use_hourly_freqs: false}}
 
 - name: MLP_decoder_hourly
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: mlp_pos_enc, variant: decoder_hourly, order: 3}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -57,7 +54,6 @@ runs:
   config: {model: {pos_enc: dec, use_hourly_freqs: true}}
 
 - name: LSTM_baseline
-  model_arch: LSTM
   compare: {anomaly: Contextual, arch: LSTM, section: lstm_pos_enc, variant: baseline, order: 1}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -67,7 +63,6 @@ runs:
   config: {model: {pos_enc: none}}
 
 - name: LSTM_encoder_generic
-  model_arch: LSTM
   compare: {anomaly: Contextual, arch: LSTM, section: lstm_pos_enc, variant: encoder_generic, order: 2}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -77,7 +72,6 @@ runs:
   config: {model: {pos_enc: enc, use_hourly_freqs: false}}
 
 - name: LSTM_encoder_hourly
-  model_arch: LSTM
   compare: {anomaly: Contextual, arch: LSTM, section: lstm_pos_enc, variant: encoder_hourly, order: 3}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml

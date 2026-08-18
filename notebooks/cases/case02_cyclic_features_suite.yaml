@@ -14,7 +14,6 @@ output_dir: runs/trials_suite/case02_cyclic_features
 runs:
 
 - name: MLP_plain
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: cyclic, variant: "off", order: 1}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -23,7 +22,6 @@ runs:
   - ../../modules/feat_eng/cyclic_off.yaml
 
 - name: MLP_cyclic_input_only
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: cyclic, variant: input_only, order: 2}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -32,7 +30,6 @@ runs:
   - ../../modules/feat_eng/cyclic_on.yaml
 
 - name: MLP_cyclic_recon
-  model_arch: MLP
   compare: {anomaly: Contextual, arch: MLP, section: cyclic, variant: recon, order: 3}
   config_layers:
   - ../../modules/models/era5_MLP.yaml

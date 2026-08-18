@@ -36,7 +36,6 @@ output_dir: runs/trials_suite/case01_clean_baseline
 runs:
 
 - name: MLP_Clean
-  model_arch: MLP
   compare: {anomaly: Clean, arch: MLP, section: baseline, variant: MLP, order: 1}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -46,7 +45,6 @@ runs:
     plot: {latent_umap: true}
 
 - name: MLP_Cyclic_Clean
-  model_arch: MLP
   compare: {anomaly: Clean, arch: MLP_Cyclic, section: baseline, variant: MLP_Cyclic, order: 2}
   config_layers:
   - ../../modules/models/era5_MLP.yaml
@@ -57,7 +55,6 @@ runs:
     plot: {latent_umap: true}
 
 - name: LSTM_Clean
-  model_arch: LSTM
   compare: {anomaly: Clean, arch: LSTM, section: baseline, variant: LSTM, order: 3}
   config_layers:
   - ../../modules/models/era5_LSTM.yaml
@@ -67,7 +64,6 @@ runs:
     plot: {latent_umap: true}
 
 - name: TF_VAE_Clean
-  model_arch: TF_VAE
   compare: {anomaly: Clean, arch: TF_VAE, section: baseline, variant: TF_VAE, order: 4}
   config_layers:
   - ../../modules/models/era5_TF_VAE.yaml
