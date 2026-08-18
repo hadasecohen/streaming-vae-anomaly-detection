@@ -19,7 +19,11 @@ venv/
 # Local-only tooling that reaches outside this repo (e.g. into thesis_code,
 # a machine-local path not shipped here). Only these scripts' *outputs*
 # (small, self-contained reference files) are meant to be committed.
-scripts/local/
+# compile_src.py is self-contained (only touches src/) and is needed by
+# scripts/compile_test_colab.ipynb to build on Colab's own Linux runtime —
+# tracked despite otherwise living among local-only tooling below.
+scripts/local/*
+!scripts/local/compile_src.py
 
 scripts/compare_to_thesis.py
 scripts/generate_mini_era5.py

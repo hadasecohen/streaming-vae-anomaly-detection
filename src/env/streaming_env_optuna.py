@@ -62,19 +62,18 @@ class StreamEnvOptuna(StreamEnv):
         
         model_type = cfg["model"]["type"]
         # Lazy import so this file doesn’t require model at import time
-        match model_type:
-            case "MLP":
-                from src.VAE.mlp_VAE import MLP_VAE
-            case "MLP_Attn" | "MLP attn":
-                from src.VAE.mlp_attn_VAE import MLP_ATTN_VAE
-            case "LSTM":
-                from src.VAE.lstm_VAE import LSTM_VAE
-            case "LSTM_Attn" | "LSTM attn":
-                from src.VAE.lstm_attn_VAE import LSTM_ATTN_VAE
-            case "TF_VAE":
-                from src.VAE.tf_VAE import TF_VAE
-            case _:
-                raise ValueError(f"No such model: {model_type}")
+        if model_type == "MLP":
+            from src.VAE.mlp_VAE import MLP_VAE
+        elif model_type in ("MLP_Attn", "MLP attn"):
+            from src.VAE.mlp_attn_VAE import MLP_ATTN_VAE
+        elif model_type == "LSTM":
+            from src.VAE.lstm_VAE import LSTM_VAE
+        elif model_type in ("LSTM_Attn", "LSTM attn"):
+            from src.VAE.lstm_attn_VAE import LSTM_ATTN_VAE
+        elif model_type == "TF_VAE":
+            from src.VAE.tf_VAE import TF_VAE
+        else:
+            raise ValueError(f"No such model: {model_type}")
 
 
         def objective(trial: optuna.Trial,
@@ -160,129 +159,128 @@ class StreamEnvOptuna(StreamEnv):
                 "prior_variance": prior_variance,
                 "seq_len": seq_len,
             }
-            match model_type:
-                case "MLP" :
-                    enc_depth = suggest_param(trial, "enc_depth", model_cfg["enc_depth"], ctx)
-                    ctx["enc_depth"] = enc_depth            
+            if model_type == "MLP":
+                enc_depth = suggest_param(trial, "enc_depth", model_cfg["enc_depth"], ctx)
+                ctx["enc_depth"] = enc_depth            
                     
-                    hidden_dims = suggest_param(trial, "widths_list", model_cfg["hidden_dims"], ctx)
-                    acts        = suggest_param(trial, "acts_list", model_cfg["acts"], ctx)
-                    drops       = suggest_param(trial, "drops_list", model_cfg["drops"], ctx)
+                hidden_dims = suggest_param(trial, "widths_list", model_cfg["hidden_dims"], ctx)
+                acts        = suggest_param(trial, "acts_list", model_cfg["acts"], ctx)
+                drops       = suggest_param(trial, "drops_list", model_cfg["drops"], ctx)
                     
-                    # Force last dropout = 0
-                    if len(drops) > 0:
-                        drops[-1] = 0.0
+                # Force last dropout = 0
+                if len(drops) > 0:
+                    drops[-1] = 0.0
 
-                    model = MLP_VAE(
-                        input_dim=input_dim,
-                        latent_dim=latent_dim,
-                        loss_func=loss_fn,
-                        pooling=pooling,
-                        pool_latent=pool_latent,
-                        prior_variance=prior_variance,
-                        enc_dec_hidden_dims=hidden_dims,
-                        enc_dec_activation_funcs=acts,
-                        enc_dec_dropouts=drops,
-                        clamp_logvar=clamp_logvar,
-                        clamp_bounds=clamp_bounds,
-                        pos_enc_freqs=pos_enc_freqs,
-                        pos_enc_mode=pos_enc_mode,
-                        kl_mode=kl_mode,
-                        kl_auto_scale=kl_auto_scale,
-                    ).to(device)
+                model = MLP_VAE(
+                    input_dim=input_dim,
+                    latent_dim=latent_dim,
+                    loss_func=loss_fn,
+                    pooling=pooling,
+                    pool_latent=pool_latent,
+                    prior_variance=prior_variance,
+                    enc_dec_hidden_dims=hidden_dims,
+                    enc_dec_activation_funcs=acts,
+                    enc_dec_dropouts=drops,
+                    clamp_logvar=clamp_logvar,
+                    clamp_bounds=clamp_bounds,
+                    pos_enc_freqs=pos_enc_freqs,
+                    pos_enc_mode=pos_enc_mode,
+                    kl_mode=kl_mode,
+                    kl_auto_scale=kl_auto_scale,
+                ).to(device)
 
-                    chosen_cfg["enc_dec_hidden_dims"] = hidden_dims,
-                    chosen_cfg["enc_dec_activation_funcs"] = acts
-                    chosen_cfg["enc_dec_dropouts"] = drops
+                chosen_cfg["enc_dec_hidden_dims"] = hidden_dims,
+                chosen_cfg["enc_dec_activation_funcs"] = acts
+                chosen_cfg["enc_dec_dropouts"] = drops
 
-                case "LSTM" :
-                    enc_hidden_dim = suggest_param(trial, "enc_hidden_dim", model_cfg["enc_hidden_dim"], ctx)
-                    enc_num_layers =  suggest_param(trial, "enc_num_layers", model_cfg["enc_num_layers"], ctx)
-                    enc_dropout = suggest_param(trial, "enc_dropout", model_cfg["enc_dropout"], ctx) 
+            elif model_type == "LSTM":
+                enc_hidden_dim = suggest_param(trial, "enc_hidden_dim", model_cfg["enc_hidden_dim"], ctx)
+                enc_num_layers =  suggest_param(trial, "enc_num_layers", model_cfg["enc_num_layers"], ctx)
+                enc_dropout = suggest_param(trial, "enc_dropout", model_cfg["enc_dropout"], ctx) 
 
-                    dec_hidden_dim_opts = model_cfg.get("dec_hidden_dim", None)
-                    dec_num_layers_opts = model_cfg.get("dec_num_layers", 1)
-                    dec_dropout_opts = model_cfg.get("dec_dropout", 0.0)
+                dec_hidden_dim_opts = model_cfg.get("dec_hidden_dim", None)
+                dec_num_layers_opts = model_cfg.get("dec_num_layers", 1)
+                dec_dropout_opts = model_cfg.get("dec_dropout", 0.0)
 
-                    dec_hidden_dim = None if dec_hidden_dim_opts == None else suggest_param(trial, "dec_hidden_dim", dec_hidden_dim_opts, ctx)
-                    dec_num_layers = suggest_param(trial, "dec_num_layers", dec_num_layers_opts, ctx)
-                    dec_dropout =    suggest_param(trial, "dec_dropout", dec_dropout_opts, ctx)
+                dec_hidden_dim = None if dec_hidden_dim_opts == None else suggest_param(trial, "dec_hidden_dim", dec_hidden_dim_opts, ctx)
+                dec_num_layers = suggest_param(trial, "dec_num_layers", dec_num_layers_opts, ctx)
+                dec_dropout =    suggest_param(trial, "dec_dropout", dec_dropout_opts, ctx)
                     
-                    enc_bidirectional = suggest_param(trial, "enc_bidirectional", model_cfg["enc_bidirectional"], ctx)
+                enc_bidirectional = suggest_param(trial, "enc_bidirectional", model_cfg["enc_bidirectional"], ctx)
 
-                    model = LSTM_VAE(
-                        input_dim=input_dim,
-                        latent_dim=latent_dim,
-                        loss_func=loss_fn,
-                        pooling=pooling,
-                        pool_latent=pool_latent,
-                        prior_variance=prior_variance,
+                model = LSTM_VAE(
+                    input_dim=input_dim,
+                    latent_dim=latent_dim,
+                    loss_func=loss_fn,
+                    pooling=pooling,
+                    pool_latent=pool_latent,
+                    prior_variance=prior_variance,
                         
-                        # ----- encoder -----
-                        enc_hidden_dim=enc_hidden_dim,
-                        enc_num_layers=enc_num_layers,
-                        enc_dropout=enc_dropout,
+                    # ----- encoder -----
+                    enc_hidden_dim=enc_hidden_dim,
+                    enc_num_layers=enc_num_layers,
+                    enc_dropout=enc_dropout,
 
-                        # ----- decoder -----
-                        dec_hidden_dim=dec_hidden_dim, # dec_hidden_dim,   # SAME as encoder hidden size
-                        dec_num_layers=dec_num_layers, # dec_num_layers,
-                        dec_dropout=dec_dropout, # dec_dropout,
+                    # ----- decoder -----
+                    dec_hidden_dim=dec_hidden_dim, # dec_hidden_dim,   # SAME as encoder hidden size
+                    dec_num_layers=dec_num_layers, # dec_num_layers,
+                    dec_dropout=dec_dropout, # dec_dropout,
 
-                        enc_bidirectional = enc_bidirectional,
+                    enc_bidirectional = enc_bidirectional,
 
-                        clamp_logvar=clamp_logvar,
-                        clamp_bounds=clamp_bounds,
-                        kl_mode=kl_mode,
-                        kl_auto_scale=kl_auto_scale,
-                        pos_enc_freqs=pos_enc_freqs,
-                        pos_enc_mode=pos_enc_mode,
-                    ).to(self.device)
+                    clamp_logvar=clamp_logvar,
+                    clamp_bounds=clamp_bounds,
+                    kl_mode=kl_mode,
+                    kl_auto_scale=kl_auto_scale,
+                    pos_enc_freqs=pos_enc_freqs,
+                    pos_enc_mode=pos_enc_mode,
+                ).to(self.device)
 
-                    chosen_cfg["enc_hidden_dim"] = enc_hidden_dim
-                    chosen_cfg["enc_num_layers"] = enc_num_layers
-                    chosen_cfg["enc_dropout"] = enc_dropout
-                    chosen_cfg["enc_bidirectional"] = enc_bidirectional
+                chosen_cfg["enc_hidden_dim"] = enc_hidden_dim
+                chosen_cfg["enc_num_layers"] = enc_num_layers
+                chosen_cfg["enc_dropout"] = enc_dropout
+                chosen_cfg["enc_bidirectional"] = enc_bidirectional
 
-                    chosen_cfg["dec_hidden_dim"] = dec_hidden_dim
-                    chosen_cfg["dec_num_layers"] = dec_num_layers
-                    chosen_cfg["dec_dropout"] = dec_dropout
+                chosen_cfg["dec_hidden_dim"] = dec_hidden_dim
+                chosen_cfg["dec_num_layers"] = dec_num_layers
+                chosen_cfg["dec_dropout"] = dec_dropout
 
-                case "TF_VAE":
-                    tf_d_model        = suggest_param(trial, "d_model",        model_cfg["d_model"],        ctx)
-                    tf_num_enc_layers = suggest_param(trial, "num_enc_layers", model_cfg["num_enc_layers"], ctx)
-                    tf_num_dec_layers = suggest_param(trial, "num_dec_layers", model_cfg["num_dec_layers"], ctx)
-                    tf_nhead          = model_cfg.get("nhead", 4)
-                    tf_ff_dim         = model_cfg.get("ff_dim", None)
-                    tf_dropout        = suggest_param(trial, "dropout",        model_cfg.get("dropout", 0.1), ctx)
-                    tf_activation     = model_cfg.get("activation", "gelu")
-                    tf_norm_first     = model_cfg.get("norm_first", True)
+            elif model_type == "TF_VAE":
+                tf_d_model        = suggest_param(trial, "d_model",        model_cfg["d_model"],        ctx)
+                tf_num_enc_layers = suggest_param(trial, "num_enc_layers", model_cfg["num_enc_layers"], ctx)
+                tf_num_dec_layers = suggest_param(trial, "num_dec_layers", model_cfg["num_dec_layers"], ctx)
+                tf_nhead          = model_cfg.get("nhead", 4)
+                tf_ff_dim         = model_cfg.get("ff_dim", None)
+                tf_dropout        = suggest_param(trial, "dropout",        model_cfg.get("dropout", 0.1), ctx)
+                tf_activation     = model_cfg.get("activation", "gelu")
+                tf_norm_first     = model_cfg.get("norm_first", True)
 
-                    model = TF_VAE(
-                        input_dim=input_dim,
-                        latent_dim=latent_dim,
-                        loss_func=loss_fn,
-                        pooling=pooling,
-                        pool_latent=pool_latent,
-                        prior_variance=prior_variance,
-                        clamp_logvar=clamp_logvar,
-                        clamp_bounds=clamp_bounds,
-                        kl_mode=kl_mode,
-                        kl_auto_scale=kl_auto_scale,
-                        d_model=tf_d_model,
-                        num_enc_layers=tf_num_enc_layers,
-                        num_dec_layers=tf_num_dec_layers,
-                        nhead=tf_nhead,
-                        ff_dim=tf_ff_dim,
-                        dropout=tf_dropout,
-                        activation=tf_activation,
-                        norm_first=tf_norm_first,
-                    ).to(device)
+                model = TF_VAE(
+                    input_dim=input_dim,
+                    latent_dim=latent_dim,
+                    loss_func=loss_fn,
+                    pooling=pooling,
+                    pool_latent=pool_latent,
+                    prior_variance=prior_variance,
+                    clamp_logvar=clamp_logvar,
+                    clamp_bounds=clamp_bounds,
+                    kl_mode=kl_mode,
+                    kl_auto_scale=kl_auto_scale,
+                    d_model=tf_d_model,
+                    num_enc_layers=tf_num_enc_layers,
+                    num_dec_layers=tf_num_dec_layers,
+                    nhead=tf_nhead,
+                    ff_dim=tf_ff_dim,
+                    dropout=tf_dropout,
+                    activation=tf_activation,
+                    norm_first=tf_norm_first,
+                ).to(device)
 
-                    chosen_cfg["d_model"]        = tf_d_model
-                    chosen_cfg["num_enc_layers"] = tf_num_enc_layers
-                    chosen_cfg["num_dec_layers"] = tf_num_dec_layers
-                    chosen_cfg["nhead"]          = tf_nhead
-                    chosen_cfg["dropout"]        = tf_dropout
+                chosen_cfg["d_model"]        = tf_d_model
+                chosen_cfg["num_enc_layers"] = tf_num_enc_layers
+                chosen_cfg["num_dec_layers"] = tf_num_dec_layers
+                chosen_cfg["nhead"]          = tf_nhead
+                chosen_cfg["dropout"]        = tf_dropout
 
             weight_init = model_cfg.get("weight_init", "xavier_uniform")
             model.apply_weight_init(weight_init)

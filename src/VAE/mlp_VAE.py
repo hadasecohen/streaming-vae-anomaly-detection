@@ -36,7 +36,7 @@ class MLP_VAE(VAE):
                  # Normalization: None | "layer" | "batch"
                  norm: Optional[str] = None,
                  clamp_logvar : bool = False,
-                 clamp_bounds: float = 8.0,
+                 clamp_bounds: list = None,
                  pos_enc_freqs: Optional[List[float]] = None,
                  pos_enc_mode: str = "dec",
                  pooling_attn_dim: int | None = None,

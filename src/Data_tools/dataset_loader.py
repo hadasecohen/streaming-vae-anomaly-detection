@@ -17,11 +17,10 @@ data:
 def data_fn_builder(cfg, logger: Logger):
     name = cfg["name"].lower()
 
-    match name:
-        case "era5":
-            return load_era5_dataset(cfg, logger)
-        case _:
-            raise ValueError(f"Unknown dataset name: {cfg['name']}. This curated build only supports 'era5'.")
+    if name == "era5":
+        return load_era5_dataset(cfg, logger)
+    else:
+        raise ValueError(f"Unknown dataset name: {cfg['name']}. This curated build only supports 'era5'.")
 
 
 def _read_era5_raw(cfg):
