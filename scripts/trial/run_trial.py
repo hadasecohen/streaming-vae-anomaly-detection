@@ -1,9 +1,20 @@
 
+import sys
 import yaml
 import torch
 import argparse
 from src.utils import set_global_seed
 from src.env.streaming_env_standalone import StreamEnvStandalone
+
+# Windows' console defaults to a legacy codepage (e.g. cp1252) that can't
+# encode characters like σ or → that show up in log/print messages; force
+# UTF-8 so those don't crash mid-run. No-op on stdio that's already UTF-8
+# or doesn't support reconfigure (e.g. some notebook-captured streams).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
 
 
 def run_trial(config_path: str, model_arch: str = None):

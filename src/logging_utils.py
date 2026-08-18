@@ -223,7 +223,7 @@ class PredictionCsvSink:
         # a previous run silently corrupts every downstream count (fp/tn/n) —
         # this is not a crash-resume mechanism, every trial starts fresh.
         self.csv_path = csv_path
-        self.stream = open(self.csv_path, "w", newline="", buffering=1)
+        self.stream = open(self.csv_path, "w", newline="", buffering=1, encoding="utf-8")
         self.writer = csv.DictWriter(self.stream, fieldnames=self.FIELDS)
         self.stream.write("# " + ",".join(self.FIELDS) + "\n")
 
@@ -332,7 +332,7 @@ class HumanFriendlyRunLog:
         # Always truncate — see PredictionCsvSink for why (reused trial_dir
         # across independent reruns must not append onto a stale file).
         self.log_path = log_path
-        self.stream = open(self.log_path, "w", newline="", buffering=1)
+        self.stream = open(self.log_path, "w", newline="", buffering=1, encoding="utf-8")
         self.writer = csv.DictWriter(self.stream, fieldnames=self.FIELDS)
         self.stream.write("# " + ",".join(self.FIELDS) + "\n")
 
@@ -378,7 +378,7 @@ class TrialFilesObj:
             # Human-readable / JSONL text log
             self.log_path              = os.path.join(self.trial_dir, "trial.log")
             # Always truncate — see PredictionCsvSink for why.
-            self._log_fh = open(self.log_path, "w", buffering=1)
+            self._log_fh = open(self.log_path, "w", buffering=1, encoding="utf-8")
             self.logger  = Logger(paths=self.paths, level=verbosity, stream=self._log_fh)
         else :
             self.logger = use_this_logger
@@ -465,7 +465,7 @@ class RunFilesObj:
         # across independent reruns of the same case/arch/seed combination;
         # appending onto a stale run.log silently doubles every step count
         # and confuses anyone reading it as one coherent run).
-        self._log_fh = open(self.log_path, "w", buffering=1)
+        self._log_fh = open(self.log_path, "w", buffering=1, encoding="utf-8")
         self.logger  = Logger(self.paths, level=verbosity, stream=self._log_fh)
 
         # NEW: keep track of child trials to close them later
