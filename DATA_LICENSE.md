@@ -123,8 +123,8 @@ TEST_YEARS=12`, `OUT_DIR` pointed at `mini_28pct/`): 105,192 rows of warmup,
 
 ## `standalone_tests/`
 
-`standalone_tests/{baseline,finetuned}/<Anomaly>_<Arch>/*.yaml` (run via
-`python demo.py` or `python -m standalone_tests.<baseline|finetuned>.<Anomaly>_<Arch>.run_era5_..._standalone`)
+`standalone_tests/{baseline,finetuned}/*.yaml` (run via `python demo.py` or
+directly via `python -m scripts.trial.run_trial <config.yaml> <ARCH>`)
 are independent of the `DATA_SOURCE`/data_source-layer system above — each
 hardcodes `warmup_path`/`test_path` directly, pointed at the full-scale split
 files under `data/era5/full_scale/split/` described above (the same files

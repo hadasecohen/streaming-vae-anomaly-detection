@@ -5,7 +5,11 @@
             "name": "ERA5 Baseline - Group LSTM standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.baseline.Group_LSTM.run_era5_group_LSTM_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/baseline/era5_group_LSTM_config_standalone.yaml",
+                "LSTM"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -17,7 +21,11 @@
             "name": "ERA5 Baseline - Group Transformer standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.baseline.Group_Transformer.run_era5_group_Transformer_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/baseline/era5_group_Transformer_config_standalone.yaml",
+                "TF_VAE"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -29,7 +37,11 @@
             "name": "ERA5 Baseline - Group MLP standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.baseline.Group_MLP.run_era5_group_MLP_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/baseline/era5_group_MLP_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -41,7 +53,11 @@
             "name": "ERA5 Baseline - Group MLP Cyclic standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.baseline.Group_MLP_Cyclic.run_era5_group_MLP_Cyclic_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/baseline/era5_group_MLP_Cyclic_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -53,7 +69,11 @@
             "name": "ERA5 Baseline - Contextual LSTM standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.baseline.Contextual_LSTM.run_era5_contextual_LSTM_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/baseline/era5_contextual_LSTM_config_standalone.yaml",
+                "LSTM"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -65,7 +85,11 @@
             "name": "ERA5 Baseline - Contextual MLP standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.baseline.Contextual_MLP.run_era5_contextual_MLP_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/baseline/era5_contextual_MLP_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -77,7 +101,11 @@
             "name": "ERA5 Baseline - Contextual MLP Cyclic standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.baseline.Contextual_MLP_Cyclic.run_era5_contextual_MLP_Cyclic_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/baseline/era5_contextual_MLP_Cyclic_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -89,7 +117,11 @@
             "name": "ERA5 Baseline - Contextual Transformer standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.baseline.Contextual_Transformer.run_era5_contextual_Transformer_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/baseline/era5_contextual_Transformer_config_standalone.yaml",
+                "TF_VAE"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -101,7 +133,11 @@
             "name": "ERA5 Baseline - Point MLP standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.baseline.Point_MLP.run_era5_point_MLP_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/baseline/era5_point_MLP_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -113,7 +149,11 @@
             "name": "ERA5 Baseline - Point MLP Cyclic standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.baseline.Point_MLP_Cyclic.run_era5_point_MLP_Cyclic_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/baseline/era5_point_MLP_Cyclic_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -121,13 +161,15 @@
                 "CUDA_VISIBLE_DEVICES": "2"
             }
         },
-
-
         {
             "name": "ERA5 Finetuned - Contextual LSTM standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.finetuned.Contextual_LSTM.run_era5_contextual_LSTM_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/finetuned/era5_contextual_LSTM_config_standalone.yaml",
+                "LSTM"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -139,7 +181,11 @@
             "name": "ERA5 Finetuned - Contextual MLP standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.finetuned.Contextual_MLP.run_era5_contextual_MLP_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/finetuned/era5_contextual_MLP_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -151,7 +197,11 @@
             "name": "ERA5 Finetuned - Contextual MLP Cyclic standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.finetuned.Contextual_MLP_Cyclic.run_era5_contextual_MLP_Cyclic_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/finetuned/era5_contextual_MLP_Cyclic_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -163,7 +213,11 @@
             "name": "ERA5 Finetuned - Contextual Transformer standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.finetuned.Contextual_Transformer.run_era5_contextual_Transformer_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/finetuned/era5_contextual_Transformer_config_standalone.yaml",
+                "TF_VAE"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -175,7 +229,11 @@
             "name": "ERA5 Finetuned - Group LSTM standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.finetuned.Group_LSTM.run_era5_group_LSTM_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/finetuned/era5_group_LSTM_config_standalone.yaml",
+                "LSTM"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -187,7 +245,11 @@
             "name": "ERA5 Finetuned - Group MLP standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.finetuned.Group_MLP.run_era5_group_MLP_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/finetuned/era5_group_MLP_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -199,7 +261,11 @@
             "name": "ERA5 Finetuned - Group MLP Cyclic standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.finetuned.Group_MLP_Cyclic.run_era5_group_MLP_Cyclic_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/finetuned/era5_group_MLP_Cyclic_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -211,7 +277,11 @@
             "name": "ERA5 Finetuned - Group Transformer standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.finetuned.Group_Transformer.run_era5_group_Transformer_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/finetuned/era5_group_Transformer_config_standalone.yaml",
+                "TF_VAE"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -223,7 +293,11 @@
             "name": "ERA5 Finetuned - Point MLP standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.finetuned.Point_MLP.run_era5_point_MLP_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/finetuned/era5_point_MLP_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,
@@ -235,7 +309,11 @@
             "name": "ERA5 Finetuned - Point MLP Cyclic standalone",
             "type": "debugpy",
             "request": "launch",
-            "module": "standalone_tests.finetuned.Point_MLP_Cyclic.run_era5_point_MLP_Cyclic_standalone",
+            "module": "scripts.trial.run_trial",
+            "args": [
+                "standalone_tests/finetuned/era5_point_MLP_Cyclic_config_standalone.yaml",
+                "MLP"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "justMyCode": true,

@@ -114,7 +114,7 @@ https://githubtocolab.com/hadasecohen/streaming-vae-anomaly-detection/blob/main/
 
 ## Baseline and Fine-Tuned Configurations
 
-The directory structure:
+The directory [`standalone_tests/`](standalone_tests/):
 
 ```text
 standalone_tests/
@@ -122,15 +122,19 @@ standalone_tests/
     finetuned/
 ```
 
-contains representative configurations for each [architecture](#vae-architectures) and [anomaly type](#anomaly-scenarios).
+contains representative configurations for each [architecture](#vae-architectures) and [anomaly type](#anomaly-scenarios), run directly via:
+
+```bash
+python -m scripts.trial.run_trial <config.yaml> <ARCH>
+```
 
 Each scenario compares a common baseline configuration with a configuration adjusted according to the corresponding thesis experiments.
 
 For example:
 
 ```text
-standalone_tests/baseline/Contextual_MLP_Cyclic/
-standalone_tests/finetuned/Contextual_MLP_Cyclic/
+standalone_tests/baseline/era5_contextual_MLP_Cyclic_config_standalone.yaml
+standalone_tests/finetuned/era5_contextual_MLP_Cyclic_config_standalone.yaml
 ```
 
 The purpose is not to claim that the fine-tuned configuration is universally optimal. The thesis shows that VAE performance depends on the interaction between architecture, anomaly type, temporal representation, and streaming configuration.

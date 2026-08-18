@@ -14,7 +14,7 @@ Usage:
 """
 
 import argparse
-import glob
+import os
 import sys
 import tempfile
 
@@ -72,16 +72,16 @@ def resolve_experiment(anom: str, arch: str, best: bool):
     arch_dir = ARCH_ALIASES[arch]
     tuning = "finetuned" if best else "baseline"
     dirname = f"{anomaly}_{arch_dir}"
-    experiment_dir = f"standalone_tests/{tuning}/{dirname}"
+    experiment_dir = f"standalone_tests/{tuning}"
 
-    config_matches = glob.glob(f"{experiment_dir}/*_config_standalone.yaml")
-    if not config_matches:
+    config_path = f"{experiment_dir}/era5_{anom}_{arch_dir}_config_standalone.yaml"
+    if not os.path.exists(config_path):
         sys.exit(
             f"No config for anom={anom!r}, arch={arch!r} — "
-            f"{experiment_dir}/ does not exist. "
+            f"{config_path} does not exist. "
             "(Point only has mlp/mlp_cyclic; Contextual and Group have all four architectures.)"
         )
-    return tuning, dirname, config_matches[0]
+    return tuning, dirname, config_path
 
 
 def main(argv=None):
