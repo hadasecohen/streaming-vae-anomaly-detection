@@ -69,17 +69,29 @@ def _check_prereqs():
     except ImportError:
         sys.exit("Cython is not installed. Run: pip install cython")
 
-    try:
-        import setuptools.dist
-        import distutils.ccompiler
-        compiler = distutils.ccompiler.new_compiler()
-        compiler.initialize()
-    except Exception as e:
-        sys.exit(
-            "No working C compiler found (needed to build the compiled "
-            f"extension modules). Underlying error: {e}\n"
-            "Install a C compiler first (see this script's docstring)."
-        )
+    import distutils.ccompiler
+    compiler = distutils.ccompiler.new_compiler()
+    if hasattr(compiler, "initialize"):
+        # MSVC-specific: actually probes for a usable install (vs. just
+        # picking the class for this platform), so failures here are real.
+        try:
+            compiler.initialize()
+        except Exception as e:
+            sys.exit(
+                "No working C compiler found (needed to build the compiled "
+                f"extension modules). Underlying error: {e}\n"
+                "Install a C compiler first (see this script's docstring)."
+            )
+    else:
+        # Unix compilers (gcc/clang) have no such probe — new_compiler()
+        # picks the class unconditionally, so check the actual binary exists.
+        import shutil
+        exe = (compiler.compiler_cxx or compiler.compiler)[0] if (compiler.compiler_cxx or compiler.compiler) else None
+        if not exe or not shutil.which(exe):
+            sys.exit(
+                f"No working C compiler found on PATH (looked for {exe!r}).\n"
+                "Install a C compiler first (see this script's docstring)."
+            )
 
 
 def _collect_source_files(src_dir: str):
