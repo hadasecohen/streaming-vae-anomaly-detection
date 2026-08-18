@@ -2,7 +2,7 @@
 
 This repository contains a curated implementation of the streaming anomaly-detection framework developed for my thesis.
 
-The thesis studies how different VAE architectures and streaming configurations affect anomaly detection in temporally dependent data. The experiments use hourly ERA5 climate reanalysis data and compare four architectures:
+The thesis studies how different [VAE architectures](#vae-architectures) and streaming configurations affect [anomaly detection](#anomaly-scenarios) in temporally dependent data. The experiments use hourly ERA5 climate reanalysis data and compare four architectures:
 
 - **MLP-VAE**
 - **MLP-VAE-Cyclic**
@@ -30,7 +30,7 @@ pip install -r requirements.txt
 python demo.py
 ```
 
-The demo runs one fixed model on one fixed anomaly type — it is not meant for comparing architectures or tuning hyperparameters, and its configuration is not user-editable. Its purpose is a quick, simple environment check: a successful run confirms the local or Colab environment is set up correctly and shows what one model's output looks like, before moving on to the added complexity of a full test suite.
+The demo runs one fixed model on one fixed [anomaly type](#anomaly-scenarios) — it is not meant for comparing [architectures](#vae-architectures) or tuning hyperparameters, and its configuration is not user-editable. Its purpose is a quick, simple environment check: a successful run confirms the local or Colab environment is set up correctly and shows what one model's output looks like, before moving on to the added complexity of a full test suite.
 By default, the demo runs **MLP-VAE-Cyclic** on the **Contextual** anomaly scenario.
 
 The demo's output will include commands such as  `python -m scripts.trial.run_trial <config> <ARCH>` used for the trial it just ran, pointing to a config under [`standalone_tests/`](#baseline-and-fine-tuned-configurations), which is convenient for setting models for comparison or tuning configurations.
@@ -43,7 +43,7 @@ python demo.py --anom group --arch lstm
 python demo.py --anom contextual --arch transformer
 ```
 
-Available anomaly types:
+Available [anomaly types](#anomaly-scenarios):
 
 ```text
 point
@@ -51,7 +51,7 @@ group
 contextual
 ```
 
-Available architectures:
+Available [architectures](#vae-architectures):
 
 ```text
 mlp
@@ -86,11 +86,11 @@ Each run prints its output directory at startup and stores its logs and metrics 
 
 The notebooks under [`notebooks/cases/`](notebooks/cases/) and [`notebooks/demo_colab.ipynb`](notebooks/demo_colab.ipynb) can be opened directly in Google Colab.
 
-The main Colab notebook:
+The demo Colab notebook:
 
 [`notebooks/demo_colab.ipynb`](notebooks/demo_colab.ipynb)
 
-clones the repository and runs `demo.py`. The anomaly type, architecture, configuration, and GPU can be selected from the first code cell.
+clones the repository and runs `demo.py`. The [anomaly type](#anomaly-scenarios), [architecture](#vae-architectures), configuration, and GPU can be selected from the first code cell.
 
 Other notebooks in the repository can also be opened in Colab by replacing:
 
@@ -109,8 +109,33 @@ in the notebook URL.
 For example:
 
 ```text
-https://githubtocolab.com/hadasecohen/streaming-vae-anomaly-detection/blob/main/notebooks/cases/case01_clean_baseline.ipynb
+https://githubtocolab.com/hadasecohen/streaming-vae-anomaly-detection/blob/main/notebooks/demo_colab.ipynb
 ```
+
+## Baseline and Fine-Tuned Configurations
+
+The directory structure:
+
+```text
+standalone_tests/
+    baseline/
+    finetuned/
+```
+
+contains representative configurations for each [architecture](#vae-architectures) and [anomaly type](#anomaly-scenarios).
+
+Each scenario compares a common baseline configuration with a configuration adjusted according to the corresponding thesis experiments.
+
+For example:
+
+```text
+standalone_tests/baseline/Contextual_MLP_Cyclic/
+standalone_tests/finetuned/Contextual_MLP_Cyclic/
+```
+
+The purpose is not to claim that the fine-tuned configuration is universally optimal. The thesis shows that VAE performance depends on the interaction between architecture, anomaly type, temporal representation, and streaming configuration.
+
+The fine-tuned configurations therefore represent settings that performed well for every model on every anomaly type, under the experimental conditions used in the thesis.
 
 ## Selected Thesis Scenarios
 
@@ -152,6 +177,7 @@ Smaller ERA5 subsets are also available for faster execution.
 
 [`case01_clean_baseline.ipynb`](notebooks/cases/case01_clean_baseline.ipynb) compares the available dataset scales directly and shows why dataset size can affect the observed streaming behaviour.
 
+
 ## Anomaly Scenarios
 
 Three synthetic anomaly types are used.
@@ -178,30 +204,6 @@ These scenarios are particularly useful for examining whether temporal context i
 
 Most testcases selected for this repository use the  injected contextual anomalies dataset.
 
-## Baseline and Fine-Tuned Configurations
-
-The directory structure:
-
-```text
-standalone_tests/
-    baseline/
-    finetuned/
-```
-
-contains representative configurations for each architecture and anomaly type.
-
-Each scenario compares a common baseline configuration with a configuration adjusted according to the corresponding thesis experiments.
-
-For example:
-
-```text
-standalone_tests/baseline/Contextual_MLP_Cyclic/
-standalone_tests/finetuned/Contextual_MLP_Cyclic/
-```
-
-The purpose is not to claim that the fine-tuned configuration is universally optimal. The thesis shows that VAE performance depends on the interaction between architecture, anomaly type, temporal representation, and streaming configuration.
-
-The fine-tuned configurations therefore represent settings that performed well for every model on every anomaly type, under the experimental conditions used in the thesis.
 
 ## Framework Overview
 
