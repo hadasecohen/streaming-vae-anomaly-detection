@@ -15,14 +15,26 @@ Requires (not installed by this script):
 Usage (from the project root):
     python scripts/local/compile_src.py
     python scripts/local/compile_src.py --out dist/compiled_src
-    python scripts/local/compile_src.py --clean   # remove build artifacts after building
+    python scripts/local/compile_src.py --no-zip     # skip the final .zip
+    python scripts/local/compile_src.py --keep-py    # don't delete original .py after compiling
+    python scripts/local/compile_src.py --keep-c     # keep Cython's intermediate .c files
+
+Runs the full pipeline in one call: copy src/ -> compile every .py file with
+Cython -> verify every file that should have compiled has a .pyd/.so ->
+delete the original .py source (compiled modules would otherwise be
+silently ignored in favor of it) -> delete intermediate .c files and the
+build/temp.*, build/lib.* scratch dirs -> zip the result. This is meant to
+be the single command you run to produce a distributable compiled_src.zip
+(e.g. from scripts/compile_test_colab.ipynb on Colab, to build for Colab's
+own Linux/Python target).
 
 Output:
     A full copy of src/ under --out (default: build/compiled_src/src), with
-    every .py file replaced by its compiled extension module. __init__.py
-    files are copied as plain Python (they're empty package markers; Cython
-    compiles them fine too, but there's no benefit and it's one less thing
-    to rebuild). src/Data_tools/dataset_loader.py and
+    every .py file replaced by its compiled extension module, plus
+    <out>.zip (default: build/compiled_src.zip) containing that src/ tree.
+    __init__.py files are copied as plain Python (they're empty package
+    markers; Cython compiles them fine too, but there's no benefit and it's
+    one less thing to rebuild). src/Data_tools/dataset_loader.py and
     src/env/streaming_env_optuna.py used to contain match/case statements,
     which Cython does not support (a hard compiler crash, not a graceful
     error) — already rewritten to if/elif. If match/case reappears in future
@@ -105,33 +117,20 @@ def _collect_source_files(src_dir: str):
     return py_files, init_files
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--out", default=os.path.join(REPO_ROOT, "build", "compiled_src"),
-                        help="Output directory (default: build/compiled_src)")
-    parser.add_argument("--clean", action="store_true",
-                        help="Remove intermediate build artifacts (.c files, build/temp.*) after compiling, "
-                             "keeping only the final .pyd/.so files")
-    args = parser.parse_args()
-
-    _check_prereqs()
-    from Cython.Build import cythonize
-
-    src_dir = os.path.join(REPO_ROOT, "src")
-    if not os.path.isdir(src_dir):
-        sys.exit(f"src/ not found at {src_dir}")
-
-    out_dir = os.path.abspath(args.out)
-    out_src_dir = os.path.join(out_dir, "src")
-
+def _step1_copy_src(src_dir: str, out_src_dir: str, out_dir: str):
+    print("[1/6] Copying src/ ...")
     if os.path.exists(out_dir):
         shutil.rmtree(out_dir)
     shutil.copytree(src_dir, out_src_dir)
 
+
+def _step2_compile(out_dir: str, out_src_dir: str):
+    from Cython.Build import cythonize
+
     py_files, init_files = _collect_source_files(out_src_dir)
     py_files = [f for f in py_files if os.path.relpath(f, out_dir) not in KNOWN_UNSUPPORTED]
 
-    print(f"Compiling {len(py_files)} files ({len(init_files)} __init__.py left as plain Python):")
+    print(f"[2/6] Compiling {len(py_files)} files ({len(init_files)} __init__.py left as plain Python):")
     for f in sorted(py_files):
         print("  ", os.path.relpath(f, out_dir))
 
@@ -158,19 +157,88 @@ def main():
     finally:
         os.chdir(cwd)
 
-    if args.clean:
-        for f in glob.glob(os.path.join(out_src_dir, "**", "*.c"), recursive=True):
-            os.remove(f)
-        build_tmp = os.path.join(out_dir, "build")
-        if os.path.isdir(build_tmp):
-            shutil.rmtree(build_tmp)
+    return py_files
 
+
+def _step3_verify(out_dir: str, out_src_dir: str, expected_py_files):
     compiled = glob.glob(os.path.join(out_src_dir, "**", "*.pyd"), recursive=True) + \
                glob.glob(os.path.join(out_src_dir, "**", "*.so"), recursive=True)
-    print(f"\nDone. {len(compiled)} compiled modules written under {out_src_dir}")
-    print("Original .py files for the compiled modules are still present alongside them")
-    print("(Python prefers .py over .pyd/.so) — delete them before shipping this tree,")
-    print("or the compiled modules will be silently ignored in favor of the source.")
+    print(f"[3/6] Verifying: {len(compiled)} compiled modules for {len(expected_py_files)} source files")
+    if len(compiled) != len(expected_py_files):
+        sys.exit(
+            f"Compiled module count ({len(compiled)}) doesn't match the number of "
+            f"files fed to Cython ({len(expected_py_files)}). Check the build output "
+            "above for a file that silently failed to produce a .pyd/.so."
+        )
+    return compiled
+
+
+def _step4_delete_py(out_src_dir: str, keep_py: bool):
+    if keep_py:
+        print("[4/6] --keep-py set: leaving original .py source in place")
+        return
+    removed = 0
+    for f in glob.glob(os.path.join(out_src_dir, "**", "*.py"), recursive=True):
+        if os.path.basename(f) != "__init__.py":
+            os.remove(f)
+            removed += 1
+    print(f"[4/6] Deleted {removed} original .py files (kept __init__.py package markers) "
+          "so the compiled modules aren't shadowed by source on import")
+
+
+def _step5_clean(out_dir: str, out_src_dir: str, keep_c: bool):
+    if keep_c:
+        print("[5/6] --keep-c set: leaving intermediate .c files and build/ scratch dirs")
+        return
+    for f in glob.glob(os.path.join(out_src_dir, "**", "*.c"), recursive=True):
+        os.remove(f)
+    build_tmp = os.path.join(out_dir, "build")
+    if os.path.isdir(build_tmp):
+        shutil.rmtree(build_tmp)
+    print("[5/6] Removed intermediate .c files and build/ scratch directories")
+
+
+def _step6_zip(out_dir: str, make_zip: bool):
+    if not make_zip:
+        print("[6/6] --no-zip set: skipping archive")
+        return None
+    zip_base = out_dir  # shutil.make_archive appends .zip
+    archive_path = shutil.make_archive(zip_base, "zip", out_dir)
+    print(f"[6/6] Wrote {archive_path}")
+    return archive_path
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--out", default=os.path.join(REPO_ROOT, "build", "compiled_src"),
+                        help="Output directory (default: build/compiled_src)")
+    parser.add_argument("--no-zip", action="store_true", help="Skip producing <out>.zip")
+    parser.add_argument("--keep-py", action="store_true",
+                        help="Don't delete the original .py files after compiling "
+                             "(they'd otherwise shadow the compiled modules on import)")
+    parser.add_argument("--keep-c", action="store_true",
+                        help="Don't delete Cython's intermediate .c files / build/ scratch dirs")
+    args = parser.parse_args()
+
+    _check_prereqs()
+
+    src_dir = os.path.join(REPO_ROOT, "src")
+    if not os.path.isdir(src_dir):
+        sys.exit(f"src/ not found at {src_dir}")
+
+    out_dir = os.path.abspath(args.out)
+    out_src_dir = os.path.join(out_dir, "src")
+
+    _step1_copy_src(src_dir, out_src_dir, out_dir)
+    py_files = _step2_compile(out_dir, out_src_dir)
+    _step3_verify(out_dir, out_src_dir, py_files)
+    _step4_delete_py(out_src_dir, args.keep_py)
+    _step5_clean(out_dir, out_src_dir, args.keep_c)
+    archive_path = _step6_zip(out_dir, not args.no_zip)
+
+    print(f"\nDone. Compiled src/ ready under {out_src_dir}")
+    if archive_path:
+        print(f"Download/ship: {archive_path}")
 
 
 if __name__ == "__main__":
