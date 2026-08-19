@@ -6,7 +6,6 @@ git_personal_token
 CLAUDE.md
 runs/
 scratchpad/
-notebooks/colab/
 # Full-scale real ERA5 source (~550MB, not included in this repo — see
 # DATA_LICENSE.md). Local-only; only data/era5/full_scale/split/ (each file
 # under GitHub's 100MB limit) is shipped — raw_files/ never is.
@@ -16,17 +15,11 @@ data/era5/full_scale/raw_files/
 .venv/
 venv/
 
-# Local-only tooling that reaches outside this repo (e.g. into thesis_code,
-# a machine-local path not shipped here). Only these scripts' *outputs*
-# (small, self-contained reference files) are meant to be committed.
-# compile_src.py is self-contained (only touches src/) and is needed by
-# scripts/compile_test_colab.ipynb to build on Colab's own Linux runtime —
-# tracked despite otherwise living among local-only tooling below.
-scripts/local/*
-!scripts/local/compile_src.py
-
-scripts/compare_to_thesis.py
-scripts/generate_mini_era5.py
-scripts/slice_real_era5.py
-git-cmds.txt
+# Everything below this point is tracked in this (dev) repo but excluded
+# from the production repo by scripts/local/release_to_production.py's
+# exclude-list — not by .gitignore, since it needs to stay tracked here.
+#   scripts/compare_to_thesis.py, scripts/generate_mini_era5.py,
+#   scripts/slice_real_era5.py, scripts/local/, scripts/compile_test_colab.ipynb,
+#   notebooks/colab/, git-cmds.txt, src/env/streaming_env_optuna.py (deleted),
+#   src/VAE/lstm_attn_VAE.py (deleted), src/VAE/mlp_attn_VAE.py (deleted)
 
