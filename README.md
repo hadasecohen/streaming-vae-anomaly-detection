@@ -35,7 +35,7 @@ python demo.py
 The demo runs one fixed model on one fixed [anomaly type](#anomaly-scenarios) — it is not meant for comparing [architectures](#vae-architectures) or tuning hyperparameters, and its configuration is not user-editable. Its purpose is a quick, simple environment check: a successful run confirms the local or Colab environment is set up correctly and shows what one model's output looks like, before moving on to the added complexity of a full test suite.
 By default, the demo runs **MLP-VAE-Cyclic** on the **Contextual** anomaly scenario.
 
-The demo's output will include a command such as `python -m scripts.trial.run_trial <config>` for the trial it just ran, pointing to a config under [`standalone_tests/`](#baseline-and-fine-tuned-configurations), which is convenient for setting models for comparison or tuning configurations.
+The demo's output will include a command such as `python -m scripts.trial.run_trial <config>` for the trial it just ran, pointing to a config under [`standalone_tests/`](#baseline-configurations), which is convenient for setting models for comparison or tuning configurations.
 
 Other combinations can be selected using:
 
@@ -60,12 +60,6 @@ mlp
 mlp_cyclic
 lstm
 transformer
-```
-
-Finetuned config instead of the common baseline:
-
-```bash
---best
 ```
 
 To select a GPU:
@@ -114,14 +108,13 @@ For example:
 https://githubtocolab.com/hadasecohen/streaming-vae-anomaly-detection/blob/main/notebooks/demo_colab.ipynb
 ```
 
-## Baseline and Fine-Tuned Configurations
+## Baseline Configurations
 
 The directory [`standalone_tests/`](standalone_tests/):
 
 ```text
 standalone_tests/
     baseline/
-    finetuned/
 ```
 
 contains representative configurations for each [architecture](#vae-architectures) and [anomaly type](#anomaly-scenarios), run directly via:
@@ -130,18 +123,11 @@ contains representative configurations for each [architecture](#vae-architecture
 python -m scripts.trial.run_trial <config.yaml>
 ```
 
-Each scenario compares a common baseline configuration with a configuration adjusted according to the corresponding thesis experiments.
-
 For example:
 
 ```text
 standalone_tests/baseline/era5_contextual_MLP_Cyclic_config_standalone.yaml
-standalone_tests/finetuned/era5_contextual_MLP_Cyclic_config_standalone.yaml
 ```
-
-The purpose is not to claim that the fine-tuned configuration is universally optimal. The thesis shows that VAE performance depends on the interaction between architecture, anomaly type, temporal representation, and streaming configuration.
-
-The fine-tuned configurations therefore represent settings that performed well for every model on every anomaly type, under the experimental conditions used in the thesis.
 
 ## Selected Thesis Scenarios
 

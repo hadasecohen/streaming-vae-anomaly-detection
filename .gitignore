@@ -20,6 +20,7 @@ venv/
 # exclude-list — not by .gitignore, since it needs to stay tracked here.
 #   scripts/compare_to_thesis.py, scripts/generate_mini_era5.py,
 #   scripts/slice_real_era5.py, scripts/local/, scripts/compile_test_colab.ipynb,
-#   notebooks/colab/, git-cmds.txt, src/env/streaming_env_optuna.py (deleted),
+#   notebooks/colab/, git-cmds.txt, standalone_tests/finetuned/,
+#   src/env/streaming_env_optuna.py (deleted),
 #   src/VAE/lstm_attn_VAE.py (deleted), src/VAE/mlp_attn_VAE.py (deleted)
 

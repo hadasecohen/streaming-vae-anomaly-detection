@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """Streaming VAE Anomaly Detection — quick-start demo.
 
-Runs one config from standalone_tests/baseline/ (or standalone_tests/finetuned/
-with --best) end to end: offline warmup training + online streaming anomaly
-detection on a real ERA5 slice.
+Runs one config from standalone_tests/baseline/ end to end: offline warmup
+training + online streaming anomaly detection on a real ERA5 slice.
 
 Usage:
     python demo.py                              # MLP-Cyclic on contextual anomalies (default)
     python demo.py --anom point --arch mlp
-    python demo.py --anom group --arch lstm --best
+    python demo.py --anom group --arch lstm
     python demo.py --anom contextual --arch transformer
     python demo.py --gpu 1                       # pin to cuda:1 (default: cuda:0; ignored for --anom point)
 """
@@ -56,10 +55,6 @@ def parse_args(argv=None):
         help="Model architecture (default: mlp_cyclic)",
     )
     parser.add_argument(
-        "--best", action="store_true",
-        help="Run the finetuned config instead of the baseline one",
-    )
-    parser.add_argument(
         "--gpu", type=int, default=0, metavar="N",
         help="GPU index to run on, e.g. --gpu 1 for cuda:1 (default: 0). "
              "Ignored for --anom point, which always runs on CPU.",
@@ -67,12 +62,11 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def resolve_experiment(anom: str, arch: str, best: bool):
+def resolve_experiment(anom: str, arch: str):
     anomaly = ANOM_ALIASES[anom]
     arch_dir = ARCH_ALIASES[arch]
-    tuning = "finetuned" if best else "baseline"
     dirname = f"{anomaly}_{arch_dir}"
-    experiment_dir = f"standalone_tests/{tuning}"
+    experiment_dir = "standalone_tests/baseline"
 
     config_path = f"{experiment_dir}/era5_{anom}_{arch_dir}_config_standalone.yaml"
     if not os.path.exists(config_path):
@@ -81,12 +75,12 @@ def resolve_experiment(anom: str, arch: str, best: bool):
             f"{config_path} does not exist. "
             "(Point only has mlp/mlp_cyclic; Contextual and Group have all four architectures.)"
         )
-    return tuning, dirname, config_path
+    return dirname, config_path
 
 
 def main(argv=None):
     args = parse_args(argv)
-    tuning, dirname, config_path = resolve_experiment(args.anom, args.arch, args.best)
+    dirname, config_path = resolve_experiment(args.anom, args.arch)
     tracked_config_path = config_path  # the real standalone_tests/ path, before any temp-file device override below
 
     with open(config_path) as f:
@@ -124,7 +118,7 @@ def main(argv=None):
         tmp.close()
         config_path = tmp.name
 
-    print(f"Experiment : {tuning}/{dirname}")
+    print(f"Experiment : baseline/{dirname}")
     print(f"Config     : {config_path}")
     print(f"Model arch : {model_arch}  (cyclic_recon={cfg['model'].get('cyclic_recon', False)})")
     print(f"Device     : {cfg['common']['device']}")
