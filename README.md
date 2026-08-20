@@ -1,8 +1,8 @@
 # Streaming Anomaly Detection with VAEs
 
-This repository contains a curated implementation of the streaming anomaly-detection framework developed for my thesis.
+This repository contains a curated implementation of the streaming anomaly-detection framework developed for my Master's thesis.
 
-The thesis studies how different [VAE architectures](#vae-architectures) and streaming configurations affect [anomaly detection](#anomaly-scenarios) in temporally dependent data. The experiments use hourly ERA5 climate reanalysis data and compare four architectures:
+The thesis studies how different [VAE architectures](#vae-architectures) and streaming configurations affect [anomaly detection](#anomaly-scenarios) in temporally dependent streaming data. The experiments use hourly climate data and compare four architectures:
 
 - **MLP-VAE**
 - **MLP-VAE-Cyclic**
@@ -11,11 +11,13 @@ The thesis studies how different [VAE architectures](#vae-architectures) and str
 
 Rather than reproducing the complete research codebase, this repository focuses on a selected set of representative test scenarios. Each scenario was chosen to demonstrate one of the main behaviours observed in the thesis, such as the effect of cyclic time features, window size and stride, latent dimensionality, prediction thresholds, or online adaptation.
 
-The detector is first trained on a warmup segment assumed to contain normal data. It is then evaluated in streaming mode, processing either individual timesteps or temporal windows. During the stream, the model may continue updating its parameters, while anomaly scores and thresholds are adapted over time.
+The detector is first trained offline (using epochs) on a warmup segment assumed to contain normal data. After offline training, the model streams through the remaining data sample-by-sample (or window-by-window), predicting each one before training on it (test-then-train). As the stream progresses, it may keep updating its parameters based on accumulated anomaly scores, which also drive the adaptive threshold.
 
 Anomalies are detected from VAE reconstruction behaviour, with additional latent-space and ELBO-related metrics available in the framework. The prediction threshold is based on an adaptive rolling score distribution rather than a fixed raw reconstruction-error value.
 
-See [`DATA_LICENSE.md`](DATA_LICENSE.md) for details about the ERA5 data included in this repository.
+The dataset is ERA5 reanalysis climate data for a single surface grid point in Canterbury, New Zealand — see [`DATA_LICENSE.md`](DATA_LICENSE.md) for full details on what's included in this repository.
+
+ERA5 itself has no labeled anomalies, so several copies of the dataset are used, each synthetically injected with a different type of anomaly.
 
 ## Quickstart
 
