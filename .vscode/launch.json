@@ -7,7 +7,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_group_LSTM_config_standalone.yaml"
+                "modules/standalone_model_env/baseline/era5_group_LSTM_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -22,7 +22,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_group_Transformer_config_standalone.yaml"
+                "modules/standalone_model_env/baseline/era5_group_Transformer_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -37,7 +37,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_group_MLP_config_standalone.yaml"
+                "modules/standalone_model_env/baseline/era5_group_MLP_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -52,7 +52,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_group_MLP_Cyclic_config_standalone.yaml"
+                "modules/standalone_model_env/baseline/era5_group_MLP_Cyclic_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -67,7 +67,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_contextual_LSTM_config_standalone.yaml"
+                "modules/standalone_model_env/baseline/era5_contextual_LSTM_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -82,7 +82,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_contextual_MLP_config_standalone.yaml"
+                "modules/standalone_model_env/baseline/era5_contextual_MLP_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -97,7 +97,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_contextual_MLP_Cyclic_config_standalone.yaml"
+                "modules/standalone_model_env/baseline/era5_contextual_MLP_Cyclic_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -112,7 +112,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_contextual_Transformer_config_standalone.yaml"
+                "modules/standalone_model_env/baseline/era5_contextual_Transformer_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -127,7 +127,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_point_MLP_config_standalone.yaml"
+                "modules/standalone_model_env/baseline/era5_point_MLP_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -142,7 +142,7 @@
             "request": "launch",
             "module": "scripts.trial.run_trial",
             "args": [
-                "standalone_tests/baseline/era5_point_MLP_Cyclic_config_standalone.yaml"
+                "modules/standalone_model_env/baseline/era5_point_MLP_Cyclic_config_standalone.yaml"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",

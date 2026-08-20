@@ -1,7 +1,7 @@
 common:
   device: cuda:0
   logging:
-    run_dir: runs/standalone_tests/baseline/Group_Transformer
+    run_dir: runs/standalone_model_env/baseline/Group_LSTM
     verbosity: INFO_HIGH
   reporting:
     grace_steps: 0
@@ -17,27 +17,27 @@ data:
   warmup_path: data/era5/full_scale/split/era5_clean_warmup.csv
   test_path: data/era5/full_scale/split/era5_group_test.csv
 model:
-  activation: gelu
   clamp_bounds:
   - -4
   - 4
   clamp_logvar: true
-  d_model: 96
-  dropout: 0.1
-  ff_dim: 256
+  dec_dropout: 0.0
+  dec_hidden_dim: 128
+  dec_num_layers: 3
+  enc_bidirectional: false
+  enc_dropout: 0.1
+  enc_hidden_dim: 128
+  enc_num_layers: 3
   free_bits: 0.0
   kl_auto_scale: true
   kl_mode: norm
   latent_dim: 24
-  nhead: 4
-  norm_first: true
-  num_dec_layers: 4
-  num_enc_layers: 4
   pool_latent: false
   pooling: mean
   prior_variance: 1.0
   recon_loss_kind: mse
-  type: TF_VAE
+  type: LSTM
+  use_layer_norm: true
   use_pos_enc: false
 stream:
   mode: window

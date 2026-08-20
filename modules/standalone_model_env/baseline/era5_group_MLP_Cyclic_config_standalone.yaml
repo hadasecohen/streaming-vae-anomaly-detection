@@ -1,23 +1,21 @@
 common:
   device: cuda:0
   logging:
-    run_dir: runs/standalone_tests/baseline/Contextual_MLP
+    run_dir: runs/standalone_model_env/baseline/Group_MLP_Cyclic
     verbosity: INFO_HIGH
   reporting:
     grace_steps: 0
     min_eval_samples: 1000
     report_every: 500
   seed: 49
-
 data:
   args:
-    cyclic_time_features: false
+    cyclic_time_features: true
     scaler_kind: zscore
     val_ratio: 0.2
   name: era5
   warmup_path: data/era5/full_scale/split/era5_clean_warmup.csv
-  test_path: data/era5/full_scale/split/era5_contextual_test.csv
-
+  test_path: data/era5/full_scale/split/era5_group_test.csv
 model:
   acts:
   - silu
@@ -27,6 +25,7 @@ model:
   - -4
   - 4
   clamp_logvar: true
+  cyclic_recon: true
   dec_acts:
   - elu
   - silu
@@ -56,13 +55,11 @@ model:
   type: MLP
   use_pos_enc: false
   weight_init: kaiming_uniform
-
 stream:
   mode: window
   seq_len: 168
   shuffle: false
   stride: 24
-  
 training:
   anom_if_score_above: 0.85
   clip_grads_norm: 2.0

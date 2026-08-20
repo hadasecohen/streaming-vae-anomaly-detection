@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Streaming VAE Anomaly Detection — quick-start demo.
 
-Runs one config from standalone_tests/baseline/ end to end: offline warmup
-training + online streaming anomaly detection on a real ERA5 slice.
+Runs one config from modules/standalone_model_env/baseline/ end to end:
+offline warmup training + online streaming anomaly detection on a real
+ERA5 slice.
 
 Usage:
     python demo.py                              # MLP-Cyclic on contextual anomalies (default)
@@ -66,7 +67,7 @@ def resolve_experiment(anom: str, arch: str):
     anomaly = ANOM_ALIASES[anom]
     arch_dir = ARCH_ALIASES[arch]
     dirname = f"{anomaly}_{arch_dir}"
-    experiment_dir = "standalone_tests/baseline"
+    experiment_dir = "modules/standalone_model_env/baseline"
 
     config_path = f"{experiment_dir}/era5_{anom}_{arch_dir}_config_standalone.yaml"
     if not os.path.exists(config_path):
@@ -81,7 +82,7 @@ def resolve_experiment(anom: str, arch: str):
 def main(argv=None):
     args = parse_args(argv)
     dirname, config_path = resolve_experiment(args.anom, args.arch)
-    tracked_config_path = config_path  # the real standalone_tests/ path, before any temp-file device override below
+    tracked_config_path = config_path  # the real modules/standalone_model_env/ path, before any temp-file device override below
 
     with open(config_path) as f:
         cfg = yaml.safe_load(f)

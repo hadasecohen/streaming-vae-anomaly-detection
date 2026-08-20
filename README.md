@@ -35,7 +35,7 @@ python demo.py
 The demo runs one fixed model on one fixed [anomaly type](#anomaly-scenarios) — it is not meant for comparing [architectures](#vae-architectures) or tuning hyperparameters, and its configuration is not user-editable. Its purpose is a quick, simple environment check: a successful run confirms the local or Colab environment is set up correctly and shows what one model's output looks like, before moving on to the added complexity of a full test suite.
 By default, the demo runs **MLP-VAE-Cyclic** on the **Contextual** anomaly scenario.
 
-The demo's output will include a command such as `python -m scripts.trial.run_trial <config>` for the trial it just ran, pointing to a config under [`standalone_tests/`](#baseline-configurations), which is convenient for setting models for comparison or tuning configurations.
+The demo's output will include a command such as `python -m scripts.trial.run_trial <config>` for the trial it just ran, pointing to a config under [`modules/standalone_model_env/`](#baseline-configurations), which is convenient for setting models for comparison or tuning configurations.
 
 Other combinations can be selected using:
 
@@ -110,13 +110,7 @@ https://githubtocolab.com/hadasecohen/streaming-vae-anomaly-detection/blob/main/
 
 ## Baseline Configurations
 
-The directory [`standalone_tests/`](standalone_tests/):
-
-```text
-standalone_tests/
-    baseline/
-```
-
+The directory [`modules/standalone_model_env/baseline`](modules/standalone_model_env/baseline)
 contains representative configurations for each [architecture](#vae-architectures) and [anomaly type](#anomaly-scenarios), run directly via:
 
 ```bash
@@ -126,16 +120,12 @@ python -m scripts.trial.run_trial <config.yaml>
 For example:
 
 ```text
-standalone_tests/baseline/era5_contextual_MLP_Cyclic_config_standalone.yaml
+modules/standalone_model_env/baseline/era5_contextual_MLP_Cyclic_config_standalone.yaml
 ```
 
 ## Selected Thesis Scenarios
 
-The directory:
-
-[`notebooks/cases/`](notebooks/cases/)
-
-contains a set of small experiments selected from the thesis.
+The directory: [`notebooks/cases/`](notebooks/cases/) contains a set of small experiments selected from the thesis.
 
 These notebooks are not intended to reproduce every experiment in the thesis. Instead, they provide relatively small comparisons that demonstrate some of the more interesting findings.
 

@@ -1,7 +1,7 @@
 common:
   device: cuda:0
   logging:
-    run_dir: runs/standalone_tests/baseline/Contextual_MLP_Cyclic
+    run_dir: runs/standalone_model_env/baseline/Contextual_LSTM
     verbosity: INFO_HIGH
   reporting:
     grace_steps: 0
@@ -10,51 +10,35 @@ common:
   seed: 49
 data:
   args:
-    cyclic_time_features: true
+    cyclic_time_features: false
     scaler_kind: zscore
     val_ratio: 0.2
   name: era5
   warmup_path: data/era5/full_scale/split/era5_clean_warmup.csv
   test_path: data/era5/full_scale/split/era5_contextual_test.csv
 model:
-  acts:
-  - silu
-  - silu
-  - elu
   clamp_bounds:
   - -4
   - 4
   clamp_logvar: true
-  cyclic_recon: true
-  dec_acts:
-  - elu
-  - silu
-  dec_drops:
-  - 0.0
-  - 0.0
-  dec_hidden_dims:
-  - 384
-  - 512
-  drops:
-  - 0.2
-  - 0.2
-  - 0.0
+  dec_dropout: 0.0
+  dec_hidden_dim: 128
+  dec_num_layers: 3
+  enc_bidirectional: false
+  enc_dropout: 0.1
+  enc_hidden_dim: 128
+  enc_num_layers: 3
   free_bits: 0.0
-  hidden_dims:
-  - 512
-  - 512
-  - 384
   kl_auto_scale: true
   kl_mode: norm
   latent_dim: 24
-  norm: layer
   pool_latent: false
   pooling: mean
   prior_variance: 1.0
   recon_loss_kind: mse
-  type: MLP
+  type: LSTM
+  use_layer_norm: true
   use_pos_enc: false
-  weight_init: kaiming_uniform
 stream:
   mode: window
   seq_len: 168

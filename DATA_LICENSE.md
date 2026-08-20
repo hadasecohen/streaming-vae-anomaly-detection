@@ -121,9 +121,9 @@ exactly `scripts/slice_real_era5.py`'s own default output (`WARMUP_YEARS=12,
 TEST_YEARS=12`, `OUT_DIR` pointed at `mini_28pct/`): 105,192 rows of warmup,
 105,192 rows of test, split at the same 1974-06-23 boundary.
 
-## `standalone_tests/`
+## `modules/standalone_model_env/`
 
-`standalone_tests/baseline/*.yaml` (run via `python demo.py` or
+`modules/standalone_model_env/baseline/*.yaml` (run via `python demo.py` or
 directly via `python -m scripts.trial.run_trial <config.yaml>`)
 are independent of the `DATA_SOURCE`/data_source-layer system above — each
 hardcodes `warmup_path`/`test_path` directly, pointed at the full-scale split
