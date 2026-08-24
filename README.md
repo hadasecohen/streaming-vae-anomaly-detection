@@ -2,7 +2,11 @@
 
 This repository contains a curated implementation of the streaming anomaly-detection framework developed for my Master's thesis.
 
-The thesis studies how different [VAE architectures](#vae-architectures) and streaming configurations affect [anomaly detection](#anomaly-scenarios) in temporally dependent streaming data. The experiments use hourly climate data and compare four architectures:
+The thesis studies how different [VAE architectures](#vae-architectures) and streaming configurations affect [anomaly detection](#anomaly-scenarios) in temporally dependent streaming data.
+
+> **Note:** the thesis itself is currently under examination and is not yet publicly available. This repository (the curated, open-source implementation) and the thesis document will both be released once the thesis has been examined and approved.
+
+The experiments use hourly climate data and compare four architectures:
 
 - **MLP-VAE**
 - **MLP-VAE-Cyclic**
@@ -23,7 +27,7 @@ ERA5 itself has no labeled anomalies, so several copies of the dataset are used,
 
 The framework may be tried by running `demo.py` from a local terminal, or by running 
 [`notebooks/demo_colab.ipynb`](notebooks/demo_colab.ipynb) on Google Colab, which 
-runs the same demo on Colab GPU runtime. It needs a couple of extra one-time steps (a GitHub token secret, runtime selection), see [Colab](#colab) section below.
+runs the same demo on Colab GPU runtime — see [Colab](#colab) section below.
 
 To execute `demo.py`:
 
