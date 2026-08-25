@@ -8,3 +8,4 @@ PyYAML>=6.0
 optuna>=3.5
 plotly>=5.24
 umap-learn>=0.5
+kaleido==0.2.1
